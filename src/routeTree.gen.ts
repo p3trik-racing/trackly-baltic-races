@@ -19,6 +19,9 @@ import { Route as AppInboxRouteImport } from './routes/_app/inbox'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
+import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
+import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
+import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -69,6 +72,21 @@ const AppBookingsRoute = AppBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
+  id: '/event/$eventId',
+  path: '/event/$eventId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBookingBookingIdRoute = AppBookingBookingIdRouteImport.update({
+  id: '/booking/$bookingId',
+  path: '/booking/$bookingId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBookEventIdRoute = AppBookEventIdRouteImport.update({
+  id: '/book/$eventId',
+  path: '/book/$eventId',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,6 +98,9 @@ export interface FileRoutesByFullPath {
   '/home': typeof AppHomeRoute
   '/inbox': typeof AppInboxRoute
   '/profile': typeof AppProfileRoute
+  '/book/$eventId': typeof AppBookEventIdRoute
+  '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/event/$eventId': typeof AppEventEventIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,6 +112,9 @@ export interface FileRoutesByTo {
   '/home': typeof AppHomeRoute
   '/inbox': typeof AppInboxRoute
   '/profile': typeof AppProfileRoute
+  '/book/$eventId': typeof AppBookEventIdRoute
+  '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/event/$eventId': typeof AppEventEventIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,6 +128,9 @@ export interface FileRoutesById {
   '/_app/home': typeof AppHomeRoute
   '/_app/inbox': typeof AppInboxRoute
   '/_app/profile': typeof AppProfileRoute
+  '/_app/book/$eventId': typeof AppBookEventIdRoute
+  '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/_app/event/$eventId': typeof AppEventEventIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +144,9 @@ export interface FileRouteTypes {
     | '/home'
     | '/inbox'
     | '/profile'
+    | '/book/$eventId'
+    | '/booking/$bookingId'
+    | '/event/$eventId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,6 +158,9 @@ export interface FileRouteTypes {
     | '/home'
     | '/inbox'
     | '/profile'
+    | '/book/$eventId'
+    | '/booking/$bookingId'
+    | '/event/$eventId'
   id:
     | '__root__'
     | '/'
@@ -140,6 +173,9 @@ export interface FileRouteTypes {
     | '/_app/home'
     | '/_app/inbox'
     | '/_app/profile'
+    | '/_app/book/$eventId'
+    | '/_app/booking/$bookingId'
+    | '/_app/event/$eventId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -222,6 +258,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBookingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/event/$eventId': {
+      id: '/_app/event/$eventId'
+      path: '/event/$eventId'
+      fullPath: '/event/$eventId'
+      preLoaderRoute: typeof AppEventEventIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/booking/$bookingId': {
+      id: '/_app/booking/$bookingId'
+      path: '/booking/$bookingId'
+      fullPath: '/booking/$bookingId'
+      preLoaderRoute: typeof AppBookingBookingIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/book/$eventId': {
+      id: '/_app/book/$eventId'
+      path: '/book/$eventId'
+      fullPath: '/book/$eventId'
+      preLoaderRoute: typeof AppBookEventIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -231,6 +288,9 @@ interface AppRouteChildren {
   AppHomeRoute: typeof AppHomeRoute
   AppInboxRoute: typeof AppInboxRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppBookEventIdRoute: typeof AppBookEventIdRoute
+  AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
+  AppEventEventIdRoute: typeof AppEventEventIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -239,6 +299,9 @@ const AppRouteChildren: AppRouteChildren = {
   AppHomeRoute: AppHomeRoute,
   AppInboxRoute: AppInboxRoute,
   AppProfileRoute: AppProfileRoute,
+  AppBookEventIdRoute: AppBookEventIdRoute,
+  AppBookingBookingIdRoute: AppBookingBookingIdRoute,
+  AppEventEventIdRoute: AppEventEventIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
