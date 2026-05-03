@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_app/profile")({
 
 interface Profile {
   full_name: string | null;
+  username: string | null;
   email: string | null;
   phone: string | null;
   avatar_url: string | null;
@@ -27,6 +28,8 @@ function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [savingInfo, setSavingInfo] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [usernameDraft, setUsernameDraft] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
