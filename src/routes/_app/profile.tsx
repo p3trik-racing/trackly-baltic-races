@@ -257,19 +257,24 @@ function ProfilePage() {
             Post and manage your own motorsport events.
           </p>
         </div>
-        <button
-          onClick={toggleOrganiser}
-          className="w-full h-11 rounded-xl text-sm font-medium border"
-          style={{
-            backgroundColor: profile.is_organiser ? "var(--accent)" : "transparent",
-            borderColor: "var(--accent)",
-            color: profile.is_organiser ? "#fff" : "var(--accent)",
-          }}
-        >
-          {profile.is_organiser ? "Organiser mode is ON" : "Switch to organiser mode"}
-        </button>
-        {profile.is_organiser && (
-          <Link to="/organiser" className="cta-button">Go to Organiser Dashboard</Link>
+        {profile.is_organiser ? (
+          <>
+            <Link to="/organiser" className="cta-button">Go to Organiser Dashboard →</Link>
+            <button
+              onClick={toggleOrganiser}
+              className="w-full h-11 rounded-xl text-sm font-medium border border-border text-muted-foreground"
+            >
+              Switch off organiser mode
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={toggleOrganiser}
+            className="w-full h-11 rounded-xl text-sm font-medium border"
+            style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+          >
+            Switch to organiser mode
+          </button>
         )}
       </section>
 
