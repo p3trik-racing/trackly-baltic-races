@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_app/profile")({
 
 interface Profile {
   full_name: string | null;
+  username: string | null;
   email: string | null;
   phone: string | null;
   avatar_url: string | null;
@@ -27,6 +28,8 @@ function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [savingInfo, setSavingInfo] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [usernameDraft, setUsernameDraft] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -131,16 +134,68 @@ function ProfilePage() {
         </div>
         <div className="min-w-0 flex-1">
           <p className="font-medium truncate">{profile.full_name || "—"}</p>
+          {profile.username && !editingUsername && (
+            <p className="text-xs text-muted-foreground truncate">@{profile.username}</p>
+          )}
           <p className="text-sm text-muted-foreground truncate">{profile.email || user?.email}</p>
         </div>
-        <input ref={fileRef} type="file" accept="image/*" hidden onChange={onUpload} />
-        <button onClick={() => fileRef.current?.click()}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          style={{ display: "none" }}
+          onChange={onUpload}
+        />
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
           disabled={uploading}
-          className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5">
+          className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5"
+        >
           <Upload size={14} /> {uploading ? "…" : "Upload"}
         </button>
       </div>
 
+      {/* Username */}
+      <div className="bg-card border border-border rounded-2xl p-5 space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className="font-medium text-sm">Username</h2>
+          {!editingUsername && (
+            <button
+              onClick={() => { setUsernameDraft(profile.username ?? ""); setEditingUsername(true); }}
+              className="text-xs" style={{ color: "var(--accent)" }}>
+              {profile.username ? "Edit username" : "Set username"}
+            </button>
+          )}
+        </div>
+        {editingUsername ? (
+          <div className="flex gap-2">
+            <input
+              className="input-field"
+              value={usernameDraft}
+              maxLength={30}
+              onChange={(e) => setUsernameDraft(e.target.value.toLowerCase().replace(/\s/g, ""))}
+              placeholder="username"
+            />
+            <button
+              onClick={async () => {
+                if (!user) return;
+                if (!/^[a-z0-9_]{3,30}$/.test(usernameDraft)) return toast.error("3-30 chars · letters, numbers, underscore");
+                const { error } = await supabase.from("profiles").update({ username: usernameDraft }).eq("id", user.id);
+                if (error) return toast.error(error.message.includes("duplicate") ? "Username taken" : error.message);
+                setProfile((p) => p ? { ...p, username: usernameDraft } : p);
+                setEditingUsername(false);
+                toast.success("Username updated");
+              }}
+              className="px-4 h-12 rounded-xl text-sm font-medium text-white"
+              style={{ backgroundColor: "var(--accent)" }}>Save</button>
+            <button onClick={() => setEditingUsername(false)}
+              className="px-3 h-12 rounded-xl text-sm border border-border">Cancel</button>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">{profile.username ? `@${profile.username}` : "Not set"}</p>
+        )}
+      </div>
       {/* Personal Info */}
       <section className="bg-card border border-border rounded-2xl p-5 space-y-3">
         <h2 className="font-medium">Personal info</h2>
@@ -202,19 +257,24 @@ function ProfilePage() {
             Post and manage your own motorsport events.
           </p>
         </div>
-        <button
-          onClick={toggleOrganiser}
-          className="w-full h-11 rounded-xl text-sm font-medium border"
-          style={{
-            backgroundColor: profile.is_organiser ? "var(--accent)" : "transparent",
-            borderColor: "var(--accent)",
-            color: profile.is_organiser ? "#fff" : "var(--accent)",
-          }}
-        >
-          {profile.is_organiser ? "Organiser mode is ON" : "Switch to organiser mode"}
-        </button>
-        {profile.is_organiser && (
-          <Link to="/organiser" className="cta-button">Go to Organiser Dashboard</Link>
+        {profile.is_organiser ? (
+          <>
+            <Link to="/organiser" className="cta-button">Go to Organiser Dashboard →</Link>
+            <button
+              onClick={toggleOrganiser}
+              className="w-full h-11 rounded-xl text-sm font-medium border border-border text-muted-foreground"
+            >
+              Switch off organiser mode
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={toggleOrganiser}
+            className="w-full h-11 rounded-xl text-sm font-medium border"
+            style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+          >
+            Switch to organiser mode
+          </button>
         )}
       </section>
 

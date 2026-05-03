@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Compass, Ticket, Bell, User } from "lucide-react";
+import { Home, Compass, Ticket, Bell, User, CalendarPlus } from "lucide-react";
 
-const tabs = [
+const baseTabs = [
   { to: "/home", label: "Home", icon: Home },
   { to: "/explore", label: "Explore", icon: Compass },
   { to: "/bookings", label: "Bookings", icon: Ticket },
@@ -9,8 +9,12 @@ const tabs = [
   { to: "/profile", label: "Profile", icon: User },
 ] as const;
 
-export function BottomNav() {
+export function BottomNav({ isOrganiser = false }: { isOrganiser?: boolean }) {
   const { pathname } = useLocation();
+  const tabs = isOrganiser
+    ? [...baseTabs.slice(0, 4), { to: "/organiser", label: "Organiser", icon: CalendarPlus } as const, baseTabs[4]]
+    : baseTabs;
+  const iconSize = tabs.length === 6 ? 20 : 22;
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-40 bg-nav border-t-[1px]"
@@ -23,11 +27,11 @@ export function BottomNav() {
             <Link
               key={to}
               to={to}
-              className="flex flex-col items-center gap-1 py-1.5 flex-1"
+              className="flex flex-col items-center gap-1 py-1.5 flex-1 min-w-0"
               style={{ color: active ? "var(--accent)" : "var(--nav-inactive)" }}
             >
-              <Icon size={22} />
-              <span className="text-[10px] font-medium">{label}</span>
+              <Icon size={iconSize} />
+              <span className="text-[10px] font-medium truncate">{label}</span>
             </Link>
           );
         })}

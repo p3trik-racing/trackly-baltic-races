@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
 import { Search } from "lucide-react";
@@ -10,7 +11,9 @@ export const Route = createFileRoute("/_app/home")({
 });
 
 function HomePage() {
+  const { user } = useAuth();
   const [events, setEvents] = useState<EventCardData[]>([]);
+  const [favourites, setFavourites] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("all");
   const [query, setQuery] = useState("");
 
@@ -22,6 +25,19 @@ function HomePage() {
       .order("date", { ascending: true })
       .then(({ data }) => setEvents((data as any) ?? []));
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("favourite_categories").eq("id", user.id).maybeSingle()
+      .then(({ data }) => setFavourites((data?.favourite_categories ?? []) as string[]));
+  }, [user]);
+
+  const orderedCategories = useMemo(() => {
+    if (!favourites.length) return CATEGORIES;
+    const fav = CATEGORIES.filter((c) => favourites.includes(c.value));
+    const rest = CATEGORIES.filter((c) => !favourites.includes(c.value));
+    return [...fav, ...rest];
+  }, [favourites]);
 
   const filtered = events.filter(
     (e) =>
@@ -50,17 +66,22 @@ function HomePage() {
 
       <div className="-mx-5 px-5 overflow-x-auto">
         <div className="flex gap-2 w-max">
-          {[{ value: "all", label: "All" }, ...CATEGORIES].map((c) => {
+          {[{ value: "all", label: "All" }, ...orderedCategories].map((c) => {
             const active = category === c.value;
+            const isFav = favourites.includes(c.value);
             return (
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value)}
                 className="px-4 h-9 rounded-full text-sm font-medium border transition-colors"
                 style={{
-                  backgroundColor: active ? "var(--accent)" : "var(--card)",
+                  backgroundColor: active
+                    ? "var(--accent)"
+                    : isFav
+                      ? "color-mix(in oklab, var(--accent) 14%, var(--card))"
+                      : "var(--card)",
                   color: active ? "#fff" : "var(--foreground)",
-                  borderColor: active ? "var(--accent)" : "var(--border)",
+                  borderColor: active || isFav ? "var(--accent)" : "var(--border)",
                 }}
               >
                 {c.label}

@@ -95,7 +95,7 @@ function OrganiserDashboard() {
 
       <div className="flex items-center justify-between">
         <h1 className="text-[22px] font-semibold">My Events</h1>
-        <Link to="/organiser/post-event"
+        <Link to="/organiser_/post-event"
           className="inline-flex items-center gap-1 px-3 h-10 rounded-xl text-sm font-medium text-white"
           style={{ backgroundColor: "var(--accent)" }}>
           <Plus size={16} /> Post New Event
@@ -109,7 +109,7 @@ function OrganiserDashboard() {
           <p className="text-sm text-muted-foreground">
             You haven't posted any events yet. Post your first event to get started.
           </p>
-          <Link to="/organiser/post-event" className="cta-button inline-flex">Post Event</Link>
+          <Link to="/organiser_/post-event" className="cta-button inline-flex">Post Event</Link>
         </div>
       ) : (
         <div className="space-y-3">
@@ -135,11 +135,11 @@ function OrganiserDashboard() {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 border-t border-border text-xs">
-                  <Link to="/organiser/events/$eventId/bookings" params={{ eventId: e.id }}
+                  <Link to="/organiser_/events/$eventId/bookings" params={{ eventId: e.id }}
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">
                     View Bookings
                   </Link>
-                  <Link to="/event/$eventId" params={{ eventId: e.id }}
+                  <Link to="/organiser_/post-event" search={{ edit: e.id }}
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">
                     Edit
                   </Link>

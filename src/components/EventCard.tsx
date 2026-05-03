@@ -13,6 +13,8 @@ export interface EventCardData {
   price: number;
   currency: string;
   cover_image_url: string | null;
+  capacity?: number;
+  bookings_count?: number;
 }
 
 export function EventCard({ event, large = false }: { event: EventCardData; large?: boolean }) {
@@ -21,6 +23,11 @@ export function EventCard({ event, large = false }: { event: EventCardData; larg
     day: "numeric",
     month: "short",
   });
+  const soldOut =
+    typeof event.capacity === "number" &&
+    event.capacity > 0 &&
+    typeof event.bookings_count === "number" &&
+    event.bookings_count >= event.capacity;
 
   return (
     <Link
@@ -45,9 +52,21 @@ export function EventCard({ event, large = false }: { event: EventCardData; larg
       <div className="p-3 space-y-2">
         <div className="flex items-center justify-between">
           <span className="category-pill">{categoryLabel(event.category)}</span>
-          <span className="text-foreground font-semibold text-sm">
-            {event.price === 0 ? "Free" : `€${event.price}`}
-          </span>
+          {soldOut ? (
+            <span
+              className="text-[11px] px-2 py-0.5 rounded-full font-semibold"
+              style={{
+                backgroundColor: "color-mix(in oklab, var(--accent) 22%, transparent)",
+                color: "var(--accent)",
+              }}
+            >
+              Sold Out
+            </span>
+          ) : (
+            <span className="text-foreground font-semibold text-sm">
+              {event.price === 0 ? "Free" : `€${event.price}`}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-3 text-muted-foreground text-xs">
           <span className="flex items-center gap-1">

@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { ArrowLeft, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Minus, Plus, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/book/$eventId")({
@@ -18,6 +18,7 @@ function BookPage() {
   const [tickets, setTickets] = useState(1);
   const [waiver, setWaiver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
 
   useEffect(() => {
@@ -47,40 +48,44 @@ function BookPage() {
     if (!user) return;
     if (!waiver) return toast.error("Please accept the liability waiver");
     if (!form.name || !form.email) return toast.error("Please fill in your details");
+    setPaymentError(null);
     setSubmitting(true);
 
-    // NOTE: For v1 we record the booking immediately. Stripe payment hookup
-    // comes in the next iteration once the user enables payments.
-    const { data, error } = await supabase
-      .from("bookings")
-      .insert({
-        event_id: event.id,
+    try {
+      // NOTE: For v1 we record the booking immediately. Stripe payment hookup
+      // comes in the next iteration once the user enables payments.
+      const { data, error } = await supabase
+        .from("bookings")
+        .insert({
+          event_id: event.id,
+          user_id: user.id,
+          attendee_name: form.name,
+          attendee_email: form.email,
+          attendee_phone: form.phone,
+          ticket_count: tickets,
+          total_price: total,
+          platform_fee: fee,
+          organiser_payout: subtotal,
+          waiver_accepted: true,
+          status: "confirmed",
+        })
+        .select()
+        .single();
+
+      if (error || !data) throw new Error(error?.message || "Could not create booking");
+
+      await supabase.from("notifications").insert({
         user_id: user.id,
-        attendee_name: form.name,
-        attendee_email: form.email,
-        attendee_phone: form.phone,
-        ticket_count: tickets,
-        total_price: total,
-        platform_fee: fee,
-        organiser_payout: subtotal,
-        waiver_accepted: true,
-        status: "confirmed",
-      })
-      .select()
-      .single();
+        type: "booking_confirmed",
+        message: `Your booking for ${event.title} is confirmed.`,
+      });
 
-    if (error || !data) {
+      navigate({ to: "/booking/$bookingId", params: { bookingId: data.id } });
+    } catch (err: any) {
+      setPaymentError("Payment failed. Please check your card details and try again.");
+    } finally {
       setSubmitting(false);
-      return toast.error(error?.message || "Could not create booking");
     }
-
-    await supabase.from("notifications").insert({
-      user_id: user.id,
-      type: "booking_confirmed",
-      message: `Your booking for ${event.title} is confirmed.`,
-    });
-
-    navigate({ to: "/booking/$bookingId", params: { bookingId: data.id } });
   }
 
   return (
@@ -146,6 +151,22 @@ function BookPage() {
             I accept full responsibility for my safety at this event. The event organiser is solely liable for safety on site. Trackly is a booking platform only and holds no liability.
           </span>
         </label>
+
+        {paymentError && (
+          <div
+            className="rounded-2xl p-4 flex items-start gap-3 text-sm"
+            style={{
+              backgroundColor: "color-mix(in oklab, var(--accent) 12%, transparent)",
+              borderColor: "var(--accent)",
+              borderWidth: 1,
+              color: "var(--accent)",
+            }}
+            role="alert"
+          >
+            <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+            <span>{paymentError}</span>
+          </div>
+        )}
       </section>
 
       <div

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Download } from "lucide-react";
 
-export const Route = createFileRoute("/_app/organiser/events/$eventId/bookings")({
+export const Route = createFileRoute("/_app/organiser_/events/$eventId/bookings")({
   component: EventBookingsPage,
 });
 
