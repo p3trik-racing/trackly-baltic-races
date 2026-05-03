@@ -9,38 +9,213 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppInboxRouteImport } from './routes/_app/inbox'
+import { Route as AppHomeRouteImport } from './routes/_app/home'
+import { Route as AppExploreRouteImport } from './routes/_app/explore'
+import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
+import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
+import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
+import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInboxRoute = AppInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHomeRoute = AppHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppExploreRoute = AppExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBookingsRoute = AppBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
+  id: '/event/$eventId',
+  path: '/event/$eventId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBookingBookingIdRoute = AppBookingBookingIdRouteImport.update({
+  id: '/booking/$bookingId',
+  path: '/booking/$bookingId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBookEventIdRoute = AppBookEventIdRouteImport.update({
+  id: '/book/$eventId',
+  path: '/book/$eventId',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/bookings': typeof AppBookingsRoute
+  '/explore': typeof AppExploreRoute
+  '/home': typeof AppHomeRoute
+  '/inbox': typeof AppInboxRoute
+  '/profile': typeof AppProfileRoute
+  '/book/$eventId': typeof AppBookEventIdRoute
+  '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/event/$eventId': typeof AppEventEventIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/bookings': typeof AppBookingsRoute
+  '/explore': typeof AppExploreRoute
+  '/home': typeof AppHomeRoute
+  '/inbox': typeof AppInboxRoute
+  '/profile': typeof AppProfileRoute
+  '/book/$eventId': typeof AppBookEventIdRoute
+  '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/event/$eventId': typeof AppEventEventIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/_app/bookings': typeof AppBookingsRoute
+  '/_app/explore': typeof AppExploreRoute
+  '/_app/home': typeof AppHomeRoute
+  '/_app/inbox': typeof AppInboxRoute
+  '/_app/profile': typeof AppProfileRoute
+  '/_app/book/$eventId': typeof AppBookEventIdRoute
+  '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/_app/event/$eventId': typeof AppEventEventIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/bookings'
+    | '/explore'
+    | '/home'
+    | '/inbox'
+    | '/profile'
+    | '/book/$eventId'
+    | '/booking/$bookingId'
+    | '/event/$eventId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/bookings'
+    | '/explore'
+    | '/home'
+    | '/inbox'
+    | '/profile'
+    | '/book/$eventId'
+    | '/booking/$bookingId'
+    | '/event/$eventId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/_app/bookings'
+    | '/_app/explore'
+    | '/_app/home'
+    | '/_app/inbox'
+    | '/_app/profile'
+    | '/_app/book/$eventId'
+    | '/_app/booking/$bookingId'
+    | '/_app/event/$eventId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,21 +223,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inbox': {
+      id: '/_app/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof AppInboxRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/home': {
+      id: '/_app/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AppHomeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/explore': {
+      id: '/_app/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof AppExploreRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/bookings': {
+      id: '/_app/bookings'
+      path: '/bookings'
+      fullPath: '/bookings'
+      preLoaderRoute: typeof AppBookingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/event/$eventId': {
+      id: '/_app/event/$eventId'
+      path: '/event/$eventId'
+      fullPath: '/event/$eventId'
+      preLoaderRoute: typeof AppEventEventIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/booking/$bookingId': {
+      id: '/_app/booking/$bookingId'
+      path: '/booking/$bookingId'
+      fullPath: '/booking/$bookingId'
+      preLoaderRoute: typeof AppBookingBookingIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/book/$eventId': {
+      id: '/_app/book/$eventId'
+      path: '/book/$eventId'
+      fullPath: '/book/$eventId'
+      preLoaderRoute: typeof AppBookEventIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppBookingsRoute: typeof AppBookingsRoute
+  AppExploreRoute: typeof AppExploreRoute
+  AppHomeRoute: typeof AppHomeRoute
+  AppInboxRoute: typeof AppInboxRoute
+  AppProfileRoute: typeof AppProfileRoute
+  AppBookEventIdRoute: typeof AppBookEventIdRoute
+  AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
+  AppEventEventIdRoute: typeof AppEventEventIdRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppBookingsRoute: AppBookingsRoute,
+  AppExploreRoute: AppExploreRoute,
+  AppHomeRoute: AppHomeRoute,
+  AppInboxRoute: AppInboxRoute,
+  AppProfileRoute: AppProfileRoute,
+  AppBookEventIdRoute: AppBookEventIdRoute,
+  AppBookingBookingIdRoute: AppBookingBookingIdRoute,
+  AppEventEventIdRoute: AppEventEventIdRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
