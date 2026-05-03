@@ -1,8 +1,9 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BottomNav } from "@/components/BottomNav";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
@@ -11,9 +12,25 @@ export const Route = createFileRoute("/_app")({
 function AppLayout() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [isOrganiser, setIsOrganiser] = useState(false);
+
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [user, loading, navigate]);
+
+  useEffect(() => {
+    if (!user) return;
+    const load = () =>
+      supabase.from("profiles").select("is_organiser").eq("id", user.id).maybeSingle()
+        .then(({ data }) => setIsOrganiser(!!data?.is_organiser));
+    load();
+    const channel = supabase
+      .channel(`profile-${user.id}`)
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${user.id}` },
+        (payload: any) => setIsOrganiser(!!payload.new?.is_organiser))
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
 
   if (loading || !user) {
     return (
@@ -26,7 +43,7 @@ function AppLayout() {
   return (
     <div className="min-h-screen pb-24">
       <Outlet />
-      <BottomNav />
+      <BottomNav isOrganiser={isOrganiser} />
     </div>
   );
 }
