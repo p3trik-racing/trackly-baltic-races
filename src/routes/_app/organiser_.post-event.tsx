@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES } from "@/lib/categories";
@@ -7,8 +8,11 @@ import { COUNTRIES } from "@/lib/countries";
 import { ArrowLeft, Upload } from "lucide-react";
 import { toast } from "sonner";
 
+const searchSchema = z.object({ edit: z.string().optional() });
+
 export const Route = createFileRoute("/_app/organiser_/post-event")({
   component: PostEventPage,
+  validateSearch: (search) => searchSchema.parse(search),
 });
 
 const DURATIONS = ["2 hours", "4 hours", "6 hours", "Full day", "Multi-day"];
@@ -16,10 +20,12 @@ const DURATIONS = ["2 hours", "4 hours", "6 hours", "Full day", "Multi-day"];
 function PostEventPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { edit: editId } = Route.useSearch();
   const [submitting, setSubmitting] = useState(false);
   const [waiver, setWaiver] = useState(false);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [existingCover, setExistingCover] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "",
     category: CATEGORIES[0].value as string,
@@ -33,6 +39,28 @@ function PostEventPage() {
     capacity: 20,
     price: 0,
   });
+
+  useEffect(() => {
+    if (!editId) return;
+    supabase.from("events").select("*").eq("id", editId).maybeSingle().then(({ data }) => {
+      if (!data) return;
+      setForm({
+        title: data.title ?? "",
+        category: data.category,
+        description: data.description ?? "",
+        date: data.date ?? "",
+        time: data.time ? String(data.time).slice(0, 5) : "",
+        duration: data.duration ?? DURATIONS[0],
+        country: data.country ?? COUNTRIES[0].value,
+        city: data.city ?? "",
+        location_name: data.location_name ?? "",
+        capacity: data.capacity ?? 0,
+        price: Number(data.price ?? 0),
+      });
+      setExistingCover(data.cover_image_url);
+      if (data.status === "live") setWaiver(true);
+    });
+  }, [editId]);
 
   function setField<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -60,9 +88,9 @@ function PostEventPage() {
     if (status === "live" && !waiver) return toast.error("Accept the liability statement to publish");
     setSubmitting(true);
 
-    const cover = await uploadCover();
+    const cover = (await uploadCover()) ?? existingCover;
 
-    const { error } = await supabase.from("events").insert({
+    const payload = {
       organiser_id: user.id,
       organiser_name: user.user_metadata?.full_name ?? null,
       title: form.title,
@@ -79,11 +107,17 @@ function PostEventPage() {
       currency: "EUR",
       cover_image_url: cover,
       status,
-    });
+    };
+
+    const { error } = editId
+      ? await supabase.from("events").update(payload).eq("id", editId)
+      : await supabase.from("events").insert(payload);
 
     setSubmitting(false);
     if (error) return toast.error(error.message);
-    toast.success(status === "live" ? "Event published!" : "Saved as draft");
+    toast.success(editId
+      ? "Event updated"
+      : status === "live" ? "Event published!" : "Saved as draft");
     navigate({ to: "/organiser" });
   }
 
@@ -92,7 +126,7 @@ function PostEventPage() {
       <button onClick={() => navigate({ to: "/organiser" })} className="inline-flex items-center gap-2 text-muted-foreground">
         <ArrowLeft size={18} /> Back
       </button>
-      <h1 className="text-[22px] font-semibold">Post New Event</h1>
+      <h1 className="text-[22px] font-semibold">{editId ? "Edit Event" : "Post New Event"}</h1>
 
       <div className="space-y-3">
         <Field label="Event title">
@@ -152,15 +186,15 @@ function PostEventPage() {
 
         <Field label="Cover image">
           <label className="flex items-center gap-3 cursor-pointer bg-card border border-border rounded-xl p-3">
-            {coverPreview ? (
-              <img src={coverPreview} alt="" className="w-16 h-16 rounded-lg object-cover" />
+            {(coverPreview || existingCover) ? (
+              <img src={coverPreview ?? existingCover ?? ""} alt="" className="w-16 h-16 rounded-lg object-cover" />
             ) : (
               <div className="w-16 h-16 rounded-lg flex items-center justify-center" style={{ backgroundColor: "var(--input)" }}>
                 <Upload size={20} className="text-muted-foreground" />
               </div>
             )}
             <span className="text-sm text-muted-foreground">
-              {coverFile ? coverFile.name : "Upload cover image"}
+              {coverFile ? coverFile.name : (existingCover ? "Replace cover image" : "Upload cover image")}
             </span>
             <input type="file" accept="image/*" hidden onChange={onPickCover} />
           </label>
@@ -184,7 +218,7 @@ function PostEventPage() {
         <button onClick={() => submit("live")} disabled={submitting}
           className="h-14 rounded-xl text-sm font-semibold text-white"
           style={{ backgroundColor: "var(--accent)" }}>
-          {submitting ? "Publishing…" : "Publish Event"}
+          {submitting ? "Saving…" : editId ? "Save Changes" : "Publish Event"}
         </button>
       </div>
     </main>
