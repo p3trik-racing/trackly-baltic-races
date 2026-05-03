@@ -207,6 +207,7 @@ export type Database = {
           id: string
           is_organiser: boolean
           phone: string | null
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -219,6 +220,7 @@ export type Database = {
           id: string
           is_organiser?: boolean
           phone?: string | null
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -231,6 +233,7 @@ export type Database = {
           id?: string
           is_organiser?: boolean
           phone?: string | null
+          username?: string | null
         }
         Relationships: []
       }
