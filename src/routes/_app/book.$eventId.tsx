@@ -151,6 +151,22 @@ function BookPage() {
             I accept full responsibility for my safety at this event. The event organiser is solely liable for safety on site. Trackly is a booking platform only and holds no liability.
           </span>
         </label>
+
+        {paymentError && (
+          <div
+            className="rounded-2xl p-4 flex items-start gap-3 text-sm"
+            style={{
+              backgroundColor: "color-mix(in oklab, var(--accent) 12%, transparent)",
+              borderColor: "var(--accent)",
+              borderWidth: 1,
+              color: "var(--accent)",
+            }}
+            role="alert"
+          >
+            <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+            <span>{paymentError}</span>
+          </div>
+        )}
       </section>
 
       <div
