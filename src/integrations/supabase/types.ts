@@ -97,7 +97,8 @@ export type Database = {
           location_lat: number | null
           location_lng: number | null
           location_name: string | null
-          organiser_id: string
+          organiser_id: string | null
+          organiser_name: string | null
           price: number
           status: Database["public"]["Enums"]["event_status"]
           time: string | null
@@ -119,7 +120,8 @@ export type Database = {
           location_lat?: number | null
           location_lng?: number | null
           location_name?: string | null
-          organiser_id: string
+          organiser_id?: string | null
+          organiser_name?: string | null
           price?: number
           status?: Database["public"]["Enums"]["event_status"]
           time?: string | null
@@ -141,7 +143,8 @@ export type Database = {
           location_lat?: number | null
           location_lng?: number | null
           location_name?: string | null
-          organiser_id?: string
+          organiser_id?: string | null
+          organiser_name?: string | null
           price?: number
           status?: Database["public"]["Enums"]["event_status"]
           time?: string | null
