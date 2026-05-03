@@ -20,7 +20,7 @@ import { Route as AppInboxRouteImport } from './routes/_app/inbox'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
-import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser.post-event'
+import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
 import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
 import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
@@ -81,9 +81,9 @@ const AppBookingsRoute = AppBookingsRouteImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 const AppOrganiserPostEventRoute = AppOrganiserPostEventRouteImport.update({
-  id: '/post-event',
-  path: '/post-event',
-  getParentRoute: () => AppOrganiserRoute,
+  id: '/organiser_/post-event',
+  path: '/organiser/post-event',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
   id: '/event/$eventId',
@@ -157,7 +157,7 @@ export interface FileRoutesById {
   '/_app/book/$eventId': typeof AppBookEventIdRoute
   '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/_app/event/$eventId': typeof AppEventEventIdRoute
-  '/_app/organiser/post-event': typeof AppOrganiserPostEventRoute
+  '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
   '/_app/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
 }
 export interface FileRouteTypes {
@@ -211,7 +211,7 @@ export interface FileRouteTypes {
     | '/_app/book/$eventId'
     | '/_app/booking/$bookingId'
     | '/_app/event/$eventId'
-    | '/_app/organiser/post-event'
+    | '/_app/organiser_/post-event'
     | '/_app/organiser/events/$eventId/bookings'
   fileRoutesById: FileRoutesById
 }
@@ -302,12 +302,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBookingsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/organiser/post-event': {
-      id: '/_app/organiser/post-event'
-      path: '/post-event'
+    '/_app/organiser_/post-event': {
+      id: '/_app/organiser_/post-event'
+      path: '/organiser/post-event'
       fullPath: '/organiser/post-event'
       preLoaderRoute: typeof AppOrganiserPostEventRouteImport
-      parentRoute: typeof AppOrganiserRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/event/$eventId': {
       id: '/_app/event/$eventId'
@@ -341,12 +341,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppOrganiserRouteChildren {
-  AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
   AppOrganiserEventsEventIdBookingsRoute: typeof AppOrganiserEventsEventIdBookingsRoute
 }
 
 const AppOrganiserRouteChildren: AppOrganiserRouteChildren = {
-  AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
   AppOrganiserEventsEventIdBookingsRoute:
     AppOrganiserEventsEventIdBookingsRoute,
 }
@@ -365,6 +363,7 @@ interface AppRouteChildren {
   AppBookEventIdRoute: typeof AppBookEventIdRoute
   AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
   AppEventEventIdRoute: typeof AppEventEventIdRoute
+  AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -377,6 +376,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppBookEventIdRoute: AppBookEventIdRoute,
   AppBookingBookingIdRoute: AppBookingBookingIdRoute,
   AppEventEventIdRoute: AppEventEventIdRoute,
+  AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -391,3 +391,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
