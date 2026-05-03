@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { eventCoverFor } from "@/lib/event-cover";
+import { eventCover } from "@/lib/event-cover";
 import { ArrowLeft, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -118,7 +118,7 @@ function OrganiserDashboard() {
             return (
               <div key={e.id} className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="flex gap-3 p-3">
-                  <img src={e.cover_image_url || eventCoverFor(e.category)}
+                  <img src={eventCover(e.category, e.cover_image_url)}
                     alt="" className="w-20 h-20 rounded-xl object-cover flex-shrink-0" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">

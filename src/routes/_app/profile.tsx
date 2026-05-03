@@ -68,7 +68,10 @@ function ProfilePage() {
   async function setNotif(field: "event_reminders" | "booking_confirmations", value: boolean) {
     if (!user || !profile) return;
     setProfile({ ...profile, [field]: value });
-    await supabase.from("profiles").update({ [field]: value }).eq("id", user.id);
+    const patch = field === "event_reminders"
+      ? { event_reminders: value }
+      : { booking_confirmations: value };
+    await supabase.from("profiles").update(patch).eq("id", user.id);
   }
 
   async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
