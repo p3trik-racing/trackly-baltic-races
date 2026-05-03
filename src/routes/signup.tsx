@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Check, X } from "lucide-react";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -10,22 +10,38 @@ export const Route = createFileRoute("/signup")({
 
 function SignupPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ fullName: "", phone: "", email: "", password: "" });
+  const [form, setForm] = useState({ fullName: "", username: "", phone: "", email: "", password: "" });
   const [showPw, setShowPw] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
+
+  const usernameValid = /^[a-z0-9_]{3,30}$/.test(form.username);
+
+  useEffect(() => {
+    if (!form.username) { setUsernameStatus("idle"); return; }
+    if (!usernameValid) { setUsernameStatus("invalid"); return; }
+    setUsernameStatus("checking");
+    const t = setTimeout(async () => {
+      const { data } = await supabase.from("profiles").select("id").eq("username", form.username).maybeSingle();
+      setUsernameStatus(data ? "taken" : "available");
+    }, 350);
+    return () => clearTimeout(t);
+  }, [form.username, usernameValid]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!agreed) return toast.error("Please accept the Terms of Service");
     if (form.password.length < 6) return toast.error("Password must be at least 6 characters");
+    if (!usernameValid) return toast.error("Username must be 3+ chars, letters/numbers/underscore");
+    if (usernameStatus === "taken") return toast.error("Username already taken");
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
         emailRedirectTo: window.location.origin,
-        data: { full_name: form.fullName, phone: form.phone },
+        data: { full_name: form.fullName, phone: form.phone, username: form.username.toLowerCase() },
       },
     });
     setLoading(false);
@@ -45,6 +61,22 @@ function SignupPage() {
       <form onSubmit={onSubmit} className="space-y-3">
         <input className="input-field" placeholder="Full name" value={form.fullName}
           onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
+
+        <div className="relative">
+          <input className="input-field pr-10" placeholder="Username" value={form.username}
+            onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase().replace(/\s/g, "") })}
+            required minLength={3} maxLength={30} autoComplete="off" />
+          {form.username && (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2">
+              {usernameStatus === "available" && <Check size={18} className="text-[oklch(0.78_0.16_145)]" />}
+              {(usernameStatus === "taken" || usernameStatus === "invalid") && <X size={18} style={{ color: "var(--accent)" }} />}
+            </span>
+          )}
+        </div>
+        {form.username && usernameStatus === "invalid" && (
+          <p className="text-[11px] -mt-2" style={{ color: "var(--accent)" }}>3-30 chars · letters, numbers, underscore</p>
+        )}
+
         <input className="input-field" type="tel" placeholder="Phone" value={form.phone}
           onChange={(e) => setForm({ ...form, phone: e.target.value })} />
         <input className="input-field" type="email" placeholder="Email" value={form.email}
