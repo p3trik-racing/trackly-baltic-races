@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
 import { countryLabel } from "@/lib/countries";
@@ -13,7 +14,10 @@ export const Route = createFileRoute("/_app/explore")({
 type SortKey = "soonest" | "newest" | "price_asc" | "price_desc";
 
 function ExplorePage() {
+  const { user } = useAuth();
   const [events, setEvents] = useState<EventCardData[]>([]);
+  const [bookingCounts, setBookingCounts] = useState<Record<string, number>>({});
+  const [favourites, setFavourites] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState<SortKey>("soonest");
@@ -23,15 +27,46 @@ function ExplorePage() {
   useEffect(() => {
     supabase
       .from("events")
-      .select("id,title,category,date,city,country,price,currency,cover_image_url,created_at")
+      .select("id,title,category,date,city,country,price,currency,cover_image_url,created_at,capacity")
       .eq("status", "live")
-      .then(({ data }) => setEvents((data as any) ?? []));
+      .then(async ({ data }) => {
+        const list = (data as any) ?? [];
+        setEvents(list);
+        if (list.length) {
+          const ids = list.map((e: any) => e.id);
+          const { data: bks } = await supabase
+            .from("bookings").select("event_id,ticket_count,status").in("event_id", ids);
+          const counts: Record<string, number> = {};
+          (bks ?? []).forEach((b: any) => {
+            if (b.status === "cancelled") return;
+            counts[b.event_id] = (counts[b.event_id] ?? 0) + (b.ticket_count ?? 1);
+          });
+          setBookingCounts(counts);
+        }
+      });
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("favourite_categories").eq("id", user.id).maybeSingle()
+      .then(({ data }) => {
+        const favs = (data?.favourite_categories ?? []) as string[];
+        setFavourites(favs);
+        if (favs.length === 1) setCategory(favs[0]);
+      });
+  }, [user]);
 
   const countries = useMemo(
     () => Array.from(new Set(events.map((e) => e.country).filter(Boolean))) as string[],
     [events],
   );
+
+  const orderedCategories = useMemo(() => {
+    if (!favourites.length) return CATEGORIES;
+    const fav = CATEGORIES.filter((c) => favourites.includes(c.value));
+    const rest = CATEGORIES.filter((c) => !favourites.includes(c.value));
+    return [...fav, ...rest];
+  }, [favourites]);
 
   const filtered = useMemo(() => {
     let list = events.filter(
@@ -44,8 +79,8 @@ function ExplorePage() {
     else if (sort === "price_asc") list = list.sort((a, b) => a.price - b.price);
     else if (sort === "price_desc") list = list.sort((a, b) => b.price - a.price);
     else list = list.sort((a: any, b: any) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
-    return list;
-  }, [events, category, country, query, sort]);
+    return list.map((e) => ({ ...e, bookings_count: bookingCounts[e.id] ?? 0 }));
+  }, [events, category, country, query, sort, bookingCounts]);
 
   return (
     <main className="container-app py-6 space-y-4">
@@ -86,7 +121,7 @@ function ExplorePage() {
             <label className="text-xs text-muted-foreground">Category</label>
             <select className="input-field mt-1" value={category} onChange={(e) => setCategory(e.target.value)}>
               <option value="all">All</option>
-              {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+              {orderedCategories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
           </div>
           <div>
