@@ -3,17 +3,20 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
+import { countryLabel } from "@/lib/countries";
 import { Search, SlidersHorizontal } from "lucide-react";
 
 export const Route = createFileRoute("/_app/explore")({
   component: ExplorePage,
 });
 
+type SortKey = "soonest" | "newest" | "price_asc" | "price_desc";
+
 function ExplorePage() {
   const [events, setEvents] = useState<EventCardData[]>([]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
-  const [sort, setSort] = useState<"soonest" | "newest" | "price">("soonest");
+  const [sort, setSort] = useState<SortKey>("soonest");
   const [showFilters, setShowFilters] = useState(false);
   const [country, setCountry] = useState("all");
 
@@ -38,7 +41,8 @@ function ExplorePage() {
         (!query || e.title.toLowerCase().includes(query.toLowerCase())),
     );
     if (sort === "soonest") list = list.sort((a, b) => a.date.localeCompare(b.date));
-    else if (sort === "price") list = list.sort((a, b) => a.price - b.price);
+    else if (sort === "price_asc") list = list.sort((a, b) => a.price - b.price);
+    else if (sort === "price_desc") list = list.sort((a, b) => b.price - a.price);
     else list = list.sort((a: any, b: any) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
     return list;
   }, [events, category, country, query, sort]);
@@ -66,12 +70,13 @@ function ExplorePage() {
         </button>
         <select
           value={sort}
-          onChange={(e) => setSort(e.target.value as any)}
+          onChange={(e) => setSort(e.target.value as SortKey)}
           className="input-field h-9 w-auto px-3 text-sm"
         >
           <option value="soonest">Soonest</option>
           <option value="newest">Newest</option>
-          <option value="price">Price: low to high</option>
+          <option value="price_asc">Price: low to high</option>
+          <option value="price_desc">Price: high to low</option>
         </select>
       </div>
 
@@ -88,7 +93,7 @@ function ExplorePage() {
             <label className="text-xs text-muted-foreground">Country</label>
             <select className="input-field mt-1" value={country} onChange={(e) => setCountry(e.target.value)}>
               <option value="all">All</option>
-              {countries.map((c) => <option key={c} value={c}>{c}</option>)}
+              {countries.map((c) => <option key={c} value={c}>{countryLabel(c)}</option>)}
             </select>
           </div>
         </div>

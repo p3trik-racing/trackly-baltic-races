@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/signup")({
 function SignupPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ fullName: "", phone: "", email: "", password: "" });
+  const [showPw, setShowPw] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -48,8 +49,15 @@ function SignupPage() {
           onChange={(e) => setForm({ ...form, phone: e.target.value })} />
         <input className="input-field" type="email" placeholder="Email" value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })} required autoComplete="email" />
-        <input className="input-field" type="password" placeholder="Password" value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })} required autoComplete="new-password" />
+        <div className="relative">
+          <input className="input-field pr-12" type={showPw ? "text" : "password"} placeholder="Password" value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })} required autoComplete="new-password" />
+          <button type="button" onClick={() => setShowPw((s) => !s)}
+            aria-label={showPw ? "Hide password" : "Show password"}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-2">
+            {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
 
         <label className="flex items-start gap-2 text-sm text-muted-foreground py-2">
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
