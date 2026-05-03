@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
 import { Search } from "lucide-react";
@@ -10,7 +11,9 @@ export const Route = createFileRoute("/_app/home")({
 });
 
 function HomePage() {
+  const { user } = useAuth();
   const [events, setEvents] = useState<EventCardData[]>([]);
+  const [favourites, setFavourites] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("all");
   const [query, setQuery] = useState("");
 
@@ -22,6 +25,19 @@ function HomePage() {
       .order("date", { ascending: true })
       .then(({ data }) => setEvents((data as any) ?? []));
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("favourite_categories").eq("id", user.id).maybeSingle()
+      .then(({ data }) => setFavourites((data?.favourite_categories ?? []) as string[]));
+  }, [user]);
+
+  const orderedCategories = useMemo(() => {
+    if (!favourites.length) return CATEGORIES;
+    const fav = CATEGORIES.filter((c) => favourites.includes(c.value));
+    const rest = CATEGORIES.filter((c) => !favourites.includes(c.value));
+    return [...fav, ...rest];
+  }, [favourites]);
 
   const filtered = events.filter(
     (e) =>
