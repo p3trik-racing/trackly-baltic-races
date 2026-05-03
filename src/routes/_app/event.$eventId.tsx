@@ -15,15 +15,23 @@ function EventDetail() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [event, setEvent] = useState<any>(null);
+  const [bookedCount, setBookedCount] = useState(0);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle()
       .then(({ data }) => setEvent(data));
+    supabase.from("bookings").select("ticket_count,status").eq("event_id", eventId)
+      .then(({ data }) => {
+        const total = (data ?? []).reduce((s: number, b: any) =>
+          b.status === "cancelled" ? s : s + (b.ticket_count ?? 1), 0);
+        setBookedCount(total);
+      });
   }, [eventId]);
 
   if (!event) {
     return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
   }
+  const soldOut = event.capacity > 0 && bookedCount >= event.capacity;
 
   return (
     <main className="pb-32">
@@ -108,12 +116,14 @@ function EventDetail() {
         style={{ paddingBottom: "calc(80px + env(safe-area-inset-bottom))" }}
       >
         <div className="container-app py-3">
-          {user ? (
+          {!user ? (
+            <Link to="/login" className="cta-button">Log in to book</Link>
+          ) : soldOut ? (
+            <button disabled className="cta-button opacity-60 cursor-not-allowed">Sold Out</button>
+          ) : (
             <Link to="/book/$eventId" params={{ eventId }} className="cta-button">
               Book Now
             </Link>
-          ) : (
-            <Link to="/login" className="cta-button">Log in to book</Link>
           )}
         </div>
       </div>
