@@ -7,7 +7,7 @@ import { COUNTRIES } from "@/lib/countries";
 import { ArrowLeft, Upload } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_app/organiser_/post-event")({
+export const Route = createFileRoute("/_app/organiser/post-event")({
   component: PostEventPage,
 });
 
