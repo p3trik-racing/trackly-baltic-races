@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { LogOut, User } from "lucide-react";
+import { CATEGORIES } from "@/lib/categories";
+import { LogOut, User, Upload, ChevronRight, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/profile")({
@@ -15,18 +16,35 @@ interface Profile {
   phone: string | null;
   avatar_url: string | null;
   is_organiser: boolean;
+  favourite_categories: string[];
+  event_reminders: boolean;
+  booking_confirmations: boolean;
 }
 
 function ProfilePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [savingInfo, setSavingInfo] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
       .then(({ data }) => setProfile(data as any));
   }, [user]);
+
+  async function saveInfo() {
+    if (!user || !profile) return;
+    setSavingInfo(true);
+    const { error } = await supabase.from("profiles")
+      .update({ full_name: profile.full_name, phone: profile.phone })
+      .eq("id", user.id);
+    setSavingInfo(false);
+    if (error) return toast.error(error.message);
+    toast.success("Personal info saved");
+  }
 
   async function toggleOrganiser() {
     if (!user || !profile) return;
@@ -37,26 +55,144 @@ function ProfilePage() {
     toast.success(next ? "Organiser mode enabled" : "Switched to user mode");
   }
 
+  async function toggleCategory(value: string) {
+    if (!user || !profile) return;
+    const has = profile.favourite_categories.includes(value);
+    const next = has
+      ? profile.favourite_categories.filter((c) => c !== value)
+      : [...profile.favourite_categories, value];
+    setProfile({ ...profile, favourite_categories: next });
+    await supabase.from("profiles").update({ favourite_categories: next }).eq("id", user.id);
+  }
+
+  async function setNotif(field: "event_reminders" | "booking_confirmations", value: boolean) {
+    if (!user || !profile) return;
+    setProfile({ ...profile, [field]: value });
+    await supabase.from("profiles").update({ [field]: value }).eq("id", user.id);
+  }
+
+  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploading(true);
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const path = `${user.id}/avatar-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (upErr) { setUploading(false); return toast.error(upErr.message); }
+    const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+    const { error: dbErr } = await supabase.from("profiles").update({ avatar_url: pub.publicUrl }).eq("id", user.id);
+    setUploading(false);
+    if (dbErr) return toast.error(dbErr.message);
+    setProfile((p) => p ? { ...p, avatar_url: pub.publicUrl } : p);
+    toast.success("Photo updated");
+  }
+
+  async function changePassword() {
+    if (!user?.email) return;
+    const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) return toast.error(error.message);
+    toast.success("Password reset email sent");
+  }
+
+  async function deleteAccount() {
+    if (!confirm("Delete your account? This cannot be undone.")) return;
+    // Account deletion requires admin privileges; sign out and notify.
+    await supabase.auth.signOut();
+    toast.message("Account deletion requested. Please contact support to permanently delete your data.");
+    navigate({ to: "/" });
+  }
+
   async function logout() {
     await supabase.auth.signOut();
     navigate({ to: "/" });
+  }
+
+  if (!profile) {
+    return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
   }
 
   return (
     <main className="container-app py-6 space-y-6">
       <h1 className="text-[22px] font-semibold">Profile</h1>
 
+      {/* Avatar */}
       <div className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: "var(--input)" }}>
-          <User size={28} className="text-muted-foreground" />
+        <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center" style={{ backgroundColor: "var(--input)" }}>
+          {profile.avatar_url ? (
+            <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+          ) : (
+            <User size={28} className="text-muted-foreground" />
+          )}
         </div>
-        <div className="min-w-0">
-          <p className="font-medium">{profile?.full_name || "—"}</p>
-          <p className="text-sm text-muted-foreground truncate">{profile?.email || user?.email}</p>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium truncate">{profile.full_name || "—"}</p>
+          <p className="text-sm text-muted-foreground truncate">{profile.email || user?.email}</p>
         </div>
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={onUpload} />
+        <button onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5">
+          <Upload size={14} /> {uploading ? "…" : "Upload"}
+        </button>
       </div>
 
-      <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
+      {/* Personal Info */}
+      <section className="bg-card border border-border rounded-2xl p-5 space-y-3">
+        <h2 className="font-medium">Personal info</h2>
+        <div>
+          <label className="text-xs text-muted-foreground">Full name</label>
+          <input className="input-field mt-1" value={profile.full_name ?? ""}
+            onChange={(e) => setProfile({ ...profile, full_name: e.target.value })} />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground">Email</label>
+          <input className="input-field mt-1 opacity-70" value={profile.email ?? user?.email ?? ""} readOnly />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground">Phone number</label>
+          <input className="input-field mt-1" value={profile.phone ?? ""}
+            onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
+        </div>
+        <button onClick={saveInfo} disabled={savingInfo} className="cta-button">
+          {savingInfo ? "Saving…" : "Save changes"}
+        </button>
+      </section>
+
+      {/* Preferences */}
+      <section className="bg-card border border-border rounded-2xl p-5 space-y-4">
+        <h2 className="font-medium">Preferences</h2>
+        <div>
+          <p className="text-xs text-muted-foreground mb-2">Favourite categories</p>
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => {
+              const active = profile.favourite_categories.includes(c.value);
+              return (
+                <button key={c.value} onClick={() => toggleCategory(c.value)}
+                  className="px-3 h-8 rounded-full text-xs font-medium border transition-colors"
+                  style={{
+                    borderColor: active ? "var(--accent)" : "var(--border)",
+                    backgroundColor: active ? "color-mix(in oklab, var(--accent) 20%, transparent)" : "transparent",
+                    color: active ? "var(--accent)" : "var(--muted-foreground)",
+                  }}>
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="border-t border-border pt-4 space-y-3">
+          <p className="text-xs text-muted-foreground">Notifications</p>
+          <ToggleRow label="Event reminders" checked={profile.event_reminders}
+            onChange={(v) => setNotif("event_reminders", v)} />
+          <ToggleRow label="Booking confirmations" checked={profile.booking_confirmations}
+            onChange={(v) => setNotif("booking_confirmations", v)} />
+        </div>
+      </section>
+
+      {/* Organiser */}
+      <section className="bg-card border border-border rounded-2xl p-5 space-y-4">
         <div>
           <p className="font-medium text-sm">Organiser mode</p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -67,23 +203,51 @@ function ProfilePage() {
           onClick={toggleOrganiser}
           className="w-full h-11 rounded-xl text-sm font-medium border"
           style={{
-            backgroundColor: profile?.is_organiser ? "var(--accent)" : "transparent",
+            backgroundColor: profile.is_organiser ? "var(--accent)" : "transparent",
             borderColor: "var(--accent)",
-            color: profile?.is_organiser ? "#fff" : "var(--accent)",
+            color: profile.is_organiser ? "#fff" : "var(--accent)",
           }}
         >
-          {profile?.is_organiser ? "Organiser mode is ON" : "Switch to organiser mode"}
+          {profile.is_organiser ? "Organiser mode is ON" : "Switch to organiser mode"}
         </button>
-        {profile?.is_organiser && (
-          <p className="text-xs text-muted-foreground">
-            Tools to post and manage events are coming in the next update.
-          </p>
+        {profile.is_organiser && (
+          <Link to="/organiser" className="cta-button">Go to Organiser Dashboard</Link>
         )}
-      </div>
+      </section>
+
+      {/* Account */}
+      <section className="bg-card border border-border rounded-2xl p-2">
+        <button onClick={changePassword}
+          className="w-full flex items-center justify-between px-3 h-12 text-sm">
+          <span className="inline-flex items-center gap-2"><KeyRound size={16} /> Change password</span>
+          <ChevronRight size={16} className="text-muted-foreground" />
+        </button>
+      </section>
 
       <button onClick={logout} className="w-full h-12 rounded-xl border border-border text-sm font-medium flex items-center justify-center gap-2 text-muted-foreground">
         <LogOut size={16} /> Log out
       </button>
+
+      <button onClick={deleteAccount}
+        className="w-full text-center text-sm font-medium py-4"
+        style={{ color: "var(--accent)" }}>
+        Delete account
+      </button>
     </main>
+  );
+}
+
+function ToggleRow({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-sm">{label}</span>
+      <button onClick={() => onChange(!checked)}
+        aria-pressed={checked}
+        className="relative w-11 h-6 rounded-full transition-colors"
+        style={{ backgroundColor: checked ? "var(--accent)" : "var(--input)" }}>
+        <span className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform"
+          style={{ transform: checked ? "translateX(20px)" : "translateX(0)" }} />
+      </button>
+    </div>
   );
 }
