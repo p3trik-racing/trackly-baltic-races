@@ -14,7 +14,214 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          attendee_email: string
+          attendee_name: string
+          attendee_phone: string | null
+          created_at: string
+          event_id: string
+          id: string
+          organiser_payout: number
+          platform_fee: number
+          status: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id: string | null
+          ticket_count: number
+          total_price: number
+          user_id: string
+          waiver_accepted: boolean
+        }
+        Insert: {
+          attendee_email: string
+          attendee_name: string
+          attendee_phone?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          organiser_payout: number
+          platform_fee: number
+          status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
+          ticket_count?: number
+          total_price: number
+          user_id: string
+          waiver_accepted?: boolean
+        }
+        Update: {
+          attendee_email?: string
+          attendee_name?: string
+          attendee_phone?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          organiser_payout?: number
+          platform_fee?: number
+          status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
+          ticket_count?: number
+          total_price?: number
+          user_id?: string
+          waiver_accepted?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          capacity: number
+          category: Database["public"]["Enums"]["event_category"]
+          city: string | null
+          country: string | null
+          cover_image_url: string | null
+          created_at: string
+          currency: string
+          date: string
+          description: string | null
+          duration: string | null
+          featured: boolean
+          id: string
+          location_lat: number | null
+          location_lng: number | null
+          location_name: string | null
+          organiser_id: string
+          price: number
+          status: Database["public"]["Enums"]["event_status"]
+          time: string | null
+          title: string
+        }
+        Insert: {
+          capacity?: number
+          category: Database["public"]["Enums"]["event_category"]
+          city?: string | null
+          country?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          currency?: string
+          date: string
+          description?: string | null
+          duration?: string | null
+          featured?: boolean
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          location_name?: string | null
+          organiser_id: string
+          price?: number
+          status?: Database["public"]["Enums"]["event_status"]
+          time?: string | null
+          title: string
+        }
+        Update: {
+          capacity?: number
+          category?: Database["public"]["Enums"]["event_category"]
+          city?: string | null
+          country?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          currency?: string
+          date?: string
+          description?: string | null
+          duration?: string | null
+          featured?: boolean
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          location_name?: string | null
+          organiser_id?: string
+          price?: number
+          status?: Database["public"]["Enums"]["event_status"]
+          time?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_organiser_id_fkey"
+            columns: ["organiser_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          is_organiser: boolean
+          phone: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          is_organiser?: boolean
+          phone?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_organiser?: boolean
+          phone?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +230,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      booking_status: "pending" | "confirmed" | "cancelled"
+      event_category:
+        | "track_days"
+        | "drift"
+        | "races"
+        | "car_meets"
+        | "snow_drift"
+        | "festivals"
+      event_status: "draft" | "live" | "cancelled" | "past"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +365,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      booking_status: ["pending", "confirmed", "cancelled"],
+      event_category: [
+        "track_days",
+        "drift",
+        "races",
+        "car_meets",
+        "snow_drift",
+        "festivals",
+      ],
+      event_status: ["draft", "live", "cancelled", "past"],
+    },
   },
 } as const
