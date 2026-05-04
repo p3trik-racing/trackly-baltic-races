@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { eventCover } from "@/lib/event-cover";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
+import { cancelEventWithNotifications } from "@/server/cancel-event.functions";
 
 export const Route = createFileRoute("/_app/organiser")({
   component: OrganiserDashboard,
@@ -67,8 +68,8 @@ function OrganiserDashboard() {
   async function cancelEvent(id: string) {
     if (!confirm("Cancel this event? Attendees will see it as cancelled.")) return;
     try {
-      const { cancelEventWithNotifications } = await import("@/server/cancel-event.functions");
-      await cancelEventWithNotifications({ data: { eventId: id } });
+      const res = await cancelEventWithNotifications({ data: { eventId: id } });
+      if (!res?.ok) throw new Error(res?.error ?? "Failed to cancel event");
       setEvents((es) => es.map((e) => e.id === id ? { ...e, status: "cancelled" } : e));
       toast.success("Event cancelled — attendees have been notified");
     } catch (e: any) {
