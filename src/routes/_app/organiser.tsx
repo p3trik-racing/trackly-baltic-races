@@ -178,7 +178,8 @@ function OrganiserDashboard() {
             );
           })}
         </div>
-      )}
+      );
+      })()}
     </main>
   );
 }
