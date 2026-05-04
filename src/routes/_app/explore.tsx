@@ -105,7 +105,18 @@ function ExplorePage() {
   }, [events, category, country, query, sort, bookingCounts]);
 
   return (
-    <main className="container-app py-6 space-y-4">
+    <main
+      className="container-app py-6 space-y-4"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      style={{ transform: pullDist ? `translateY(${pullDist / 2}px)` : undefined, transition: pullDist ? "none" : "transform 0.2s" }}
+    >
+      {(pullDist > 20 || refreshing) && (
+        <div className="flex justify-center -mt-2">
+          <Loader2 size={18} className="animate-spin text-muted-foreground" />
+        </div>
+      )}
       <h1 className="text-[22px] font-semibold">Explore</h1>
 
       <div className="relative">
