@@ -26,7 +26,7 @@ interface BookingRow {
 
 function BookingsPage() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const [tab, setTab] = useState<"upcoming" | "past" | "cancelled">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
 
   useEffect(() => {
@@ -40,9 +40,11 @@ function BookingsPage() {
   }, [user]);
 
   const today = new Date().toISOString().slice(0, 10);
-  const filtered = bookings.filter((b) =>
-    tab === "upcoming" ? b.events.date >= today : b.events.date < today,
-  );
+  const filtered = bookings.filter((b) => {
+    if (tab === "cancelled") return b.status === "cancelled";
+    if (b.status === "cancelled") return false;
+    return tab === "upcoming" ? b.events.date >= today : b.events.date < today;
+  });
 
   return (
     <main className="container-app py-6 space-y-4">
