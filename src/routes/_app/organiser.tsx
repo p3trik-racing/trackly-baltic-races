@@ -34,6 +34,7 @@ function OrganiserDashboard() {
   const [events, setEvents] = useState<OrgEvent[]>([]);
   const [aggs, setAggs] = useState<Record<string, BookingAgg>>({});
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<"active" | "past">("active");
 
   useEffect(() => {
     if (!user) return;
