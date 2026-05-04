@@ -33,10 +33,11 @@ function ProfilePage() {
   
 
   useEffect(() => {
+    if (user === null) { navigate({ to: "/login" }); return; }
     if (!user) return;
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
       .then(({ data }) => setProfile(data as any));
-  }, [user]);
+  }, [user, navigate]);
 
   async function saveInfo() {
     if (!user || !profile) return;

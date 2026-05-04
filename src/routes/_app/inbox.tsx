@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -18,7 +18,12 @@ interface Notif {
 
 function InboxPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [items, setItems] = useState<Notif[]>([]);
+
+  useEffect(() => {
+    if (user === null) navigate({ to: "/login" });
+  }, [user, navigate]);
 
   useEffect(() => {
     if (!user) return;
