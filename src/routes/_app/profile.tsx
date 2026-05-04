@@ -30,7 +30,7 @@ function ProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [editingUsername, setEditingUsername] = useState(false);
   const [usernameDraft, setUsernameDraft] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
+  
 
   useEffect(() => {
     if (!user) return;
