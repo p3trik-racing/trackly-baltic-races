@@ -89,10 +89,6 @@ function OrganiserDashboard() {
 
   return (
     <main className="container-app py-6 space-y-5">
-      <button onClick={() => navigate({ to: "/profile" })} className="inline-flex items-center gap-2 text-muted-foreground">
-        <ArrowLeft size={18} /> Back
-      </button>
-
       <div className="flex items-center justify-between">
         <h1 className="text-[22px] font-semibold">My Events</h1>
         <Link to="/organiser/post-event"
