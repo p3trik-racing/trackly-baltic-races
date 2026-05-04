@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { eventCover } from "@/lib/event-cover";
 import { categoryLabel } from "@/lib/categories";
-import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_app/event/$eventId")({
