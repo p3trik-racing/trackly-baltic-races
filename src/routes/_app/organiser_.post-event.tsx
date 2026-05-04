@@ -216,7 +216,7 @@ function PostEventPage() {
               {coverFile ? coverFile.name : (existingCover ? "Replace cover image" : "Upload cover image")}
             </span>
           </label>
-          <input id="cover-upload" type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onPickCover} />
+          <input id="cover-upload" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={onPickCover} />
         </Field>
 
         <label className="flex items-start gap-2 text-xs text-muted-foreground bg-card border border-border rounded-2xl p-4">
