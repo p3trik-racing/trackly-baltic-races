@@ -74,8 +74,8 @@ function BookingsPage() {
           {filtered.map((b) => (
             <Link
               key={b.id}
-              to="/event/$eventId"
-              params={{ eventId: b.events.id }}
+              to="/booking/$bookingId"
+              params={{ bookingId: b.id }}
               className="flex gap-3 bg-card border border-border rounded-2xl overflow-hidden p-3"
             >
               <img
