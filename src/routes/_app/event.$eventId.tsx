@@ -110,7 +110,7 @@ function EventDetail() {
                 </div>
                 <a href={url} target="_blank" rel="noopener noreferrer"
                   className="text-xs text-muted-foreground inline-flex items-center gap-1">
-                  Open in Google Maps <Share2 size={11} />
+                  Open in Google Maps <ExternalLink size={11} />
                 </a>
               </div>
             );
