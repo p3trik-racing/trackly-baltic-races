@@ -179,13 +179,30 @@ function PostEventPage() {
           <input className="input-field" value={form.location_name} onChange={(e) => setField("location_name", e.target.value)} />
         </Field>
 
+        <div>
+          <label className="text-xs text-muted-foreground">Map location (optional)</label>
+          <input
+            className="input-field mt-1"
+            placeholder="e.g. Biķernieki Racing Circuit, Riga"
+            value={form.location_name}
+            onChange={(e) => setField("location_name", e.target.value)}
+          />
+          <p className="text-[11px] text-muted-foreground mt-1">
+            This will be shown as a map link on your event page
+          </p>
+          <input type="hidden" value={form.location_lat} onChange={(e) => setField("location_lat", e.target.value)} />
+          <input type="hidden" value={form.location_lng} onChange={(e) => setField("location_lng", e.target.value)} />
+        </div>
+
         <div className="grid grid-cols-2 gap-3">
           <Field label="Capacity">
             <input className="input-field" type="number" min={0} value={form.capacity}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setField("capacity", Number(e.target.value))} />
           </Field>
           <Field label="Ticket price (EUR)">
             <input className="input-field" type="number" min={0} step="0.01" value={form.price}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setField("price", Number(e.target.value))} />
           </Field>
         </div>
