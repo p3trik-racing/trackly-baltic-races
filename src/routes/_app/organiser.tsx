@@ -65,27 +65,14 @@ function OrganiserDashboard() {
 
   async function cancelEvent(id: string) {
     if (!confirm("Cancel this event? Attendees will see it as cancelled.")) return;
-    const event = events.find((e) => e.id === id);
-    const { error } = await supabase.from("events").update({ status: "cancelled" }).eq("id", id);
-    if (error) return toast.error(error.message);
-
-    const { data: confirmed } = await supabase
-      .from("bookings").select("id,user_id")
-      .eq("event_id", id).eq("status", "confirmed");
-
-    if (confirmed && confirmed.length) {
-      await supabase.from("bookings").update({ status: "cancelled" })
-        .eq("event_id", id).eq("status", "confirmed");
-      const notifs = confirmed.map((b: any) => ({
-        user_id: b.user_id,
-        type: "event_cancelled",
-        message: `Your booking for ${event?.title ?? "the event"} has been cancelled as the event was cancelled by the organiser.`,
-      }));
-      await supabase.from("notifications").insert(notifs);
+    try {
+      const { cancelEventWithNotifications } = await import("@/server/cancel-event.functions");
+      await cancelEventWithNotifications({ data: { eventId: id } });
+      setEvents((es) => es.map((e) => e.id === id ? { ...e, status: "cancelled" } : e));
+      toast.success("Event cancelled — attendees have been notified");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to cancel event");
     }
-
-    setEvents((es) => es.map((e) => e.id === id ? { ...e, status: "cancelled" } : e));
-    toast.success("Event cancelled — attendees have been notified");
   }
 
   function statusBadge(e: OrgEvent) {
