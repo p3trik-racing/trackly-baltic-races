@@ -207,6 +207,7 @@ export type Database = {
           id: string
           is_organiser: boolean
           phone: string | null
+          saved_events: string[]
           username: string | null
         }
         Insert: {
@@ -220,6 +221,7 @@ export type Database = {
           id: string
           is_organiser?: boolean
           phone?: string | null
+          saved_events?: string[]
           username?: string | null
         }
         Update: {
@@ -233,6 +235,7 @@ export type Database = {
           id?: string
           is_organiser?: boolean
           phone?: string | null
+          saved_events?: string[]
           username?: string | null
         }
         Relationships: []
