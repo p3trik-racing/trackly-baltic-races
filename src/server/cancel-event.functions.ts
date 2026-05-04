@@ -1,14 +1,45 @@
 import { createServerFn } from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import type { Database } from "@/integrations/supabase/types";
 
 export const cancelEventWithNotifications = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data) => z.object({ eventId: z.string().uuid() }).parse(data))
-  .handler(async ({ data, context }) => {
+  .inputValidator((data) =>
+    z.object({
+      eventId: z.string().uuid(),
+      accessToken: z.string().min(1),
+    }).parse(data)
+  )
+  .handler(async ({ data }) => {
     try {
-      const { userId } = context;
+      const supabaseUrl = process.env.SUPABASE_URL;
+      const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+
+      if (!supabaseUrl || !supabasePublishableKey) {
+        return { ok: false as const, error: "Authentication is not configured" };
+      }
+
+      const userClient = createClient<Database>(supabaseUrl, supabasePublishableKey, {
+        global: {
+          headers: {
+            Authorization: `Bearer ${data.accessToken}`,
+          },
+        },
+        auth: {
+          storage: undefined,
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      });
+
+      const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(data.accessToken);
+      const userId = claimsData?.claims?.sub;
+
+      if (claimsError || !userId) {
+        return { ok: false as const, error: "Please log in again" };
+      }
+
       const { data: ev, error: evErr } = await supabaseAdmin
         .from("events").select("id,title,organiser_id").eq("id", data.eventId).maybeSingle();
       if (evErr || !ev) return { ok: false as const, error: "Event not found" };
