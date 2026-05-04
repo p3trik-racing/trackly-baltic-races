@@ -95,12 +95,24 @@ function EventDetail() {
             const query = event.location_lat && event.location_lng
               ? `${event.location_lat},${event.location_lng}`
               : [event.location_name, event.city, event.country].filter(Boolean).join(", ");
+            const embed = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
             const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
             return (
-              <a href={url} target="_blank" rel="noopener noreferrer"
-                className="border border-border rounded-full text-xs text-muted-foreground px-3 py-1.5 inline-flex items-center gap-1.5 w-fit">
-                <MapPin size={12} /> View on Map
-              </a>
+              <div className="space-y-1.5">
+                <div onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+                  className="cursor-pointer overflow-hidden" style={{ borderRadius: 16 }}>
+                  <iframe
+                    src={embed}
+                    style={{ width: "100%", height: 180, border: 0, borderRadius: 16, pointerEvents: "none" }}
+                    loading="lazy"
+                    title="Event location map"
+                  />
+                </div>
+                <a href={url} target="_blank" rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground inline-flex items-center gap-1">
+                  Open in Google Maps <Share2 size={11} />
+                </a>
+              </div>
             );
           })()}
           {event.organiser_name && (
