@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { eventCover } from "@/lib/event-cover";
 import { categoryLabel } from "@/lib/categories";
-import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_app/event/$eventId")({
@@ -16,6 +16,7 @@ function EventDetail() {
   const navigate = useNavigate();
   const [event, setEvent] = useState<any>(null);
   const [bookedCount, setBookedCount] = useState(0);
+  const [myBooking, setMyBooking] = useState<{ id: string } | null>(null);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle()
@@ -27,6 +28,14 @@ function EventDetail() {
         setBookedCount(total);
       });
   }, [eventId]);
+
+  useEffect(() => {
+    if (!user) { setMyBooking(null); return; }
+    supabase.from("bookings").select("id")
+      .eq("event_id", eventId).eq("user_id", user.id).eq("status", "confirmed")
+      .maybeSingle()
+      .then(({ data }) => setMyBooking((data as any) ?? null));
+  }, [eventId, user]);
 
   if (!event) {
     return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
@@ -86,12 +95,24 @@ function EventDetail() {
             const query = event.location_lat && event.location_lng
               ? `${event.location_lat},${event.location_lng}`
               : [event.location_name, event.city, event.country].filter(Boolean).join(", ");
+            const embed = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
             const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
             return (
-              <a href={url} target="_blank" rel="noopener noreferrer"
-                className="border border-border rounded-full text-xs text-muted-foreground px-3 py-1.5 inline-flex items-center gap-1.5 w-fit">
-                <MapPin size={12} /> View on Map
-              </a>
+              <div className="space-y-1.5">
+                <div onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+                  className="cursor-pointer overflow-hidden" style={{ borderRadius: 16 }}>
+                  <iframe
+                    src={embed}
+                    style={{ width: "100%", height: 180, border: 0, borderRadius: 16, pointerEvents: "none" }}
+                    loading="lazy"
+                    title="Event location map"
+                  />
+                </div>
+                <a href={url} target="_blank" rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground inline-flex items-center gap-1">
+                  Open in Google Maps <ExternalLink size={11} />
+                </a>
+              </div>
             );
           })()}
           {event.organiser_name && (
@@ -128,8 +149,19 @@ function EventDetail() {
         style={{ paddingBottom: "calc(80px + env(safe-area-inset-bottom))" }}
       >
         <div className="container-app py-3">
-          {!user ? (
+          {event.status === "cancelled" ? (
+            <button disabled className="cta-button opacity-80 cursor-not-allowed"
+              style={{ backgroundColor: "var(--accent)" }}>
+              Event Cancelled
+            </button>
+          ) : !user ? (
             <Link to="/login" className="cta-button">Log in to book</Link>
+          ) : myBooking ? (
+            <Link to="/booking/$bookingId" params={{ bookingId: myBooking.id }}
+              className="cta-button"
+              style={{ backgroundColor: "var(--success)", color: "#fff" }}>
+              You're attending
+            </Link>
           ) : soldOut ? (
             <button disabled className="cta-button opacity-60 cursor-not-allowed">Sold Out</button>
           ) : (

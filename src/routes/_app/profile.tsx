@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES } from "@/lib/categories";
@@ -30,7 +30,7 @@ function ProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [editingUsername, setEditingUsername] = useState(false);
   const [usernameDraft, setUsernameDraft] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
+  
 
   useEffect(() => {
     if (!user) return;
@@ -140,20 +140,19 @@ function ProfilePage() {
           <p className="text-sm text-muted-foreground truncate">{profile.email || user?.email}</p>
         </div>
         <input
-          ref={fileRef}
+          id="avatar-upload"
           type="file"
           accept="image/jpeg,image/png,image/webp"
-          style={{ display: "none" }}
+          className="hidden"
           onChange={onUpload}
         />
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          disabled={uploading}
-          className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5"
+        <label
+          htmlFor="avatar-upload"
+          aria-disabled={uploading}
+          className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5 cursor-pointer"
         >
           <Upload size={14} /> {uploading ? "…" : "Upload"}
-        </button>
+        </label>
       </div>
 
       {/* Username */}

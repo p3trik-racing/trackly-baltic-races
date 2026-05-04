@@ -26,7 +26,7 @@ interface BookingRow {
 
 function BookingsPage() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const [tab, setTab] = useState<"upcoming" | "past" | "cancelled">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
 
   useEffect(() => {
@@ -40,15 +40,17 @@ function BookingsPage() {
   }, [user]);
 
   const today = new Date().toISOString().slice(0, 10);
-  const filtered = bookings.filter((b) =>
-    tab === "upcoming" ? b.events.date >= today : b.events.date < today,
-  );
+  const filtered = bookings.filter((b) => {
+    if (tab === "cancelled") return b.status === "cancelled";
+    if (b.status === "cancelled") return false;
+    return tab === "upcoming" ? b.events.date >= today : b.events.date < today;
+  });
 
   return (
     <main className="container-app py-6 space-y-4">
       <h1 className="text-[22px] font-semibold">My Bookings</h1>
       <div className="flex gap-2 bg-card p-1 rounded-xl border border-border">
-        {(["upcoming", "past"] as const).map((t) => (
+        {(["upcoming", "past", "cancelled"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -72,8 +74,8 @@ function BookingsPage() {
           {filtered.map((b) => (
             <Link
               key={b.id}
-              to="/event/$eventId"
-              params={{ eventId: b.events.id }}
+              to="/booking/$bookingId"
+              params={{ bookingId: b.id }}
               className="flex gap-3 bg-card border border-border rounded-2xl overflow-hidden p-3"
             >
               <img
