@@ -143,7 +143,7 @@ function ProfilePage() {
           id="avatar-upload"
           type="file"
           accept="image/jpeg,image/png,image/webp"
-          className="hidden"
+          className="sr-only"
           onChange={onUpload}
         />
         <label
