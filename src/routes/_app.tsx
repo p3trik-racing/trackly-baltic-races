@@ -11,12 +11,7 @@ export const Route = createFileRoute("/_app")({
 
 function AppLayout() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const [isOrganiser, setIsOrganiser] = useState(false);
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -32,7 +27,7 @@ function AppLayout() {
     return () => { supabase.removeChannel(channel); };
   }, [user]);
 
-  if (loading || !user) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-muted-foreground">
         Loading…
