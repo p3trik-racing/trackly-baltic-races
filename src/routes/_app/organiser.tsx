@@ -101,11 +101,10 @@ function OrganiserDashboard() {
       {loading ? (
         <p className="text-sm text-muted-foreground py-8 text-center">Loading…</p>
       ) : events.length === 0 ? (
-        <div className="bg-card border border-border rounded-2xl p-8 text-center space-y-4">
+        <div className="bg-card border border-border rounded-2xl p-8 text-center">
           <p className="text-sm text-muted-foreground">
             You haven't posted any events yet. Post your first event to get started.
           </p>
-          <Link to="/organiser/post-event" className="cta-button inline-flex">Post Event</Link>
         </div>
       ) : (
         <div className="space-y-3">
