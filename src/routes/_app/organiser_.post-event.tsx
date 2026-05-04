@@ -36,6 +36,8 @@ function PostEventPage() {
     country: COUNTRIES[0].value as string,
     city: "",
     location_name: "",
+    location_lat: "" as string,
+    location_lng: "" as string,
     capacity: 20,
     price: 0,
   });
