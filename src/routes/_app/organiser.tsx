@@ -68,7 +68,14 @@ function OrganiserDashboard() {
   async function cancelEvent(id: string) {
     if (!confirm("Cancel this event? Attendees will see it as cancelled.")) return;
     try {
-      const res = await cancelEventWithNotifications({ data: { eventId: id } });
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+
+      if (sessionError || !accessToken) {
+        throw new Error("Please log in again");
+      }
+
+      const res = await cancelEventWithNotifications({ data: { eventId: id, accessToken } });
       if (!res?.ok) throw new Error(res?.error ?? "Failed to cancel event");
       setEvents((es) => es.map((e) => e.id === id ? { ...e, status: "cancelled" } : e));
       toast.success("Event cancelled — attendees have been notified");
