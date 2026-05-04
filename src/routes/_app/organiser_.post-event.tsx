@@ -106,6 +106,8 @@ function PostEventPage() {
       country: form.country,
       city: form.city || null,
       location_name: form.location_name || null,
+      location_lat: form.location_lat ? Number(form.location_lat) : null,
+      location_lng: form.location_lng ? Number(form.location_lng) : null,
       capacity: Number(form.capacity) || 0,
       price: Number(form.price) || 0,
       currency: "EUR",
