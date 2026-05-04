@@ -149,8 +149,19 @@ function EventDetail() {
         style={{ paddingBottom: "calc(80px + env(safe-area-inset-bottom))" }}
       >
         <div className="container-app py-3">
-          {!user ? (
+          {event.status === "cancelled" ? (
+            <button disabled className="cta-button opacity-80 cursor-not-allowed"
+              style={{ backgroundColor: "var(--accent)" }}>
+              Event Cancelled
+            </button>
+          ) : !user ? (
             <Link to="/login" className="cta-button">Log in to book</Link>
+          ) : myBooking ? (
+            <Link to="/booking/$bookingId" params={{ bookingId: myBooking.id }}
+              className="cta-button"
+              style={{ backgroundColor: "var(--success)", color: "#fff" }}>
+              You're attending
+            </Link>
           ) : soldOut ? (
             <button disabled className="cta-button opacity-60 cursor-not-allowed">Sold Out</button>
           ) : (
