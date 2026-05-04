@@ -16,6 +16,7 @@ function EventDetail() {
   const navigate = useNavigate();
   const [event, setEvent] = useState<any>(null);
   const [bookedCount, setBookedCount] = useState(0);
+  const [myBooking, setMyBooking] = useState<{ id: string } | null>(null);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle()
@@ -27,6 +28,14 @@ function EventDetail() {
         setBookedCount(total);
       });
   }, [eventId]);
+
+  useEffect(() => {
+    if (!user) { setMyBooking(null); return; }
+    supabase.from("bookings").select("id")
+      .eq("event_id", eventId).eq("user_id", user.id).eq("status", "confirmed")
+      .maybeSingle()
+      .then(({ data }) => setMyBooking((data as any) ?? null));
+  }, [eventId, user]);
 
   if (!event) {
     return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
