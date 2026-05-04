@@ -70,7 +70,18 @@ function HomePage() {
   const recent = filtered;
 
   return (
-    <main className="container-app py-6 space-y-6">
+    <main
+      className="container-app py-6 space-y-6"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      style={{ transform: pullDist ? `translateY(${pullDist / 2}px)` : undefined, transition: pullDist ? "none" : "transform 0.2s" }}
+    >
+      {(pullDist > 20 || refreshing) && (
+        <div className="flex justify-center -mt-2">
+          <Loader2 size={18} className="animate-spin text-muted-foreground" />
+        </div>
+      )}
       <header>
         <h1 className="text-[22px] font-semibold">Trackly</h1>
         <p className="text-sm text-muted-foreground">Find your next session</p>
@@ -138,6 +149,15 @@ function HomePage() {
           </div>
         )}
       </section>
+
+      {!user && (
+        <div className="fixed bottom-20 left-0 right-0 px-4">
+          <div className="container-app bg-card border border-border rounded-xl py-2.5 px-4 text-xs flex items-center justify-between shadow-lg">
+            <span className="text-muted-foreground">Join Trackly to book events</span>
+            <Link to="/signup" className="font-semibold" style={{ color: "var(--accent)" }}>Sign Up</Link>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
