@@ -30,7 +30,7 @@ interface BookingAgg {
 
 function OrganiserDashboard() {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  
   const [events, setEvents] = useState<OrgEvent[]>([]);
   const [aggs, setAggs] = useState<Record<string, BookingAgg>>({});
   const [loading, setLoading] = useState(true);
