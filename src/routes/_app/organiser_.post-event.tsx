@@ -175,10 +175,6 @@ function PostEventPage() {
           <input className="input-field" value={form.city} onChange={(e) => setField("city", e.target.value)} />
         </Field>
 
-        <Field label="Location / venue">
-          <input className="input-field" value={form.location_name} onChange={(e) => setField("location_name", e.target.value)} />
-        </Field>
-
         <div>
           <label className="text-xs text-muted-foreground">Map location (optional)</label>
           <input
