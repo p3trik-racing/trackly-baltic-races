@@ -50,7 +50,7 @@ function BookingsPage() {
     <main className="container-app py-6 space-y-4">
       <h1 className="text-[22px] font-semibold">My Bookings</h1>
       <div className="flex gap-2 bg-card p-1 rounded-xl border border-border">
-        {(["upcoming", "past"] as const).map((t) => (
+        {(["upcoming", "past", "cancelled"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
