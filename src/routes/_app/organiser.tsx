@@ -103,17 +103,41 @@ function OrganiserDashboard() {
         </Link>
       </div>
 
-      {loading ? (
-        <p className="text-sm text-muted-foreground py-8 text-center">Loading…</p>
-      ) : events.length === 0 ? (
-        <div className="bg-card border border-border rounded-2xl p-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            You haven't posted any events yet. Post your first event to get started.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {events.map((e) => {
+      <div className="flex gap-2 bg-card p-1 rounded-xl border border-border">
+        {(["active", "past"] as const).map((t) => (
+          <button key={t} onClick={() => setTab(t)}
+            className="flex-1 h-9 rounded-lg text-sm font-medium"
+            style={{
+              backgroundColor: tab === t ? "var(--accent)" : "transparent",
+              color: tab === t ? "#fff" : "var(--muted-foreground)",
+            }}>
+            {t === "active" ? "Active" : "Past & Cancelled"}
+          </button>
+        ))}
+      </div>
+
+      {(() => {
+        const today = new Date(new Date().toDateString());
+        const filtered = events.filter((e) => {
+          const isPast = new Date(e.date) < today;
+          const isCancelled = e.status === "cancelled";
+          return tab === "active"
+            ? !isCancelled && !isPast && (e.status === "live" || e.status === "draft")
+            : isCancelled || isPast;
+        });
+        return loading ? (
+          <p className="text-sm text-muted-foreground py-8 text-center">Loading…</p>
+        ) : filtered.length === 0 ? (
+          <div className="bg-card border border-border rounded-2xl p-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              {events.length === 0
+                ? "You haven't posted any events yet. Post your first event to get started."
+                : tab === "active" ? "No active events." : "No past or cancelled events."}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filtered.map((e) => {
             const agg = aggs[e.id] ?? { count: 0, revenue: 0 };
             return (
               <div key={e.id} className="bg-card border border-border rounded-2xl overflow-hidden">
