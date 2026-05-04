@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 export const Route = createFileRoute("/_app/home")({
   component: HomePage,
@@ -16,15 +16,37 @@ function HomePage() {
   const [favourites, setFavourites] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("all");
   const [query, setQuery] = useState("");
+  const [pullDist, setPullDist] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const startY = useRef<number | null>(null);
 
-  useEffect(() => {
+  const fetchEvents = () =>
     supabase
       .from("events")
       .select("id,title,category,date,city,country,price,currency,cover_image_url,featured")
       .eq("status", "live")
       .order("date", { ascending: true })
       .then(({ data }) => setEvents((data as any) ?? []));
-  }, []);
+
+  useEffect(() => { fetchEvents(); }, []);
+
+  function onTouchStart(e: React.TouchEvent) {
+    if (window.scrollY <= 0) startY.current = e.touches[0].clientY;
+  }
+  function onTouchMove(e: React.TouchEvent) {
+    if (startY.current == null) return;
+    const d = e.touches[0].clientY - startY.current;
+    if (d > 0) setPullDist(Math.min(d, 100));
+  }
+  async function onTouchEnd() {
+    if (pullDist > 60) {
+      setRefreshing(true);
+      await fetchEvents();
+      setRefreshing(false);
+    }
+    setPullDist(0);
+    startY.current = null;
+  }
 
   useEffect(() => {
     if (!user) return;
@@ -48,7 +70,18 @@ function HomePage() {
   const recent = filtered;
 
   return (
-    <main className="container-app py-6 space-y-6">
+    <main
+      className="container-app py-6 space-y-6"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      style={{ transform: pullDist ? `translateY(${pullDist / 2}px)` : undefined, transition: pullDist ? "none" : "transform 0.2s" }}
+    >
+      {(pullDist > 20 || refreshing) && (
+        <div className="flex justify-center -mt-2">
+          <Loader2 size={18} className="animate-spin text-muted-foreground" />
+        </div>
+      )}
       <header>
         <h1 className="text-[22px] font-semibold">Trackly</h1>
         <p className="text-sm text-muted-foreground">Find your next session</p>
@@ -116,6 +149,15 @@ function HomePage() {
           </div>
         )}
       </section>
+
+      {!user && (
+        <div className="fixed bottom-20 left-0 right-0 px-4">
+          <div className="container-app bg-card border border-border rounded-xl py-2.5 px-4 text-xs flex items-center justify-between shadow-lg">
+            <span className="text-muted-foreground">Join Trackly to book events</span>
+            <Link to="/signup" className="font-semibold" style={{ color: "var(--accent)" }}>Sign Up</Link>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

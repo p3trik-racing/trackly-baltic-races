@@ -23,7 +23,7 @@ interface Profile {
 }
 
 function ProfilePage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [savingInfo, setSavingInfo] = useState(false);
@@ -33,10 +33,11 @@ function ProfilePage() {
   
 
   useEffect(() => {
+    if (!loading && !user) { navigate({ to: "/login" }); return; }
     if (!user) return;
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
       .then(({ data }) => setProfile(data as any));
-  }, [user]);
+  }, [user, loading, navigate]);
 
   async function saveInfo() {
     if (!user || !profile) return;
@@ -139,20 +140,20 @@ function ProfilePage() {
           )}
           <p className="text-sm text-muted-foreground truncate">{profile.email || user?.email}</p>
         </div>
-        <input
-          id="avatar-upload"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className="sr-only"
-          onChange={onUpload}
-        />
-        <label
-          htmlFor="avatar-upload"
-          aria-disabled={uploading}
-          className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5 cursor-pointer"
-        >
-          <Upload size={14} /> {uploading ? "…" : "Upload"}
-        </label>
+        <div style={{ position: "relative", display: "inline-flex" }}>
+          <span
+            aria-hidden
+            className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5 cursor-pointer"
+          >
+            <Upload size={14} /> {uploading ? "…" : "Upload"}
+          </span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={onUpload}
+            style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
+          />
+        </div>
       </div>
 
       {/* Username */}

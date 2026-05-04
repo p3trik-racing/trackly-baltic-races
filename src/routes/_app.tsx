@@ -1,6 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,12 +10,7 @@ export const Route = createFileRoute("/_app")({
 
 function AppLayout() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const [isOrganiser, setIsOrganiser] = useState(false);
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -32,7 +26,7 @@ function AppLayout() {
     return () => { supabase.removeChannel(channel); };
   }, [user]);
 
-  if (loading || !user) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-muted-foreground">
         Loading…

@@ -12,7 +12,9 @@ function Splash() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/home" });
+    if (loading) return;
+    if (user) navigate({ to: "/home" });
+    else navigate({ to: "/home" });
   }, [user, loading, navigate]);
 
   return (
