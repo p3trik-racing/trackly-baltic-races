@@ -56,6 +56,8 @@ function PostEventPage() {
         country: data.country ?? COUNTRIES[0].value,
         city: data.city ?? "",
         location_name: data.location_name ?? "",
+        location_lat: data.location_lat != null ? String(data.location_lat) : "",
+        location_lng: data.location_lng != null ? String(data.location_lng) : "",
         capacity: data.capacity ?? 0,
         price: Number(data.price ?? 0),
       });
