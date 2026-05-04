@@ -82,6 +82,18 @@ function EventDetail() {
               {event.location_name}{event.city ? `, ${event.city}` : ""}{event.country ? `, ${event.country}` : ""}
             </div>
           )}
+          {(event.location_name || event.city || event.country) && (() => {
+            const query = event.location_lat && event.location_lng
+              ? `${event.location_lat},${event.location_lng}`
+              : [event.location_name, event.city, event.country].filter(Boolean).join(", ");
+            const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+            return (
+              <a href={url} target="_blank" rel="noopener noreferrer"
+                className="border border-border rounded-full text-xs text-muted-foreground px-3 py-1.5 inline-flex items-center gap-1.5 w-fit">
+                <MapPin size={12} /> View on Map
+              </a>
+            );
+          })()}
           {event.organiser_name && (
             <div className="flex items-center gap-3 text-foreground">
               <User size={16} className="text-muted-foreground" />

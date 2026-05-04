@@ -1,9 +1,9 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { eventCover } from "@/lib/event-cover";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/organiser")({
@@ -30,7 +30,7 @@ interface BookingAgg {
 
 function OrganiserDashboard() {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  
   const [events, setEvents] = useState<OrgEvent[]>([]);
   const [aggs, setAggs] = useState<Record<string, BookingAgg>>({});
   const [loading, setLoading] = useState(true);
@@ -89,10 +89,6 @@ function OrganiserDashboard() {
 
   return (
     <main className="container-app py-6 space-y-5">
-      <button onClick={() => navigate({ to: "/profile" })} className="inline-flex items-center gap-2 text-muted-foreground">
-        <ArrowLeft size={18} /> Back
-      </button>
-
       <div className="flex items-center justify-between">
         <h1 className="text-[22px] font-semibold">My Events</h1>
         <Link to="/organiser/post-event"
@@ -105,11 +101,10 @@ function OrganiserDashboard() {
       {loading ? (
         <p className="text-sm text-muted-foreground py-8 text-center">Loading…</p>
       ) : events.length === 0 ? (
-        <div className="bg-card border border-border rounded-2xl p-8 text-center space-y-4">
+        <div className="bg-card border border-border rounded-2xl p-8 text-center">
           <p className="text-sm text-muted-foreground">
             You haven't posted any events yet. Post your first event to get started.
           </p>
-          <Link to="/organiser/post-event" className="cta-button inline-flex">Post Event</Link>
         </div>
       ) : (
         <div className="space-y-3">

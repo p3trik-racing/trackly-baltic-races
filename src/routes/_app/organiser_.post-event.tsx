@@ -36,6 +36,8 @@ function PostEventPage() {
     country: COUNTRIES[0].value as string,
     city: "",
     location_name: "",
+    location_lat: "" as string,
+    location_lng: "" as string,
     capacity: 20,
     price: 0,
   });
@@ -54,6 +56,8 @@ function PostEventPage() {
         country: data.country ?? COUNTRIES[0].value,
         city: data.city ?? "",
         location_name: data.location_name ?? "",
+        location_lat: data.location_lat != null ? String(data.location_lat) : "",
+        location_lng: data.location_lng != null ? String(data.location_lng) : "",
         capacity: data.capacity ?? 0,
         price: Number(data.price ?? 0),
       });
@@ -102,6 +106,8 @@ function PostEventPage() {
       country: form.country,
       city: form.city || null,
       location_name: form.location_name || null,
+      location_lat: form.location_lat ? Number(form.location_lat) : null,
+      location_lng: form.location_lng ? Number(form.location_lng) : null,
       capacity: Number(form.capacity) || 0,
       price: Number(form.price) || 0,
       currency: "EUR",
@@ -169,17 +175,30 @@ function PostEventPage() {
           <input className="input-field" value={form.city} onChange={(e) => setField("city", e.target.value)} />
         </Field>
 
-        <Field label="Location / venue">
-          <input className="input-field" value={form.location_name} onChange={(e) => setField("location_name", e.target.value)} />
-        </Field>
+        <div>
+          <label className="text-xs text-muted-foreground">Map location (optional)</label>
+          <input
+            className="input-field mt-1"
+            placeholder="e.g. Biķernieki Racing Circuit, Riga"
+            value={form.location_name}
+            onChange={(e) => setField("location_name", e.target.value)}
+          />
+          <p className="text-[11px] text-muted-foreground mt-1">
+            This will be shown as a map link on your event page
+          </p>
+          <input type="hidden" value={form.location_lat} onChange={(e) => setField("location_lat", e.target.value)} />
+          <input type="hidden" value={form.location_lng} onChange={(e) => setField("location_lng", e.target.value)} />
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
           <Field label="Capacity">
             <input className="input-field" type="number" min={0} value={form.capacity}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setField("capacity", Number(e.target.value))} />
           </Field>
           <Field label="Ticket price (EUR)">
             <input className="input-field" type="number" min={0} step="0.01" value={form.price}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setField("price", Number(e.target.value))} />
           </Field>
         </div>
