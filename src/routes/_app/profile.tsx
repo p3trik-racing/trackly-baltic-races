@@ -23,7 +23,7 @@ interface Profile {
 }
 
 function ProfilePage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [savingInfo, setSavingInfo] = useState(false);
@@ -33,11 +33,11 @@ function ProfilePage() {
   
 
   useEffect(() => {
-    if (user === null) { navigate({ to: "/login" }); return; }
+    if (!loading && !user) { navigate({ to: "/login" }); return; }
     if (!user) return;
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
       .then(({ data }) => setProfile(data as any));
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   async function saveInfo() {
     if (!user || !profile) return;

@@ -17,13 +17,13 @@ interface Notif {
 }
 
 function InboxPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [items, setItems] = useState<Notif[]>([]);
 
   useEffect(() => {
-    if (user === null) navigate({ to: "/login" });
-  }, [user, navigate]);
+    if (!loading && !user) navigate({ to: "/login" });
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (!user) return;

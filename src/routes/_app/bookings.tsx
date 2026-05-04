@@ -25,14 +25,14 @@ interface BookingRow {
 }
 
 function BookingsPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<"upcoming" | "past" | "cancelled">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
 
   useEffect(() => {
-    if (user === null) navigate({ to: "/login" });
-  }, [user, navigate]);
+    if (!loading && !user) navigate({ to: "/login" });
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (!user) return;
