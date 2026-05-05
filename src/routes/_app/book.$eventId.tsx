@@ -38,6 +38,8 @@ function BookPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [paymentStep, setPaymentStep] = useState<PaymentStep>("details");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [existingBooking, setExistingBooking] = useState<any>(null);
+  const [dismissedExisting, setDismissedExisting] = useState(false);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle().then(({ data }) => setEvent(data));
@@ -53,7 +55,16 @@ function BookPage() {
         phone: data?.phone || "",
       });
     });
-  }, [user]);
+    supabase
+      .from("bookings")
+      .select("id")
+      .eq("event_id", eventId)
+      .eq("user_id", user.id)
+      .eq("status", "confirmed")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => setExistingBooking(data ?? null));
+  }, [user, eventId]);
 
   if (!event) return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
 
