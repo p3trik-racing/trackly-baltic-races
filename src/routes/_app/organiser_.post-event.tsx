@@ -7,6 +7,7 @@ import { CATEGORIES } from "@/lib/categories";
 import { COUNTRIES } from "@/lib/countries";
 import { ArrowLeft, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { ImageCropModal } from "@/components/ImageCropModal";
 
 const searchSchema = z.object({ edit: z.string().optional() });
 
@@ -26,6 +27,7 @@ function PostEventPage() {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [existingCover, setExistingCover] = useState<string | null>(null);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "",
     category: CATEGORIES[0].value as string,
@@ -85,8 +87,19 @@ function PostEventPage() {
   }
 
   function onPickCover(f: File) {
-    setCoverFile(f);
-    setCoverPreview(URL.createObjectURL(f));
+    setCropSrc(URL.createObjectURL(f));
+  }
+
+  function closeCrop() {
+    if (cropSrc) URL.revokeObjectURL(cropSrc);
+    setCropSrc(null);
+  }
+
+  function onCropConfirm(blob: Blob) {
+    const file = new File([blob], `cover-${Date.now()}.jpg`, { type: "image/jpeg" });
+    setCoverFile(file);
+    setCoverPreview(URL.createObjectURL(blob));
+    closeCrop();
   }
 
   async function uploadCover(): Promise<string | null> {
