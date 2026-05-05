@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES } from "@/lib/categories";
 import { LogOut, User, Upload, ChevronRight, KeyRound } from "lucide-react";
 import { toast } from "sonner";
+import { ImageCropModal } from "@/components/ImageCropModal";
 
 export const Route = createFileRoute("/_app/profile")({
   component: ProfilePage,
@@ -30,6 +31,7 @@ function ProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [editingUsername, setEditingUsername] = useState(false);
   const [usernameDraft, setUsernameDraft] = useState("");
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   
 
   useEffect(() => {
@@ -92,16 +94,25 @@ function ProfilePage() {
     input.click();
   }
 
-  async function onUpload(file: File) {
-    if (!file || !user) return;
+  function onPickAvatar(file: File) {
+    setCropSrc(URL.createObjectURL(file));
+  }
+
+  function closeCrop() {
+    if (cropSrc) URL.revokeObjectURL(cropSrc);
+    setCropSrc(null);
+  }
+
+  async function uploadCroppedAvatar(blob: Blob) {
+    if (!user) return;
     setUploading(true);
-    const ext = file.name.split(".").pop() ?? "jpg";
-    const path = `${user.id}/avatar-${Date.now()}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-    if (upErr) { setUploading(false); return toast.error(upErr.message); }
+    const path = `${user.id}/avatar-${Date.now()}.jpg`;
+    const { error: upErr } = await supabase.storage.from("avatars").upload(path, blob, { upsert: true, contentType: "image/jpeg" });
+    if (upErr) { setUploading(false); closeCrop(); return toast.error(upErr.message); }
     const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
     const { error: dbErr } = await supabase.from("profiles").update({ avatar_url: pub.publicUrl }).eq("id", user.id);
     setUploading(false);
+    closeCrop();
     if (dbErr) return toast.error(dbErr.message);
     setProfile((p) => p ? { ...p, avatar_url: pub.publicUrl } : p);
     toast.success("Photo updated");
@@ -154,7 +165,7 @@ function ProfilePage() {
           <p className="text-sm text-muted-foreground truncate">{profile.email || user?.email}</p>
         </div>
         <button
-          onClick={() => openFilePicker(onUpload, "image/jpeg,image/png,image/webp")}
+          onClick={() => openFilePicker(onPickAvatar, "image/jpeg,image/png,image/webp")}
           className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5"
         >
           <Upload size={14} /> {uploading ? "…" : "Upload"}
