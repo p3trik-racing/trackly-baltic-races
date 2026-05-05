@@ -312,6 +312,14 @@ function ProfilePage() {
         style={{ color: "var(--accent)" }}>
         Delete account
       </button>
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          aspectRatio={1}
+          onConfirm={uploadCroppedAvatar}
+          onCancel={closeCrop}
+        />
+      )}
     </main>
   );
 }
