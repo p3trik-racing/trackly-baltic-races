@@ -26,6 +26,7 @@ export type Database = {
           platform_fee: number
           status: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id: string | null
+          stripe_refund_id: string | null
           ticket_count: number
           total_price: number
           user_id: string
@@ -42,6 +43,7 @@ export type Database = {
           platform_fee: number
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
+          stripe_refund_id?: string | null
           ticket_count?: number
           total_price: number
           user_id: string
@@ -58,6 +60,7 @@ export type Database = {
           platform_fee?: number
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
+          stripe_refund_id?: string | null
           ticket_count?: number
           total_price?: number
           user_id?: string
