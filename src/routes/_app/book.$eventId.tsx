@@ -231,6 +231,41 @@ function BookPage() {
     );
   }
 
+  if (existingBooking && !dismissedExisting) {
+    return (
+      <main className="pb-32">
+        <header className="container-app py-5">
+          <button onClick={() => navigate({ to: "/event/$eventId", params: { eventId } })}
+            className="inline-flex items-center gap-2 text-muted-foreground mb-4">
+            <ArrowLeft size={18} /> Back
+          </button>
+          <h1 className="text-[22px] font-semibold">Checkout</h1>
+        </header>
+        <section className="container-app space-y-4">
+          <div className="bg-card border border-border rounded-2xl p-6 flex flex-col items-center text-center gap-3">
+            <CheckCircle2 size={48} className="text-green-500" />
+            <p className="font-medium">You already have a booking for this event</p>
+            <p className="text-xs text-muted-foreground font-mono">
+              {existingBooking.id.slice(0, 8).toUpperCase()}
+            </p>
+            <button
+              onClick={() => navigate({ to: "/booking/$bookingId", params: { bookingId: existingBooking.id } })}
+              className="cta-button mt-2"
+            >
+              View Booking
+            </button>
+            <button
+              onClick={() => setDismissedExisting(true)}
+              className="w-full mt-1 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent/10"
+            >
+              Buy more tickets
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="pb-32">
       <header className="container-app py-5">
