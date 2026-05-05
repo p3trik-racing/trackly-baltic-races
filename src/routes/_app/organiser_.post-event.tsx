@@ -216,26 +216,22 @@ function PostEventPage() {
         </div>
 
         <Field label="Cover image">
-          <div style={{ position: "relative", display: "inline-flex" }} className="w-full">
-            <div className="flex items-center gap-3 bg-card border border-border rounded-xl p-3 w-full">
-              {(coverPreview || existingCover) ? (
-                <img src={coverPreview ?? existingCover ?? ""} alt="" className="w-16 h-16 rounded-lg object-cover" />
-              ) : (
-                <div className="w-16 h-16 rounded-lg flex items-center justify-center" style={{ backgroundColor: "var(--input)" }}>
-                  <Upload size={20} className="text-muted-foreground" />
-                </div>
-              )}
-              <span className="text-sm text-muted-foreground">
-                {coverFile ? coverFile.name : (existingCover ? "Replace cover image" : "Upload cover image")}
-              </span>
-            </div>
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={onPickCover}
-              style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
-            />
-          </div>
+          <button
+            type="button"
+            onClick={() => openFilePicker(onPickCover, "image/*")}
+            className="flex items-center gap-3 bg-card border border-border rounded-xl p-3 w-full text-left"
+          >
+            {(coverPreview || existingCover) ? (
+              <img src={coverPreview ?? existingCover ?? ""} alt="" className="w-16 h-16 rounded-lg object-cover" />
+            ) : (
+              <div className="w-16 h-16 rounded-lg flex items-center justify-center" style={{ backgroundColor: "var(--input)" }}>
+                <Upload size={20} className="text-muted-foreground" />
+              </div>
+            )}
+            <span className="text-sm text-muted-foreground">
+              {coverFile ? coverFile.name : (existingCover ? "Replace cover image" : "Upload cover image")}
+            </span>
+          </button>
         </Field>
 
         <label className="flex items-start gap-2 text-xs text-muted-foreground bg-card border border-border rounded-2xl p-4">
