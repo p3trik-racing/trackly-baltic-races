@@ -91,42 +91,58 @@ function BookingsPage() {
         </p>
       ) : (
         <div className="space-y-3">
-          {filtered.map((b) => (
-            <Link
-              key={b.id}
-              to="/booking/$bookingId"
-              params={{ bookingId: b.id }}
-              className="flex gap-3 bg-card border border-border rounded-2xl overflow-hidden p-3"
-            >
-              <img
-                src={eventCover(b.events.category, b.events.cover_image_url)}
-                alt=""
-                className="w-20 h-20 rounded-xl object-cover flex-shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <h3 className="font-medium text-sm line-clamp-1">{b.events.title}</h3>
-                  <span
-                    className="text-[10px] px-2 py-0.5 rounded-full"
-                    style={{
-                      backgroundColor:
-                        b.status === "confirmed"
-                          ? "color-mix(in oklab, var(--success) 20%, transparent)"
-                          : "color-mix(in oklab, var(--accent) 20%, transparent)",
-                      color: b.status === "confirmed" ? "var(--success)" : "var(--accent)",
-                    }}
-                  >
-                    {b.status}
-                  </span>
-                </div>
-                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-3">
-                  <span className="flex items-center gap-1"><Calendar size={12} />{new Date(b.events.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>
-                  {b.events.city && <span className="flex items-center gap-1"><MapPin size={12} />{b.events.city}</span>}
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">Ref: {b.id.slice(0, 8).toUpperCase()}</div>
+          {filtered.map((b) => {
+            const dt = new Date(`${b.events.date}T${b.events.time ?? "00:00"}`);
+            const hoursUntil = (dt.getTime() - Date.now()) / 36e5;
+            const canCancel = tab === "upcoming" && b.status === "confirmed" && hoursUntil > 2;
+            return (
+              <div key={b.id} className="bg-card border border-border rounded-2xl overflow-hidden">
+                <Link
+                  to="/booking/$bookingId"
+                  params={{ bookingId: b.id }}
+                  className="flex gap-3 p-3"
+                >
+                  <img
+                    src={eventCover(b.events.category, b.events.cover_image_url)}
+                    alt=""
+                    className="w-20 h-20 rounded-xl object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-medium text-sm line-clamp-1">{b.events.title}</h3>
+                      <span
+                        className="text-[10px] px-2 py-0.5 rounded-full"
+                        style={{
+                          backgroundColor:
+                            b.status === "confirmed"
+                              ? "color-mix(in oklab, var(--success) 20%, transparent)"
+                              : "color-mix(in oklab, var(--accent) 20%, transparent)",
+                          color: b.status === "confirmed" ? "var(--success)" : "var(--accent)",
+                        }}
+                      >
+                        {b.status}
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1 flex items-center gap-3">
+                      <span className="flex items-center gap-1"><Calendar size={12} />{new Date(b.events.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>
+                      {b.events.city && <span className="flex items-center gap-1"><MapPin size={12} />{b.events.city}</span>}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">Ref: {b.id.slice(0, 8).toUpperCase()}</div>
+                  </div>
+                </Link>
+                {canCancel && (
+                  <div className="px-3 pb-3">
+                    <button
+                      onClick={() => cancelBooking(b)}
+                      className="w-full h-10 rounded-xl border border-border text-xs font-medium text-muted-foreground"
+                    >
+                      Cancel Booking
+                    </button>
+                  </div>
+                )}
               </div>
-            </Link>
-          ))}
+            );
+          })}
         </div>
       )}
     </main>
