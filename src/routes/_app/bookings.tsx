@@ -19,6 +19,7 @@ interface BookingRow {
     id: string;
     title: string;
     date: string;
+    time: string | null;
     city: string | null;
     category: string;
     cover_image_url: string | null;
