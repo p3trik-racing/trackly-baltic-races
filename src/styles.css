@@ -1,3 +1,8 @@
+html,
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -39,21 +44,21 @@
 }
 
 :root {
-  --background: oklch(0.16 0 0);          /* #0D0D0D */
-  --foreground: oklch(0.97 0 0);          /* #F5F5F5 */
-  --card: oklch(0.21 0 0);                /* #1A1A1A */
+  --background: oklch(0.16 0 0); /* #0D0D0D */
+  --foreground: oklch(0.97 0 0); /* #F5F5F5 */
+  --card: oklch(0.21 0 0); /* #1A1A1A */
   --surface: oklch(0.21 0 0);
-  --nav: oklch(0.24 0 0);                 /* #1F1F1F */
-  --border: oklch(0.30 0 0);              /* #2C2C2C */
-  --input: oklch(0.36 0 0);               /* #3A3A3A */
-  --primary: oklch(0.55 0.18 28);         /* #C0392B */
+  --nav: oklch(0.24 0 0); /* #1F1F1F */
+  --border: oklch(0.3 0 0); /* #2C2C2C */
+  --input: oklch(0.36 0 0); /* #3A3A3A */
+  --primary: oklch(0.55 0.18 28); /* #C0392B */
   --primary-foreground: oklch(1 0 0);
-  --accent: oklch(0.62 0.20 28);          /* #E74C3C */
-  --muted-foreground: oklch(0.65 0 0);    /* #9B9B9B */
-  --nav-inactive: oklch(0.50 0 0);        /* #6B6B6B */
-  --destructive: oklch(0.62 0.20 28);
-  --success: oklch(0.50 0.13 145);        /* #1E7B34 */
-  --ring: oklch(0.62 0.20 28);
+  --accent: oklch(0.62 0.2 28); /* #E74C3C */
+  --muted-foreground: oklch(0.65 0 0); /* #9B9B9B */
+  --nav-inactive: oklch(0.5 0 0); /* #6B6B6B */
+  --destructive: oklch(0.62 0.2 28);
+  --success: oklch(0.5 0.13 145); /* #1E7B34 */
+  --ring: oklch(0.62 0.2 28);
   --radius: 12px;
 
   --sidebar: var(--card);
@@ -79,13 +84,16 @@
   * {
     border-color: var(--color-border);
   }
-  html, body {
+  html,
+  body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     font-family: var(--font-sans);
   }
 }
@@ -108,7 +116,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: filter 0.15s ease, transform 0.15s ease;
+  transition:
+    filter 0.15s ease,
+    transform 0.15s ease;
 }
 @utility cta-button-hover {
   filter: brightness(1.08);
@@ -138,5 +148,5 @@
 }
 
 .gradient-overlay {
-  background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.85) 100%);
 }
