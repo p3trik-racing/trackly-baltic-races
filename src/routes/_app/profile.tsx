@@ -78,8 +78,21 @@ function ProfilePage() {
     await supabase.from("profiles").update(patch).eq("id", user.id);
   }
 
-  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+  function openFilePicker(onFile: (file: File) => void, accept: string) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = accept;
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.onchange = () => {
+      const file = input.files?.[0];
+      document.body.removeChild(input);
+      if (file) onFile(file);
+    };
+    input.click();
+  }
+
+  async function onUpload(file: File) {
     if (!file || !user) return;
     setUploading(true);
     const ext = file.name.split(".").pop() ?? "jpg";
