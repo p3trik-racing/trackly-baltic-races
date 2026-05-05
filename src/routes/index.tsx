@@ -43,6 +43,12 @@ function Splash() {
         >
           Log In
         </Link>
+        <p className="text-center text-muted-foreground pt-2" style={{ fontSize: "11px" }}>
+          By using Trackly you agree to our{" "}
+          <Link to="/terms" style={{ color: "var(--accent)" }}>Terms of Service</Link>
+          {" "}and{" "}
+          <Link to="/privacy-policy" style={{ color: "var(--accent)" }}>Privacy Policy</Link>
+        </p>
       </div>
     </main>
   );

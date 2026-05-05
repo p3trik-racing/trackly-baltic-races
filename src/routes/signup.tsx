@@ -94,7 +94,12 @@ function SignupPage() {
         <label className="flex items-start gap-2 text-sm text-muted-foreground py-2">
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
             className="mt-1 accent-[var(--accent)]" />
-          <span>I agree to the Terms of Service and Privacy Policy.</span>
+          <span>
+            I agree to the{" "}
+            <Link to="/terms" style={{ color: "var(--accent)" }}>Terms of Service</Link>
+            {" "}and{" "}
+            <Link to="/privacy-policy" style={{ color: "var(--accent)" }}>Privacy Policy</Link>.
+          </span>
         </label>
 
         <button className="cta-button" disabled={loading}>
