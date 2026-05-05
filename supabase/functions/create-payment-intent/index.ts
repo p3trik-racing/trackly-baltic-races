@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
     params.append("currency", currency);
     if (description) params.append("description", description);
     if (event_id) params.append("metadata[event_id]", String(event_id));
-    params.append("automatic_payment_methods[enabled]", "true");
+    params.append("payment_method_types[]", "card");
 
     const resp = await fetch("https://api.stripe.com/v1/payment_intents", {
       method: "POST",
