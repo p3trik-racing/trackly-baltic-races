@@ -40,11 +40,24 @@ function BookingsPage() {
     if (!user) return;
     supabase
       .from("bookings")
-      .select("id,ticket_count,total_price,status,events(id,title,date,city,category,cover_image_url)")
+      .select("id,ticket_count,total_price,status,events(id,title,date,time,city,category,cover_image_url)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => setBookings((data as any) ?? []));
   }, [user]);
+
+  async function cancelBooking(b: BookingRow) {
+    if (!confirm(`Cancel your booking for ${b.events.title}? You will receive a full refund within 5-10 business days.`)) return;
+    const { data, error } = await supabase.functions.invoke("cancel-booking", {
+      body: { booking_id: b.id },
+    });
+    if (error || data?.error) {
+      toast.error(data?.error || error?.message || "Could not cancel");
+      return;
+    }
+    setBookings((bs) => bs.map((x) => x.id === b.id ? { ...x, status: "cancelled" } : x));
+    toast.success("Booking cancelled. Refund is being processed.");
+  }
 
   const today = new Date().toISOString().slice(0, 10);
   const filtered = bookings.filter((b) => {
