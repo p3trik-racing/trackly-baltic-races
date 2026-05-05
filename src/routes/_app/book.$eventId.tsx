@@ -123,6 +123,22 @@ function BookPage() {
         });
       }
 
+      // Fire-and-forget booking confirmation email
+      supabase.functions.invoke("send-booking-email", {
+        body: {
+          booking_id: data.id,
+          attendee_email: form.email,
+          attendee_name: form.name,
+          event_title: event.title,
+          event_date: new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
+          event_time: event.time ?? "",
+          event_location: [event.location_name, event.city].filter(Boolean).join(", "),
+          ticket_count: tickets,
+          total_price: total,
+          booking_reference: data.id.slice(0, 8).toUpperCase(),
+        },
+      }).catch(() => {});
+
       navigate({ to: "/booking/$bookingId", params: { bookingId: data.id } });
     } catch (e: any) {
       setPaymentError(e?.message ?? "Could not create booking");

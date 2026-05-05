@@ -78,8 +78,21 @@ function ProfilePage() {
     await supabase.from("profiles").update(patch).eq("id", user.id);
   }
 
-  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+  function openFilePicker(onFile: (file: File) => void, accept: string) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = accept;
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.onchange = () => {
+      const file = input.files?.[0];
+      document.body.removeChild(input);
+      if (file) onFile(file);
+    };
+    input.click();
+  }
+
+  async function onUpload(file: File) {
     if (!file || !user) return;
     setUploading(true);
     const ext = file.name.split(".").pop() ?? "jpg";
@@ -140,20 +153,12 @@ function ProfilePage() {
           )}
           <p className="text-sm text-muted-foreground truncate">{profile.email || user?.email}</p>
         </div>
-        <div style={{ position: "relative", display: "inline-flex" }}>
-          <span
-            aria-hidden
-            className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5 cursor-pointer"
-          >
-            <Upload size={14} /> {uploading ? "…" : "Upload"}
-          </span>
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={onUpload}
-            style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
-          />
-        </div>
+        <button
+          onClick={() => openFilePicker(onUpload, "image/jpeg,image/png,image/webp")}
+          className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5"
+        >
+          <Upload size={14} /> {uploading ? "…" : "Upload"}
+        </button>
       </div>
 
       {/* Username */}

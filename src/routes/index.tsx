@@ -14,8 +14,11 @@ function Splash() {
   useEffect(() => {
     if (loading) return;
     if (user) navigate({ to: "/home" });
-    else navigate({ to: "/home" });
   }, [user, loading, navigate]);
+
+  if (loading || user) {
+    return <main className="min-h-screen bg-background" />;
+  }
 
   return (
     <main className="min-h-screen flex flex-col">
