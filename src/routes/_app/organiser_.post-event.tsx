@@ -268,6 +268,14 @@ function PostEventPage() {
           {submitting ? "Saving…" : editId ? "Save Changes" : "Publish Event"}
         </button>
       </div>
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          aspectRatio={16 / 9}
+          onConfirm={onCropConfirm}
+          onCancel={closeCrop}
+        />
+      )}
     </main>
   );
 }
