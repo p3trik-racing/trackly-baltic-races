@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { ArrowLeft, Minus, Plus, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Minus, Plus, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -38,6 +38,8 @@ function BookPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [paymentStep, setPaymentStep] = useState<PaymentStep>("details");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [existingBooking, setExistingBooking] = useState<any>(null);
+  const [dismissedExisting, setDismissedExisting] = useState(false);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle().then(({ data }) => setEvent(data));
@@ -53,7 +55,16 @@ function BookPage() {
         phone: data?.phone || "",
       });
     });
-  }, [user]);
+    supabase
+      .from("bookings")
+      .select("id")
+      .eq("event_id", eventId)
+      .eq("user_id", user.id)
+      .eq("status", "confirmed")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => setExistingBooking(data ?? null));
+  }, [user, eventId]);
 
   if (!event) return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
 
@@ -215,6 +226,41 @@ function BookPage() {
               <span>{paymentError}</span>
             </div>
           )}
+        </section>
+      </main>
+    );
+  }
+
+  if (existingBooking && !dismissedExisting) {
+    return (
+      <main className="pb-32">
+        <header className="container-app py-5">
+          <button onClick={() => navigate({ to: "/event/$eventId", params: { eventId } })}
+            className="inline-flex items-center gap-2 text-muted-foreground mb-4">
+            <ArrowLeft size={18} /> Back
+          </button>
+          <h1 className="text-[22px] font-semibold">Checkout</h1>
+        </header>
+        <section className="container-app space-y-4">
+          <div className="bg-card border border-border rounded-2xl p-6 flex flex-col items-center text-center gap-3">
+            <CheckCircle2 size={48} className="text-green-500" />
+            <p className="font-medium">You already have a booking for this event</p>
+            <p className="text-xs text-muted-foreground font-mono">
+              {existingBooking.id.slice(0, 8).toUpperCase()}
+            </p>
+            <button
+              onClick={() => navigate({ to: "/booking/$bookingId", params: { bookingId: existingBooking.id } })}
+              className="cta-button mt-2"
+            >
+              View Booking
+            </button>
+            <button
+              onClick={() => setDismissedExisting(true)}
+              className="w-full mt-1 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent/10"
+            >
+              Buy more tickets
+            </button>
+          </div>
         </section>
       </main>
     );
