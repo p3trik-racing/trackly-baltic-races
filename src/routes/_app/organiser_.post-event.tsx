@@ -70,9 +70,21 @@ function PostEventPage() {
     setForm((f) => ({ ...f, [k]: v }));
   }
 
-  function onPickCover(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (!f) return;
+  function openFilePicker(onFile: (file: File) => void, accept: string) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = accept;
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.onchange = () => {
+      const file = input.files?.[0];
+      document.body.removeChild(input);
+      if (file) onFile(file);
+    };
+    input.click();
+  }
+
+  function onPickCover(f: File) {
     setCoverFile(f);
     setCoverPreview(URL.createObjectURL(f));
   }
