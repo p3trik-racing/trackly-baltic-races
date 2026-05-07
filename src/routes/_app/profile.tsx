@@ -6,6 +6,7 @@ import { CATEGORIES } from "@/lib/categories";
 import { LogOut, User, Upload, ChevronRight, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
+import { useTheme } from "@/lib/theme-context";
 
 export const Route = createFileRoute("/_app/profile")({
   component: ProfilePage,
@@ -32,6 +33,7 @@ function ProfilePage() {
   const [editingUsername, setEditingUsername] = useState(false);
   const [usernameDraft, setUsernameDraft] = useState("");
   const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const { theme, toggleTheme } = useTheme();
   
 
   useEffect(() => {
@@ -262,6 +264,28 @@ function ProfilePage() {
             onChange={(v) => setNotif("event_reminders", v)} />
           <ToggleRow label="Booking confirmations" checked={profile.booking_confirmations}
             onChange={(v) => setNotif("booking_confirmations", v)} />
+        </div>
+        <div className="border-t border-border pt-4 space-y-2">
+          <p className="text-xs text-muted-foreground">Appearance</p>
+          <div className="flex gap-2">
+            {(["dark", "light"] as const).map((t) => {
+              const active = theme === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => { if (!active) toggleTheme(); }}
+                  className="flex-1 h-10 rounded-full text-xs font-medium border capitalize"
+                  style={{
+                    borderColor: active ? "var(--accent)" : "var(--border)",
+                    backgroundColor: active ? "var(--accent)" : "transparent",
+                    color: active ? "#fff" : "var(--muted-foreground)",
+                  }}
+                >
+                  {t}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 

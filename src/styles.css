@@ -80,6 +80,24 @@ body {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+.light {
+  --background: #F5F5F5;
+  --foreground: #0D0D0D;
+  --card: #FFFFFF;
+  --surface: #FFFFFF;
+  --nav: #FFFFFF;
+  --border: #E2E2E2;
+  --input: #EBEBEB;
+  --primary: #C0392B;
+  --primary-foreground: #FFFFFF;
+  --accent: #E74C3C;
+  --muted-foreground: #666666;
+  --nav-inactive: #999999;
+  --success: #1E7B34;
+  --destructive: #E74C3C;
+  --ring: #E74C3C;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
