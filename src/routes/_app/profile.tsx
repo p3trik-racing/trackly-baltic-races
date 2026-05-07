@@ -33,6 +33,7 @@ function ProfilePage() {
   const [editingUsername, setEditingUsername] = useState(false);
   const [usernameDraft, setUsernameDraft] = useState("");
   const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const { theme, toggleTheme } = useTheme();
   
 
   useEffect(() => {
