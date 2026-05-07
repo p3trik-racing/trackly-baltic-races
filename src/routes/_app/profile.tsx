@@ -6,6 +6,7 @@ import { CATEGORIES } from "@/lib/categories";
 import { LogOut, User, Upload, ChevronRight, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
+import { useTheme } from "@/lib/theme-context";
 
 export const Route = createFileRoute("/_app/profile")({
   component: ProfilePage,
