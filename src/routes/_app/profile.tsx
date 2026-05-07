@@ -265,6 +265,28 @@ function ProfilePage() {
           <ToggleRow label="Booking confirmations" checked={profile.booking_confirmations}
             onChange={(v) => setNotif("booking_confirmations", v)} />
         </div>
+        <div className="border-t border-border pt-4 space-y-2">
+          <p className="text-xs text-muted-foreground">Appearance</p>
+          <div className="flex gap-2">
+            {(["dark", "light"] as const).map((t) => {
+              const active = theme === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => { if (!active) toggleTheme(); }}
+                  className="flex-1 h-10 rounded-full text-xs font-medium border capitalize"
+                  style={{
+                    borderColor: active ? "var(--accent)" : "var(--border)",
+                    backgroundColor: active ? "var(--accent)" : "transparent",
+                    color: active ? "#fff" : "var(--muted-foreground)",
+                  }}
+                >
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </section>
 
       {/* Organiser */}
