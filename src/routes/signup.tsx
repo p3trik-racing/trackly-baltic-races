@@ -23,8 +23,8 @@ function SignupPage() {
     if (!usernameValid) { setUsernameStatus("invalid"); return; }
     setUsernameStatus("checking");
     const t = setTimeout(async () => {
-      const { data } = await supabase.from("profiles").select("id").eq("username", form.username).maybeSingle();
-      setUsernameStatus(data ? "taken" : "available");
+      const { data } = await supabase.rpc("is_username_available", { _username: form.username });
+      setUsernameStatus(data === false ? "taken" : "available");
     }, 350);
     return () => clearTimeout(t);
   }, [form.username, usernameValid]);
