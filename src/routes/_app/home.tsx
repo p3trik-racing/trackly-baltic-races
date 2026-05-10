@@ -148,7 +148,18 @@ function HomePage() {
       <section className="space-y-3">
         <h2 className="text-base font-semibold">Recently added</h2>
         {recent.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-10 text-center">No events match your filters.</p>
+          <div className="py-10 text-center space-y-2">
+            <p className="text-sm text-muted-foreground">No events match your filters.</p>
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                className="text-sm font-medium"
+                style={{ color: "var(--accent)" }}
+              >
+                Clear search
+              </button>
+            )}
+          </div>
         ) : (
           <div className="space-y-3">
             {recent.map((e) => <EventCard key={e.id} event={e} />)}
