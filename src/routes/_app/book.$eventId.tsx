@@ -445,11 +445,21 @@ function BookPage() {
 
       <div
         className="fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border"
-        style={{ paddingBottom: "calc(80px + env(safe-area-inset-bottom))" }}
+        style={{ paddingBottom: "calc(90px + env(safe-area-inset-bottom))" }}
       >
         <div className="container-app py-3">
-          <button onClick={continueToPayment} disabled={submitting} className="cta-button">
-            {submitting ? "Loading…" : "Continue to Payment →"}
+          <button
+            onClick={isFree ? confirmFreeBooking : continueToPayment}
+            disabled={submitting || soldOut}
+            className="cta-button"
+          >
+            {soldOut
+              ? "Sold Out"
+              : submitting
+                ? "Loading…"
+                : isFree
+                  ? "Confirm Booking (Free)"
+                  : "Continue to Payment →"}
           </button>
         </div>
       </div>
