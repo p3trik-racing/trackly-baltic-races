@@ -97,8 +97,11 @@ function HomePage() {
         />
       </div>
 
-      <div className="-mx-5 px-5 overflow-x-auto">
-        <div className="flex gap-2 w-max">
+      <div
+        className="-mx-5 px-5 overflow-x-auto scrollbar-hide py-3"
+        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        <div className="flex gap-2 w-max pr-5">
           {[{ value: "all", label: "All" }, ...orderedCategories].map((c) => {
             const active = category === c.value;
             const isFav = favourites.includes(c.value);
