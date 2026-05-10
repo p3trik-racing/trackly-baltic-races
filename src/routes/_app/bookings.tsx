@@ -73,7 +73,10 @@ function BookingsPage() {
         {(["upcoming", "past", "cancelled"] as const).map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => {
+              setTab(t);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
             className="flex-1 h-9 rounded-lg text-sm font-medium capitalize"
             style={{
               backgroundColor: tab === t ? "var(--accent)" : "transparent",
