@@ -375,32 +375,48 @@ function BookPage() {
             onChange={(e) => setForm({ ...form, phone: e.target.value })} />
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between">
-          <p className="text-sm font-medium">Tickets</p>
-          <div className="flex items-center gap-3">
-            <button onClick={() => setTickets((t) => Math.max(1, t - 1))}
-              className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
-              <Minus size={14} />
-            </button>
-            <span className="w-6 text-center font-semibold">{tickets}</span>
-            <button onClick={() => setTickets((t) => t + 1)}
-              className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
-              <Plus size={14} />
-            </button>
+        <div className="bg-card border border-border rounded-2xl p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium">Tickets</p>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setTickets((t) => Math.max(1, t - 1))}
+                className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
+                <Minus size={14} />
+              </button>
+              <span className="w-6 text-center font-semibold">{tickets}</span>
+              <button
+                onClick={() => setTickets((t) => Math.min(remaining, t + 1))}
+                disabled={tickets >= remaining}
+                className="w-9 h-9 rounded-full border border-border flex items-center justify-center disabled:opacity-40">
+                <Plus size={14} />
+              </button>
+            </div>
           </div>
+          {!unlimited && (
+            <p className="text-xs text-muted-foreground">
+              {soldOut ? "Sold Out" : `${remaining} spots remaining`}
+            </p>
+          )}
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-4 space-y-2 text-sm">
-          <div className="flex justify-between text-muted-foreground">
-            <span>Tickets ({tickets} × €{event.price})</span><span>€{subtotal.toFixed(2)}</span>
+        {!isFree && (
+          <div className="bg-card border border-border rounded-2xl p-4 space-y-2 text-sm">
+            <div className="flex justify-between text-muted-foreground">
+              <span>Tickets ({tickets} × €{event.price})</span><span>€{subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-muted-foreground">
+              <span>Trackly platform fee (5%)</span><span>€{fee.toFixed(2)}</span>
+            </div>
+            <div className="border-t border-border pt-2 flex justify-between font-semibold">
+              <span>Total</span><span>€{total.toFixed(2)}</span>
+            </div>
           </div>
-          <div className="flex justify-between text-muted-foreground">
-            <span>Trackly platform fee (5%)</span><span>€{fee.toFixed(2)}</span>
+        )}
+        {isFree && (
+          <div className="bg-card border border-border rounded-2xl p-4 flex justify-between font-semibold text-sm">
+            <span>Total</span><span>Free</span>
           </div>
-          <div className="border-t border-border pt-2 flex justify-between font-semibold">
-            <span>Total</span><span>€{total.toFixed(2)}</span>
-          </div>
-        </div>
+        )}
 
         <label className="flex items-start gap-2 text-xs text-muted-foreground bg-card border border-border rounded-2xl p-4">
           <input type="checkbox" checked={waiver} onChange={(e) => setWaiver(e.target.checked)}
