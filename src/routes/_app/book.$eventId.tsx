@@ -506,7 +506,7 @@ function PaymentForm({
       <PaymentElement />
       <div
         className="fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border"
-        style={{ paddingBottom: "calc(80px + env(safe-area-inset-bottom))" }}
+        style={{ paddingBottom: "calc(90px + env(safe-area-inset-bottom))" }}
       >
         <div className="container-app py-3">
           <button onClick={handlePay} disabled={!stripe || paying} className="cta-button">
