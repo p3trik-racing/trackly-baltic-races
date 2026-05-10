@@ -123,7 +123,7 @@ function BookingsPage() {
                           color: b.status === "confirmed" ? "var(--success)" : "var(--accent)",
                         }}
                       >
-                        {b.status}
+                        {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
                       </span>
                     </div>
                     <div className="text-xs text-muted-foreground mt-1 flex items-center gap-3">
