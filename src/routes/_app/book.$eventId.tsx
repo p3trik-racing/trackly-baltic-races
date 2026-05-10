@@ -40,9 +40,20 @@ function BookPage() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [existingBooking, setExistingBooking] = useState<any>(null);
   const [dismissedExisting, setDismissedExisting] = useState(false);
+  const [bookedCount, setBookedCount] = useState(0);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle().then(({ data }) => setEvent(data));
+    supabase
+      .from("bookings")
+      .select("ticket_count,status")
+      .eq("event_id", eventId)
+      .then(({ data }) => {
+        const total = (data ?? [])
+          .filter((b: any) => b.status !== "cancelled")
+          .reduce((sum: number, b: any) => sum + (b.ticket_count ?? 1), 0);
+        setBookedCount(total);
+      });
   }, [eventId]);
 
   useEffect(() => {
@@ -68,9 +79,78 @@ function BookPage() {
 
   if (!event) return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
 
+  const isFree = Number(event.price) === 0;
+  const unlimited = !event.capacity || event.capacity === 0;
+  const remaining = unlimited ? Infinity : Math.max(0, event.capacity - bookedCount);
+  const soldOut = !unlimited && remaining === 0;
   const subtotal = Number(event.price) * tickets;
-  const fee = +(subtotal * 0.05).toFixed(2);
-  const total = +(subtotal + fee).toFixed(2);
+  const fee = isFree ? 0 : +(subtotal * 0.05).toFixed(2);
+  const total = isFree ? 0 : +(subtotal + fee).toFixed(2);
+
+  async function confirmFreeBooking() {
+    if (!user) return;
+    if (!form.name || !form.email) return toast.error("Please fill in your details");
+    if (!waiver) return toast.error("Please accept the liability waiver");
+    setPaymentError(null);
+    setSubmitting(true);
+    setPaymentStep("processing");
+    try {
+      const { data, error } = await supabase
+        .from("bookings")
+        .insert({
+          event_id: event.id,
+          user_id: user.id,
+          attendee_name: form.name,
+          attendee_email: form.email,
+          attendee_phone: form.phone,
+          ticket_count: tickets,
+          total_price: 0,
+          platform_fee: 0,
+          organiser_payout: 0,
+          waiver_accepted: true,
+          status: "confirmed",
+          stripe_payment_intent_id: null,
+        })
+        .select()
+        .single();
+      if (error || !data) throw new Error(error?.message || "Could not create booking");
+
+      await supabase.from("notifications").insert({
+        user_id: user.id,
+        type: "booking_confirmed",
+        message: `Your booking for ${event.title} is confirmed.`,
+      });
+      if (event.organiser_id) {
+        await supabase.from("notifications").insert({
+          user_id: event.organiser_id,
+          type: "organiser_new_booking",
+          message: `New booking for ${event.title} by ${form.name}.`,
+        });
+      }
+
+      supabase.functions.invoke("send-booking-email", {
+        body: {
+          booking_id: data.id,
+          attendee_email: form.email,
+          attendee_name: form.name,
+          event_title: event.title,
+          event_date: new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
+          event_time: event.time ?? "",
+          event_location: [event.location_name, event.city].filter(Boolean).join(", "),
+          ticket_count: tickets,
+          total_price: 0,
+          booking_reference: data.id.slice(0, 8).toUpperCase(),
+        },
+      }).catch(() => {});
+
+      navigate({ to: "/booking/$bookingId", params: { bookingId: data.id } });
+    } catch (e: any) {
+      setPaymentError(e?.message ?? "Could not create booking");
+      setPaymentStep("details");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   async function continueToPayment() {
     if (!user) return;
@@ -295,32 +375,48 @@ function BookPage() {
             onChange={(e) => setForm({ ...form, phone: e.target.value })} />
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between">
-          <p className="text-sm font-medium">Tickets</p>
-          <div className="flex items-center gap-3">
-            <button onClick={() => setTickets((t) => Math.max(1, t - 1))}
-              className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
-              <Minus size={14} />
-            </button>
-            <span className="w-6 text-center font-semibold">{tickets}</span>
-            <button onClick={() => setTickets((t) => t + 1)}
-              className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
-              <Plus size={14} />
-            </button>
+        <div className="bg-card border border-border rounded-2xl p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium">Tickets</p>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setTickets((t) => Math.max(1, t - 1))}
+                className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
+                <Minus size={14} />
+              </button>
+              <span className="w-6 text-center font-semibold">{tickets}</span>
+              <button
+                onClick={() => setTickets((t) => Math.min(remaining, t + 1))}
+                disabled={tickets >= remaining}
+                className="w-9 h-9 rounded-full border border-border flex items-center justify-center disabled:opacity-40">
+                <Plus size={14} />
+              </button>
+            </div>
           </div>
+          {!unlimited && (
+            <p className="text-xs text-muted-foreground">
+              {soldOut ? "Sold Out" : `${remaining} spots remaining`}
+            </p>
+          )}
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-4 space-y-2 text-sm">
-          <div className="flex justify-between text-muted-foreground">
-            <span>Tickets ({tickets} × €{event.price})</span><span>€{subtotal.toFixed(2)}</span>
+        {!isFree && (
+          <div className="bg-card border border-border rounded-2xl p-4 space-y-2 text-sm">
+            <div className="flex justify-between text-muted-foreground">
+              <span>Tickets ({tickets} × €{event.price})</span><span>€{subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-muted-foreground">
+              <span>Trackly platform fee (5%)</span><span>€{fee.toFixed(2)}</span>
+            </div>
+            <div className="border-t border-border pt-2 flex justify-between font-semibold">
+              <span>Total</span><span>€{total.toFixed(2)}</span>
+            </div>
           </div>
-          <div className="flex justify-between text-muted-foreground">
-            <span>Trackly platform fee (5%)</span><span>€{fee.toFixed(2)}</span>
+        )}
+        {isFree && (
+          <div className="bg-card border border-border rounded-2xl p-4 flex justify-between font-semibold text-sm">
+            <span>Total</span><span>Free</span>
           </div>
-          <div className="border-t border-border pt-2 flex justify-between font-semibold">
-            <span>Total</span><span>€{total.toFixed(2)}</span>
-          </div>
-        </div>
+        )}
 
         <label className="flex items-start gap-2 text-xs text-muted-foreground bg-card border border-border rounded-2xl p-4">
           <input type="checkbox" checked={waiver} onChange={(e) => setWaiver(e.target.checked)}
@@ -349,11 +445,21 @@ function BookPage() {
 
       <div
         className="fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border"
-        style={{ paddingBottom: "calc(80px + env(safe-area-inset-bottom))" }}
+        style={{ paddingBottom: "calc(90px + env(safe-area-inset-bottom))" }}
       >
         <div className="container-app py-3">
-          <button onClick={continueToPayment} disabled={submitting} className="cta-button">
-            {submitting ? "Loading…" : "Continue to Payment →"}
+          <button
+            onClick={isFree ? confirmFreeBooking : continueToPayment}
+            disabled={submitting || soldOut}
+            className="cta-button"
+          >
+            {soldOut
+              ? "Sold Out"
+              : submitting
+                ? "Loading…"
+                : isFree
+                  ? "Confirm Booking (Free)"
+                  : "Continue to Payment →"}
           </button>
         </div>
       </div>
@@ -400,7 +506,7 @@ function PaymentForm({
       <PaymentElement />
       <div
         className="fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border"
-        style={{ paddingBottom: "calc(80px + env(safe-area-inset-bottom))" }}
+        style={{ paddingBottom: "calc(90px + env(safe-area-inset-bottom))" }}
       >
         <div className="container-app py-3">
           <button onClick={handlePay} disabled={!stripe || paying} className="cta-button">

@@ -97,8 +97,11 @@ function HomePage() {
         />
       </div>
 
-      <div className="-mx-5 px-5 overflow-x-auto">
-        <div className="flex gap-2 w-max">
+      <div
+        className="-mx-5 px-5 overflow-x-auto scrollbar-hide py-3"
+        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        <div className="flex gap-2 w-max pr-5">
           {[{ value: "all", label: "All" }, ...orderedCategories].map((c) => {
             const active = category === c.value;
             const isFav = favourites.includes(c.value);
@@ -127,8 +130,11 @@ function HomePage() {
       {featured.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-base font-semibold">Featured</h2>
-          <div className="-mx-5 px-5 overflow-x-auto">
-            <div className="flex gap-3 w-max">
+          <div
+            className="-mx-5 px-5 overflow-x-auto scrollbar-hide py-3"
+            style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            <div className="flex gap-3 w-max pr-5">
               {featured.map((e) => (
                 <div key={e.id} className="w-72">
                   <EventCard event={e} large />
@@ -142,7 +148,18 @@ function HomePage() {
       <section className="space-y-3">
         <h2 className="text-base font-semibold">Recently added</h2>
         {recent.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-10 text-center">No events match your filters.</p>
+          <div className="py-10 text-center space-y-2">
+            <p className="text-sm text-muted-foreground">No events match your filters.</p>
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                className="text-sm font-medium"
+                style={{ color: "var(--accent)" }}
+              >
+                Clear search
+              </button>
+            )}
+          </div>
         ) : (
           <div className="space-y-3">
             {recent.map((e) => <EventCard key={e.id} event={e} />)}
