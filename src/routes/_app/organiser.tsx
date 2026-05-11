@@ -36,6 +36,8 @@ function OrganiserDashboard() {
   const [aggs, setAggs] = useState<Record<string, BookingAgg>>({});
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"active" | "past">("active");
+  const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
