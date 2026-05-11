@@ -134,8 +134,9 @@ function HomePage() {
         <section className="space-y-3">
           <h2 className="text-base font-semibold">Featured</h2>
           <div
+            data-scroll-x
             className="-mx-5 px-5 overflow-x-auto scrollbar-hide py-3"
-            style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+            style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", backgroundColor: "var(--background)" }}
           >
             <div className="flex gap-3 w-max pr-5">
               {featured.map((e) => (
