@@ -5,6 +5,7 @@ import { eventCover } from "@/lib/event-cover";
 import { categoryLabel } from "@/lib/categories";
 import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/event/$eventId")({
   component: EventDetail,
