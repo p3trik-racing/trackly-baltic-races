@@ -180,13 +180,37 @@ function OrganiserDashboard() {
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">
                     Edit
                   </Link>
-                  <button onClick={() => cancelEvent(e.id)}
+                  <button onClick={() => setConfirmingCancel(e.id)}
                     disabled={e.status === "cancelled"}
                     className="py-3 text-center disabled:opacity-40"
                     style={{ color: "var(--accent)" }}>
                     Cancel
                   </button>
                 </div>
+                {confirmingCancel === e.id && (
+                  <div className="m-3 bg-card border border-border rounded-2xl p-4 space-y-3">
+                    <p className="text-sm">
+                      Cancel "{e.title}"? Attendees will see it as cancelled and be notified.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setConfirmingCancel(null)}
+                        disabled={cancellingId === e.id}
+                        className="flex-1 h-10 rounded-xl border border-border text-xs font-medium"
+                      >
+                        Keep Event
+                      </button>
+                      <button
+                        onClick={() => cancelEvent(e.id)}
+                        disabled={cancellingId === e.id}
+                        className="flex-1 h-10 rounded-xl text-xs font-medium text-white"
+                        style={{ backgroundColor: "var(--accent)" }}
+                      >
+                        {cancellingId === e.id ? "Cancelling…" : "Yes, Cancel"}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
