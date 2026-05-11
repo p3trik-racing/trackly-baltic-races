@@ -35,7 +35,6 @@ function ConfirmationPage() {
   const canCancel = hoursUntil > 2 && booking.status === "confirmed";
 
   async function onCancel() {
-    if (!confirm(`Cancel your booking for ${ev.title}? You will receive a full refund within 5-10 business days.`)) return;
     setCancelling(true);
     const { data, error } = await supabase.functions.invoke("cancel-booking", {
       body: { booking_id: booking.id },
@@ -46,6 +45,7 @@ function ConfirmationPage() {
       return;
     }
     setBooking({ ...booking, status: "cancelled" });
+    setConfirmingCancel(false);
     toast.success("Booking cancelled. Refund is being processed.");
   }
 
