@@ -89,11 +89,11 @@ function EventDetail() {
             <ArrowLeft size={18} color="#fff" />
           </button>
           <div className="flex gap-2">
-            <button className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
+            <button onClick={onShare} className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
               <Share2 size={16} color="#fff" />
             </button>
-            <button className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
-              <Heart size={16} color="#fff" />
+            <button onClick={onToggleSave} className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
+              <Heart size={16} color={saved ? "var(--accent)" : "#fff"} fill={saved ? "var(--accent)" : "none"} />
             </button>
           </div>
         </div>
