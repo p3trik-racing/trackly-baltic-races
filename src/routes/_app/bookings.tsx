@@ -48,7 +48,6 @@ function BookingsPage() {
   }, [user]);
 
   async function cancelBooking(b: BookingRow) {
-    if (!confirm(`Cancel your booking for ${b.events.title}? You will receive a full refund within 5-10 business days.`)) return;
     const { data, error } = await supabase.functions.invoke("cancel-booking", {
       body: { booking_id: b.id },
     });
@@ -57,6 +56,7 @@ function BookingsPage() {
       return;
     }
     setBookings((bs) => bs.map((x) => x.id === b.id ? { ...x, status: "cancelled" } : x));
+    setConfirmingCancel(null);
     toast.success("Booking cancelled. Refund is being processed.");
   }
 
