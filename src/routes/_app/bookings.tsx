@@ -31,6 +31,7 @@ function BookingsPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<"upcoming" | "past" | "cancelled">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
+  const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
