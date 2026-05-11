@@ -100,8 +100,9 @@ function HomePage() {
       </div>
 
       <div
+        data-scroll-x
         className="-mx-5 px-5 overflow-x-auto scrollbar-hide py-3"
-        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", backgroundColor: "var(--background)" }}
       >
         <div className="flex gap-2 w-max pr-5">
           {[{ value: "all", label: "All" }, ...orderedCategories].map((c) => {
