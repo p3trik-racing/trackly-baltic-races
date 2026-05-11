@@ -18,6 +18,7 @@ function EventDetail() {
   const [event, setEvent] = useState<any>(null);
   const [bookedCount, setBookedCount] = useState(0);
   const [myBooking, setMyBooking] = useState<{ id: string } | null>(null);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle()
@@ -31,12 +32,42 @@ function EventDetail() {
   }, [eventId]);
 
   useEffect(() => {
-    if (!user) { setMyBooking(null); return; }
+    if (!user) { setMyBooking(null); setSaved(false); return; }
     supabase.from("bookings").select("id")
       .eq("event_id", eventId).eq("user_id", user.id).eq("status", "confirmed")
       .maybeSingle()
       .then(({ data }) => setMyBooking((data as any) ?? null));
+    supabase.from("profiles").select("saved_events").eq("id", user.id).maybeSingle()
+      .then(({ data }) => {
+        const list = (data?.saved_events ?? []) as string[];
+        setSaved(list.includes(eventId));
+      });
   }, [eventId, user]);
+
+  async function onShare() {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: event.title, text: `Check out ${event.title} on Trackly`, url });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard");
+    }
+  }
+
+  async function onToggleSave() {
+    if (!user) { navigate({ to: "/login" }); return; }
+    const { data } = await supabase.from("profiles").select("saved_events").eq("id", user.id).maybeSingle();
+    const current = ((data?.saved_events ?? []) as string[]);
+    const next = current.includes(eventId)
+      ? current.filter((id) => id !== eventId)
+      : [...current, eventId];
+    const { error } = await supabase.from("profiles").update({ saved_events: next }).eq("id", user.id);
+    if (error) { toast.error("Could not update"); return; }
+    setSaved(next.includes(eventId));
+    toast.success(next.includes(eventId) ? "Event saved" : "Removed from saved");
+  }
 
   if (!event) {
     return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
