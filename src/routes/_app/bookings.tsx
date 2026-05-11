@@ -31,6 +31,7 @@ function BookingsPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<"upcoming" | "past" | "cancelled">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
+  const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
@@ -47,7 +48,6 @@ function BookingsPage() {
   }, [user]);
 
   async function cancelBooking(b: BookingRow) {
-    if (!confirm(`Cancel your booking for ${b.events.title}? You will receive a full refund within 5-10 business days.`)) return;
     const { data, error } = await supabase.functions.invoke("cancel-booking", {
       body: { booking_id: b.id },
     });
@@ -56,6 +56,7 @@ function BookingsPage() {
       return;
     }
     setBookings((bs) => bs.map((x) => x.id === b.id ? { ...x, status: "cancelled" } : x));
+    setConfirmingCancel(null);
     toast.success("Booking cancelled. Refund is being processed.");
   }
 
@@ -133,14 +134,36 @@ function BookingsPage() {
                     <div className="text-xs text-muted-foreground mt-1">Ref: {b.id.slice(0, 8).toUpperCase()}</div>
                   </div>
                 </Link>
-                {canCancel && (
+                {canCancel && confirmingCancel !== b.id && (
                   <div className="px-3 pb-3">
                     <button
-                      onClick={() => cancelBooking(b)}
+                      onClick={() => setConfirmingCancel(b.id)}
                       className="w-full h-10 rounded-xl border border-border text-xs font-medium text-muted-foreground"
                     >
                       Cancel Booking
                     </button>
+                  </div>
+                )}
+                {canCancel && confirmingCancel === b.id && (
+                  <div className="mx-3 mb-3 bg-card border border-border rounded-2xl p-4 space-y-3">
+                    <p className="text-sm">
+                      Cancel your booking for {b.events.title}? You'll receive a full refund within 5-10 business days.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setConfirmingCancel(null)}
+                        className="flex-1 h-10 rounded-xl border border-border text-xs font-medium"
+                      >
+                        Keep Booking
+                      </button>
+                      <button
+                        onClick={() => cancelBooking(b)}
+                        className="flex-1 h-10 rounded-xl text-xs font-medium text-white"
+                        style={{ backgroundColor: "var(--accent)" }}
+                      >
+                        Yes, Cancel
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

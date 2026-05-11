@@ -51,6 +51,8 @@ function ExplorePage() {
   useEffect(() => { fetchEvents(); }, []);
 
   function onTouchStart(e: React.TouchEvent) {
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-scroll-x]')) return;
     if (window.scrollY <= 0) startY.current = e.touches[0].clientY;
   }
   function onTouchMove(e: React.TouchEvent) {

@@ -36,6 +36,8 @@ function OrganiserDashboard() {
   const [aggs, setAggs] = useState<Record<string, BookingAgg>>({});
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"active" | "past">("active");
+  const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -66,7 +68,7 @@ function OrganiserDashboard() {
   }, [user]);
 
   async function cancelEvent(id: string) {
-    if (!confirm("Cancel this event? Attendees will see it as cancelled.")) return;
+    setCancellingId(id);
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       const accessToken = sessionData?.session?.access_token;
@@ -78,9 +80,12 @@ function OrganiserDashboard() {
       const res = await cancelEventWithNotifications({ data: { eventId: id, accessToken } });
       if (!res?.ok) throw new Error(res?.error ?? "Failed to cancel event");
       setEvents((es) => es.map((e) => e.id === id ? { ...e, status: "cancelled" } : e));
+      setConfirmingCancel(null);
       toast.success("Event cancelled — attendees have been notified");
     } catch (e: any) {
       toast.error(e?.message ?? "Failed to cancel event");
+    } finally {
+      setCancellingId(null);
     }
   }
 
@@ -175,13 +180,37 @@ function OrganiserDashboard() {
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">
                     Edit
                   </Link>
-                  <button onClick={() => cancelEvent(e.id)}
+                  <button onClick={() => setConfirmingCancel(e.id)}
                     disabled={e.status === "cancelled"}
                     className="py-3 text-center disabled:opacity-40"
                     style={{ color: "var(--accent)" }}>
                     Cancel
                   </button>
                 </div>
+                {confirmingCancel === e.id && (
+                  <div className="m-3 bg-card border border-border rounded-2xl p-4 space-y-3">
+                    <p className="text-sm">
+                      Cancel "{e.title}"? Attendees will see it as cancelled and be notified.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setConfirmingCancel(null)}
+                        disabled={cancellingId === e.id}
+                        className="flex-1 h-10 rounded-xl border border-border text-xs font-medium"
+                      >
+                        Keep Event
+                      </button>
+                      <button
+                        onClick={() => cancelEvent(e.id)}
+                        disabled={cancellingId === e.id}
+                        className="flex-1 h-10 rounded-xl text-xs font-medium text-white"
+                        style={{ backgroundColor: "var(--accent)" }}
+                      >
+                        {cancellingId === e.id ? "Cancelling…" : "Yes, Cancel"}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}

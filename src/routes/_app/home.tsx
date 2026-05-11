@@ -31,6 +31,8 @@ function HomePage() {
   useEffect(() => { fetchEvents(); }, []);
 
   function onTouchStart(e: React.TouchEvent) {
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-scroll-x]')) return;
     if (window.scrollY <= 0) startY.current = e.touches[0].clientY;
   }
   function onTouchMove(e: React.TouchEvent) {
@@ -98,8 +100,9 @@ function HomePage() {
       </div>
 
       <div
+        data-scroll-x
         className="-mx-5 px-5 overflow-x-auto scrollbar-hide py-3"
-        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", backgroundColor: "var(--background)" }}
       >
         <div className="flex gap-2 w-max pr-5">
           {[{ value: "all", label: "All" }, ...orderedCategories].map((c) => {
@@ -131,8 +134,9 @@ function HomePage() {
         <section className="space-y-3">
           <h2 className="text-base font-semibold">Featured</h2>
           <div
+            data-scroll-x
             className="-mx-5 px-5 overflow-x-auto scrollbar-hide py-3"
-            style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+            style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", backgroundColor: "var(--background)" }}
           >
             <div className="flex gap-3 w-max pr-5">
               {featured.map((e) => (

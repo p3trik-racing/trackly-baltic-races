@@ -13,6 +13,7 @@ function ConfirmationPage() {
   const navigate = useNavigate();
   const [booking, setBooking] = useState<any>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
 
   useEffect(() => {
     supabase
@@ -34,7 +35,6 @@ function ConfirmationPage() {
   const canCancel = hoursUntil > 2 && booking.status === "confirmed";
 
   async function onCancel() {
-    if (!confirm(`Cancel your booking for ${ev.title}? You will receive a full refund within 5-10 business days.`)) return;
     setCancelling(true);
     const { data, error } = await supabase.functions.invoke("cancel-booking", {
       body: { booking_id: booking.id },
@@ -45,6 +45,7 @@ function ConfirmationPage() {
       return;
     }
     setBooking({ ...booking, status: "cancelled" });
+    setConfirmingCancel(false);
     toast.success("Booking cancelled. Refund is being processed.");
   }
 
@@ -102,14 +103,39 @@ function ConfirmationPage() {
           </button>
         )}
 
-        {canCancel && (
+        {canCancel && !confirmingCancel && (
           <button
-            onClick={onCancel}
+            onClick={() => setConfirmingCancel(true)}
             disabled={cancelling}
             className="w-full h-14 rounded-xl border border-border text-sm font-medium text-muted-foreground"
           >
-            {cancelling ? "Cancelling…" : "Cancel Booking"}
+            Cancel Booking
           </button>
+        )}
+
+        {canCancel && confirmingCancel && (
+          <div className="bg-card border border-border rounded-2xl p-4 space-y-3 text-left">
+            <p className="text-sm">
+              Cancel your booking for {ev.title}? You'll receive a full refund within 5-10 business days.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfirmingCancel(false)}
+                disabled={cancelling}
+                className="flex-1 h-11 rounded-xl border border-border text-sm font-medium"
+              >
+                Keep Booking
+              </button>
+              <button
+                onClick={onCancel}
+                disabled={cancelling}
+                className="flex-1 h-11 rounded-xl text-sm font-medium text-white"
+                style={{ backgroundColor: "var(--accent)" }}
+              >
+                {cancelling ? "Cancelling…" : "Yes, Cancel"}
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </main>
