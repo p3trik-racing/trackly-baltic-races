@@ -13,6 +13,7 @@ function ConfirmationPage() {
   const navigate = useNavigate();
   const [booking, setBooking] = useState<any>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
 
   useEffect(() => {
     supabase
