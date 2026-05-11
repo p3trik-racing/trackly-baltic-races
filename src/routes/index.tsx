@@ -43,6 +43,12 @@ function Splash() {
         >
           Log In
         </Link>
+        <Link
+          to="/home"
+          className="block text-center text-sm text-muted-foreground py-3"
+        >
+          Browse events without signing up →
+        </Link>
         <p className="text-center text-muted-foreground pt-2" style={{ fontSize: "11px" }}>
           By using Trackly you agree to our{" "}
           <Link to="/terms" style={{ color: "var(--accent)" }}>Terms of Service</Link>
