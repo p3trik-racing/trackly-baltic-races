@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.get-metrics]
 verify_jwt = false
+
+[functions.get-weekly-bookings]
+verify_jwt = false
