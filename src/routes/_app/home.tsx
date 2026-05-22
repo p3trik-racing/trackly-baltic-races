@@ -84,8 +84,10 @@ function HomePage() {
           <Loader2 size={18} className="animate-spin text-muted-foreground" />
         </div>
       )}
-      <header>
-        <h1 className="text-[22px] font-semibold">Trackly</h1>
+      <header className="flex items-center gap-2">
+        <div className="bg-white rounded-lg px-2 py-1 flex items-center justify-center">
+          <img src="/trackly-logo.png" alt="Trackly" className="h-7 w-auto object-contain" />
+        </div>
         <p className="text-sm text-muted-foreground">Find your next session</p>
       </header>
 

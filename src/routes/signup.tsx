@@ -55,6 +55,9 @@ function SignupPage() {
       <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground mb-6">
         <ArrowLeft size={20} /> Back
       </Link>
+      <div className="bg-white rounded-2xl p-4 mx-auto mb-6" style={{ width: "180px" }}>
+        <img src="/trackly-logo.png" alt="Trackly" className="w-full h-auto object-contain" />
+      </div>
       <h1 className="text-2xl font-semibold mb-1">Create your account</h1>
       <p className="text-muted-foreground text-sm mb-6">Join the Baltic motorsport community</p>
 
