@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Eye, EyeOff, Flag } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -39,16 +39,8 @@ function LoginPage() {
         <ArrowLeft size={20} /> Back
       </Link>
 
-      <div className="flex flex-col items-center mb-8 mt-2">
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
-          style={{ backgroundColor: "var(--accent)" }}
-        >
-          <Flag size={28} color="#fff" strokeWidth={2.5} />
-        </div>
-        <h2 className="text-3xl font-bold tracking-tight" style={{ color: "var(--accent)" }}>
-          Trackly
-        </h2>
+      <div className="bg-white rounded-2xl p-4 mx-auto mb-6" style={{ width: "180px" }}>
+        <img src="/trackly-logo.png" alt="Trackly" className="w-full h-auto object-contain" />
       </div>
 
       <h1 className="text-2xl font-semibold mb-1">Welcome back</h1>
