@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { Flag } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Splash,
