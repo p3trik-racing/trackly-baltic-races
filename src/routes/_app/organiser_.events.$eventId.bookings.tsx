@@ -26,7 +26,9 @@ function EventBookingsPage() {
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle().then(({ data }) => setEvent(data));
-    supabase.from("bookings").select("*").eq("event_id", eventId).order("created_at", { ascending: false })
+    supabase.from("bookings")
+      .select("id,attendee_name,attendee_email,attendee_phone,ticket_count,organiser_payout,status,created_at")
+      .eq("event_id", eventId).order("created_at", { ascending: false })
       .then(({ data }) => setBookings((data as any) ?? []));
   }, [eventId]);
 
