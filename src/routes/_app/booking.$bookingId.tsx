@@ -18,7 +18,7 @@ function ConfirmationPage() {
   useEffect(() => {
     supabase
       .from("bookings")
-      .select("*, events(id,title,date,time,city,status,organiser_name)")
+      .select("id,event_id,user_id,attendee_name,attendee_email,attendee_phone,ticket_count,total_price,organiser_payout,platform_fee,status,waiver_accepted,created_at, events(id,title,date,time,city,status,organiser_name)")
       .eq("id", bookingId)
       .maybeSingle()
       .then(({ data }) => setBooking(data));
