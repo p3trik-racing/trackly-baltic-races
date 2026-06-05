@@ -245,39 +245,7 @@ export type Database = {
       }
     }
     Views: {
-      organiser_bookings: {
-        Row: {
-          attendee_email: string | null
-          attendee_name: string | null
-          attendee_phone: string | null
-          created_at: string | null
-          event_id: string | null
-          id: string | null
-          organiser_payout: number | null
-          platform_fee: number | null
-          status: Database["public"]["Enums"]["booking_status"] | null
-          ticket_count: number | null
-          total_price: number | null
-          user_id: string | null
-          waiver_accepted: boolean | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bookings_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       is_username_available: { Args: { _username: string }; Returns: boolean }
