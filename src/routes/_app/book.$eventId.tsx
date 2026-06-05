@@ -163,37 +163,19 @@ function BookPage() {
   async function onPaymentSuccess(paymentIntentId: string) {
     setPaymentStep("processing");
     try {
-      const { data, error } = await supabase
-        .from("bookings")
-        .insert({
+      const { data, error } = await supabase.functions.invoke("create-booking", {
+        body: {
           event_id: event.id,
-          user_id: user!.id,
           attendee_name: form.name,
           attendee_email: form.email,
           attendee_phone: form.phone,
           ticket_count: tickets,
-          total_price: total,
-          platform_fee: fee,
-          organiser_payout: subtotal,
           waiver_accepted: true,
-          status: "confirmed",
           stripe_payment_intent_id: paymentIntentId,
-        })
-        .select()
-        .single();
-      if (error || !data) throw new Error(error?.message || "Could not create booking");
-
-      await supabase.from("notifications").insert({
-        user_id: user!.id,
-        type: "booking_confirmed",
-        message: `Your booking for ${event.title} is confirmed.`,
+        },
       });
-      if (event.organiser_id) {
-        await supabase.from("notifications").insert({
-          user_id: event.organiser_id,
-          type: "organiser_new_booking",
-          message: `New booking for ${event.title} by ${form.name}.`,
-        });
+      if (error || data?.error || !data?.id) {
+        throw new Error(data?.error || error?.message || "Could not create booking");
       }
 
       // Fire-and-forget booking confirmation email
@@ -218,6 +200,7 @@ function BookPage() {
       setPaymentStep("payment");
     }
   }
+
 
   if (paymentStep === "processing") {
     return (
