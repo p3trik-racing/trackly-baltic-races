@@ -38,8 +38,6 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "Majorka Racing" },
       { name: "twitter:description", content: "Track days and motorsport events in the Baltics" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7f54bd10-939c-46f0-b2fa-5e87cec2b672/id-preview-9a339e78--98f8eda6-22e5-4f7d-bcb4-455353a6dce9.lovable.app-1778144872370.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7f54bd10-939c-46f0-b2fa-5e87cec2b672/id-preview-9a339e78--98f8eda6-22e5-4f7d-bcb4-455353a6dce9.lovable.app-1778144872370.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [

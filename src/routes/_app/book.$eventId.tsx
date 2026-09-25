@@ -220,6 +220,7 @@ function BookPage() {
   }
 
   if (paymentStep === "payment" && clientSecret && stripePromise) {
+    const palette = getComputedStyle(document.documentElement);
     return (
       <main className="pb-32">
         <header className="container-app py-5">
@@ -248,10 +249,10 @@ function BookPage() {
               appearance: {
                 theme: "night",
                 variables: {
-                  colorPrimary: "var(--accent)",
-                  colorBackground: "var(--input)",
-                  colorText: "var(--foreground)",
-                  colorTextPlaceholder: "var(--muted-foreground)",
+                  colorPrimary: palette.getPropertyValue("--accent").trim(),
+                  colorBackground: palette.getPropertyValue("--input").trim(),
+                  colorText: palette.getPropertyValue("--foreground").trim(),
+                  colorTextPlaceholder: palette.getPropertyValue("--muted-foreground").trim(),
                   borderRadius: "12px",
                 },
               },

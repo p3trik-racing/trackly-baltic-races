@@ -1,0 +1,1 @@
+Use `src/components/Logo.tsx` for inline, theme-colored brand marks; keep the matching SVG assets under `public/` for direct use, because external SVG images cannot inherit the app's text color.
