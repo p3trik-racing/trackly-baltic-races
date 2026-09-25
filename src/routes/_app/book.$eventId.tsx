@@ -13,6 +13,14 @@ import {
 } from "@stripe/react-stripe-js";
 
 export const Route = createFileRoute("/_app/book/$eventId")({
+  head: () => ({ meta: [
+    { title: "Book an event — Majorka Racing" },
+    { name: "description", content: "Reserve tickets for a motorsport event with Majorka Racing." },
+    { property: "og:title", content: "Book an event — Majorka Racing" },
+    { property: "og:description", content: "Reserve tickets for a motorsport event with Majorka Racing." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: BookPage,
 });
 
@@ -212,6 +220,7 @@ function BookPage() {
   }
 
   if (paymentStep === "payment" && clientSecret && stripePromise) {
+    const palette = getComputedStyle(document.documentElement);
     return (
       <main className="pb-32">
         <header className="container-app py-5">
@@ -240,10 +249,10 @@ function BookPage() {
               appearance: {
                 theme: "night",
                 variables: {
-                  colorPrimary: "#E74C3C",
-                  colorBackground: "#3A3A3A",
-                  colorText: "#F5F5F5",
-                  colorTextPlaceholder: "#6B6B6B",
+                  colorPrimary: palette.getPropertyValue("--accent").trim(),
+                  colorBackground: palette.getPropertyValue("--input").trim(),
+                  colorText: palette.getPropertyValue("--foreground").trim(),
+                  colorTextPlaceholder: palette.getPropertyValue("--muted-foreground").trim(),
                   borderRadius: "12px",
                 },
               },
@@ -370,7 +379,7 @@ function BookPage() {
               <span>Tickets ({tickets} × €{event.price})</span><span>€{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
-              <span>Trackly platform fee (5%)</span><span>€{fee.toFixed(2)}</span>
+              <span>Majorka Racing platform fee (5%)</span><span>€{fee.toFixed(2)}</span>
             </div>
             <div className="border-t border-border pt-2 flex justify-between font-semibold">
               <span>Total</span><span>€{total.toFixed(2)}</span>
@@ -387,7 +396,7 @@ function BookPage() {
           <input type="checkbox" checked={waiver} onChange={(e) => setWaiver(e.target.checked)}
             className="mt-1 accent-[var(--accent)] flex-shrink-0" />
           <span>
-            I accept full responsibility for my safety at this event. The event organiser is solely liable for safety on site. Trackly is a booking platform only and holds no liability.
+             I accept full responsibility for my safety at this event. The event organiser is solely liable for safety on site. Majorka Racing is a booking platform only and holds no liability.
           </span>
         </label>
 

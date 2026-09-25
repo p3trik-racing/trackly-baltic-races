@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/lib/theme-context";
 import { Toaster } from "@/components/ui/sonner";
 
-const themeInitScript = `(function(){try{var s=localStorage.getItem('trackly-theme');var t=s==='light'||s==='dark'?s:(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();`;
+const themeInitScript = `(function(){try{var s=localStorage.getItem('majorka-theme');var t=s==='light'||s==='dark'?s:(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();`;
 
 import appCss from "../styles.css?url";
 
@@ -27,23 +27,22 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#0D0D0D" },
-      { title: "Trackly" },
+      { name: "theme-color", content: "#0A0A0A" },
+      { title: "Majorka Racing" },
       {
         name: "description",
-        content: "Discover and book legal, organised motorsport events across Latvia and the Baltic States.",
+        content: "Track days, car meets and motorsport events in Riga and the Baltics — book your spot with Majorka Racing.",
       },
-      { property: "og:title", content: "Trackly" },
-      { property: "og:description", content: "Find motorsport events in the Baltics" },
+      { property: "og:title", content: "Majorka Racing" },
+      { property: "og:description", content: "Track days and motorsport events in the Baltics" },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "Trackly" },
-      { name: "description", content: "Find motorsport events in the Baltics" },
-      { name: "twitter:description", content: "Find motorsport events in the Baltics" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7f54bd10-939c-46f0-b2fa-5e87cec2b672/id-preview-9a339e78--98f8eda6-22e5-4f7d-bcb4-455353a6dce9.lovable.app-1778144872370.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7f54bd10-939c-46f0-b2fa-5e87cec2b672/id-preview-9a339e78--98f8eda6-22e5-4f7d-bcb4-455353a6dce9.lovable.app-1778144872370.png" },
+      { name: "twitter:title", content: "Majorka Racing" },
+      { name: "twitter:description", content: "Track days and motorsport events in the Baltics" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "apple-touch-icon", href: "/favicon.svg" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" },

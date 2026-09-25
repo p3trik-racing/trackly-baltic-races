@@ -3,8 +3,17 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Eye, EyeOff, Check, X } from "lucide-react";
+import { LogoFull } from "@/components/Logo";
 
 export const Route = createFileRoute("/signup")({
+  head: () => ({ meta: [
+    { title: "Sign up — Majorka Racing" },
+    { name: "description", content: "Join Majorka Racing and book track days and motorsport events in the Baltics." },
+    { property: "og:title", content: "Sign up — Majorka Racing" },
+    { property: "og:description", content: "Join Majorka Racing and book track days and motorsport events in the Baltics." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: SignupPage,
 });
 
@@ -46,7 +55,7 @@ function SignupPage() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Welcome to Trackly!");
+    toast.success("Welcome to Majorka Racing!");
     navigate({ to: "/home" });
   }
 
@@ -55,9 +64,7 @@ function SignupPage() {
       <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground mb-6">
         <ArrowLeft size={20} /> Back
       </Link>
-      <div className="bg-white rounded-2xl p-4 mx-auto mb-6" style={{ width: "180px" }}>
-        <img src="/trackly-logo.png" alt="Trackly" className="w-full h-auto object-contain" />
-      </div>
+      <LogoFull className="w-[180px] h-auto mx-auto mb-6 text-foreground" />
       <h1 className="text-2xl font-semibold mb-1">Create your account</h1>
       <p className="text-muted-foreground text-sm mb-6">Join the Baltic motorsport community</p>
 

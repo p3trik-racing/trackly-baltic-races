@@ -15,7 +15,7 @@ function applyTheme(t: Theme) {
 
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "dark";
-  const saved = window.localStorage.getItem("trackly-theme");
+  const saved = window.localStorage.getItem("majorka-theme");
   if (saved === "light" || saved === "dark") return saved;
   if (window.matchMedia?.("(prefers-color-scheme: light)").matches) return "light";
   return "dark";
@@ -33,7 +33,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   function toggleTheme() {
     setTheme((prev) => {
       const next: Theme = prev === "dark" ? "light" : "dark";
-      try { window.localStorage.setItem("trackly-theme", next); } catch {}
+      try { window.localStorage.setItem("majorka-theme", next); } catch {}
       applyTheme(next);
       return next;
     });

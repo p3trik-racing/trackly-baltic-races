@@ -5,6 +5,14 @@ import { Check } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/booking/$bookingId")({
+  head: () => ({ meta: [
+    { title: "Booking details — Majorka Racing" },
+    { name: "description", content: "View your motorsport event booking details and confirmation." },
+    { property: "og:title", content: "Booking details — Majorka Racing" },
+    { property: "og:description", content: "View your motorsport event booking details and confirmation." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: ConfirmationPage,
 });
 
@@ -129,7 +137,7 @@ function ConfirmationPage() {
               <button
                 onClick={onCancel}
                 disabled={cancelling}
-                className="flex-1 h-11 rounded-xl text-sm font-medium text-white"
+                className="flex-1 h-11 rounded-xl text-sm font-medium text-accent-foreground"
                 style={{ backgroundColor: "var(--accent)" }}
               >
                 {cancelling ? "Cancelling…" : "Yes, Cancel"}

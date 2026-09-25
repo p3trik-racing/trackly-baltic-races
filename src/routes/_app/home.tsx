@@ -5,8 +5,17 @@ import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
 import { Loader2, Search } from "lucide-react";
+import { LogoMark } from "@/components/Logo";
 
 export const Route = createFileRoute("/_app/home")({
+  head: () => ({ meta: [
+    { title: "Home — Majorka Racing" },
+    { name: "description", content: "Discover track days, car meets and motorsport events in the Baltics." },
+    { property: "og:title", content: "Home — Majorka Racing" },
+    { property: "og:description", content: "Discover track days, car meets and motorsport events in the Baltics." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: HomePage,
 });
 
@@ -85,9 +94,7 @@ function HomePage() {
         </div>
       )}
       <header className="flex items-center gap-2">
-        <div className="bg-white rounded-lg px-2 py-1 flex items-center justify-center">
-          <img src="/trackly-logo.png" alt="Trackly" className="h-7 w-auto object-contain" />
-        </div>
+        <LogoMark className="h-7 w-auto text-foreground" />
         <p className="text-sm text-muted-foreground">Find your next session</p>
       </header>
 
@@ -121,7 +128,7 @@ function HomePage() {
                     : isFav
                       ? "color-mix(in oklab, var(--accent) 14%, var(--card))"
                       : "var(--card)",
-                  color: active ? "#fff" : "var(--foreground)",
+                   color: active ? "var(--accent-foreground)" : "var(--foreground)",
                   borderColor: active || isFav ? "var(--accent)" : "var(--border)",
                 }}
               >
@@ -176,7 +183,7 @@ function HomePage() {
       {!user && (
         <div className="fixed bottom-20 left-0 right-0 px-4">
           <div className="container-app bg-card border border-border rounded-xl py-2.5 px-4 text-xs flex items-center justify-between shadow-lg">
-            <span className="text-muted-foreground">Join Trackly to book events</span>
+            <span className="text-muted-foreground">Join Majorka Racing to book events</span>
             <Link to="/signup" className="font-semibold" style={{ color: "var(--accent)" }}>Sign Up</Link>
           </div>
         </div>
