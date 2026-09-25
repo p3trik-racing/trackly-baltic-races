@@ -48,7 +48,7 @@ function EventDetail() {
     const url = window.location.href;
     if (navigator.share) {
       try {
-        await navigator.share({ title: event.title, text: `Check out ${event.title} on Trackly`, url });
+        await navigator.share({ title: event.title, text: `Check out ${event.title} on Majorka Racing`, url });
       } catch {}
     } else {
       await navigator.clipboard.writeText(url);

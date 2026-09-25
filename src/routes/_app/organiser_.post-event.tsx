@@ -251,7 +251,7 @@ function PostEventPage() {
           <input type="checkbox" checked={waiver} onChange={(e) => setWaiver(e.target.checked)}
             className="mt-1 accent-[var(--accent)] flex-shrink-0" />
           <span>
-            I confirm that I am solely responsible for the safety, legality, and insurance of this event. Trackly holds no liability.
+             I confirm that I am solely responsible for the safety, legality, and insurance of this event. Majorka Racing holds no liability.
           </span>
         </label>
       </div>
@@ -263,7 +263,7 @@ function PostEventPage() {
           Save as Draft
         </button>
         <button onClick={() => submit("live")} disabled={submitting}
-          className="h-14 rounded-xl text-sm font-semibold text-white"
+          className="h-14 rounded-xl text-sm font-semibold text-accent-foreground"
           style={{ backgroundColor: "var(--accent)" }}>
           {submitting ? "Saving…" : editId ? "Save Changes" : "Publish Event"}
         </button>

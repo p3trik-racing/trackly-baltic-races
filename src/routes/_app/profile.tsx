@@ -205,7 +205,7 @@ function ProfilePage() {
                 setEditingUsername(false);
                 toast.success("Username updated");
               }}
-              className="px-4 h-12 rounded-xl text-sm font-medium text-white"
+              className="px-4 h-12 rounded-xl text-sm font-medium text-accent-foreground"
               style={{ backgroundColor: "var(--accent)" }}>Save</button>
             <button onClick={() => setEditingUsername(false)}
               className="px-3 h-12 rounded-xl text-sm border border-border">Cancel</button>
@@ -278,7 +278,7 @@ function ProfilePage() {
                   style={{
                     borderColor: active ? "var(--accent)" : "var(--border)",
                     backgroundColor: active ? "var(--accent)" : "transparent",
-                    color: active ? "#fff" : "var(--muted-foreground)",
+                     color: active ? "var(--accent-foreground)" : "var(--muted-foreground)",
                   }}
                 >
                   {t}

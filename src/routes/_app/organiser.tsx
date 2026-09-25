@@ -110,7 +110,7 @@ function OrganiserDashboard() {
       <div className="flex items-center justify-between">
         <h1 className="text-[22px] font-semibold">My Events</h1>
         <Link to="/organiser/post-event"
-          className="inline-flex items-center gap-1 px-3 h-10 rounded-xl text-sm font-medium text-white"
+          className="inline-flex items-center gap-1 px-3 h-10 rounded-xl text-sm font-medium text-accent-foreground"
           style={{ backgroundColor: "var(--accent)" }}>
           <Plus size={16} /> Post New Event
         </Link>
@@ -122,7 +122,7 @@ function OrganiserDashboard() {
             className="flex-1 h-9 rounded-lg text-sm font-medium"
             style={{
               backgroundColor: tab === t ? "var(--accent)" : "transparent",
-              color: tab === t ? "#fff" : "var(--muted-foreground)",
+               color: tab === t ? "var(--accent-foreground)" : "var(--muted-foreground)",
             }}>
             {t === "active" ? "Active" : "Past & Cancelled"}
           </button>
@@ -203,7 +203,7 @@ function OrganiserDashboard() {
                       <button
                         onClick={() => cancelEvent(e.id)}
                         disabled={cancellingId === e.id}
-                        className="flex-1 h-10 rounded-xl text-xs font-medium text-white"
+                        className="flex-1 h-10 rounded-xl text-xs font-medium text-accent-foreground"
                         style={{ backgroundColor: "var(--accent)" }}
                       >
                         {cancellingId === e.id ? "Cancelling…" : "Yes, Cancel"}

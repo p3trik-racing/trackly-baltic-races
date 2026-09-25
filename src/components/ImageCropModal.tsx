@@ -72,7 +72,7 @@ export function ImageCropModal({ imageSrc, aspectRatio, onConfirm, onCancel }: P
         <button
           onClick={handleConfirm}
           disabled={busy || !areaPx}
-          className="flex-1 h-12 rounded-xl text-sm font-semibold text-white disabled:opacity-60"
+          className="flex-1 h-12 rounded-xl text-sm font-semibold text-accent-foreground disabled:opacity-60"
           style={{ backgroundColor: "var(--accent)" }}
         >
           {busy ? "Cropping…" : "Crop & Upload"}

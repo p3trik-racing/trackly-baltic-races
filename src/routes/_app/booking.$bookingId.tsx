@@ -129,7 +129,7 @@ function ConfirmationPage() {
               <button
                 onClick={onCancel}
                 disabled={cancelling}
-                className="flex-1 h-11 rounded-xl text-sm font-medium text-white"
+                className="flex-1 h-11 rounded-xl text-sm font-medium text-accent-foreground"
                 style={{ backgroundColor: "var(--accent)" }}
               >
                 {cancelling ? "Cancelling…" : "Yes, Cancel"}

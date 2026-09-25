@@ -81,7 +81,7 @@ function BookingsPage() {
             className="flex-1 h-9 rounded-lg text-sm font-medium capitalize"
             style={{
               backgroundColor: tab === t ? "var(--accent)" : "transparent",
-              color: tab === t ? "#fff" : "var(--muted-foreground)",
+               color: tab === t ? "var(--accent-foreground)" : "var(--muted-foreground)",
             }}
           >
             {t}
@@ -158,7 +158,7 @@ function BookingsPage() {
                       </button>
                       <button
                         onClick={() => cancelBooking(b)}
-                        className="flex-1 h-10 rounded-xl text-xs font-medium text-white"
+                        className="flex-1 h-10 rounded-xl text-xs font-medium text-accent-foreground"
                         style={{ backgroundColor: "var(--accent)" }}
                       >
                         Yes, Cancel
