@@ -9,6 +9,14 @@ import { ImageCropModal } from "@/components/ImageCropModal";
 import { useTheme } from "@/lib/theme-context";
 
 export const Route = createFileRoute("/_app/profile")({
+  head: () => ({ meta: [
+    { title: "Profile — Majorka Racing" },
+    { name: "description", content: "Manage your Majorka Racing account and preferences." },
+    { property: "og:title", content: "Profile — Majorka Racing" },
+    { property: "og:description", content: "Manage your Majorka Racing account and preferences." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: ProfilePage,
 });
 

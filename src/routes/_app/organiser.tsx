@@ -8,6 +8,14 @@ import { toast } from "sonner";
 import { cancelEventWithNotifications } from "@/server/cancel-event.functions";
 
 export const Route = createFileRoute("/_app/organiser")({
+  head: () => ({ meta: [
+    { title: "My events — Majorka Racing" },
+    { name: "description", content: "Manage your motorsport events and bookings." },
+    { property: "og:title", content: "My events — Majorka Racing" },
+    { property: "og:description", content: "Manage your motorsport events and bookings." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: OrganiserDashboard,
 });
 

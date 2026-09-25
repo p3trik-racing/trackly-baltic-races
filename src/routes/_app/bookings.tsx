@@ -7,6 +7,14 @@ import { Calendar, MapPin } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/bookings")({
+  head: () => ({ meta: [
+    { title: "My bookings — Majorka Racing" },
+    { name: "description", content: "Review your upcoming and past motorsport event bookings." },
+    { property: "og:title", content: "My bookings — Majorka Racing" },
+    { property: "og:description", content: "Review your upcoming and past motorsport event bookings." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: BookingsPage,
 });
 

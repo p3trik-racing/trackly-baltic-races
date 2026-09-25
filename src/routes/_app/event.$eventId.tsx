@@ -8,6 +8,14 @@ import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/event/$eventId")({
+  head: () => ({ meta: [
+    { title: "Event details — Majorka Racing" },
+    { name: "description", content: "See dates, locations, tickets and details for a Baltic motorsport event." },
+    { property: "og:title", content: "Event details — Majorka Racing" },
+    { property: "og:description", content: "See dates, locations, tickets and details for a Baltic motorsport event." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: EventDetail,
 });
 

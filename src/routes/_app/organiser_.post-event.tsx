@@ -12,6 +12,14 @@ import { ImageCropModal } from "@/components/ImageCropModal";
 const searchSchema = z.object({ edit: z.string().optional() });
 
 export const Route = createFileRoute("/_app/organiser_/post-event")({
+  head: () => ({ meta: [
+    { title: "Post an event — Majorka Racing" },
+    { name: "description", content: "Create or edit a motorsport event listing." },
+    { property: "og:title", content: "Post an event — Majorka Racing" },
+    { property: "og:description", content: "Create or edit a motorsport event listing." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: PostEventPage,
   validateSearch: (search) => searchSchema.parse(search),
 });

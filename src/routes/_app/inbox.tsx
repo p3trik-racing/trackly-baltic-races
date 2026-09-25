@@ -5,6 +5,14 @@ import { useAuth } from "@/lib/auth-context";
 import { Bell } from "lucide-react";
 
 export const Route = createFileRoute("/_app/inbox")({
+  head: () => ({ meta: [
+    { title: "Inbox — Majorka Racing" },
+    { name: "description", content: "View your booking and event notifications." },
+    { property: "og:title", content: "Inbox — Majorka Racing" },
+    { property: "og:description", content: "View your booking and event notifications." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: InboxPage,
 });
 

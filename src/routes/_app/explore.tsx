@@ -8,6 +8,14 @@ import { countryLabel } from "@/lib/countries";
 import { Loader2, Search, SlidersHorizontal } from "lucide-react";
 
 export const Route = createFileRoute("/_app/explore")({
+  head: () => ({ meta: [
+    { title: "Explore events — Majorka Racing" },
+    { name: "description", content: "Search and filter motorsport events and track days across the Baltics." },
+    { property: "og:title", content: "Explore events — Majorka Racing" },
+    { property: "og:description", content: "Search and filter motorsport events and track days across the Baltics." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: ExplorePage,
 });
 

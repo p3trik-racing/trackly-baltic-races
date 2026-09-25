@@ -4,6 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Download } from "lucide-react";
 
 export const Route = createFileRoute("/_app/organiser_/events/$eventId/bookings")({
+  head: () => ({ meta: [
+    { title: "Event bookings — Majorka Racing" },
+    { name: "description", content: "Review attendees and bookings for your motorsport event." },
+    { property: "og:title", content: "Event bookings — Majorka Racing" },
+    { property: "og:description", content: "Review attendees and bookings for your motorsport event." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: EventBookingsPage,
 });
 

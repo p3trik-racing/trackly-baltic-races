@@ -13,6 +13,14 @@ import {
 } from "@stripe/react-stripe-js";
 
 export const Route = createFileRoute("/_app/book/$eventId")({
+  head: () => ({ meta: [
+    { title: "Book an event — Majorka Racing" },
+    { name: "description", content: "Reserve tickets for a motorsport event with Majorka Racing." },
+    { property: "og:title", content: "Book an event — Majorka Racing" },
+    { property: "og:description", content: "Reserve tickets for a motorsport event with Majorka Racing." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: BookPage,
 });
 

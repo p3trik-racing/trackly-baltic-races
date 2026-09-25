@@ -6,6 +6,14 @@ import { ArrowLeft, Eye, EyeOff, Check, X } from "lucide-react";
 import { LogoFull } from "@/components/Logo";
 
 export const Route = createFileRoute("/signup")({
+  head: () => ({ meta: [
+    { title: "Sign up — Majorka Racing" },
+    { name: "description", content: "Join Majorka Racing and book track days and motorsport events in the Baltics." },
+    { property: "og:title", content: "Sign up — Majorka Racing" },
+    { property: "og:description", content: "Join Majorka Racing and book track days and motorsport events in the Baltics." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: SignupPage,
 });
 
