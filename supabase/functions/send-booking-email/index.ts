@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
           </p>
 
           <p style="font-size:16px;color:#F5F2EC;margin:0;">See you at the track.</p>
-          <p style="font-size:12px;color:#9A958C;margin:16px 0 0;">Questions? hello@majorkaracing.com</p>
+          <p style="font-size:12px;color:#9A958C;margin:16px 0 0;">Questions? hello@majorkariga.com</p>
         </td></tr>
       </table>
     </td></tr>
@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Majorka Racing <noreply@majorkaracing.com>",
+        from: "Majorka Racing <noreply@majorkariga.com>",
         to: [attendee_email],
         subject: `Booking Confirmed — ${event_title}`,
         html,

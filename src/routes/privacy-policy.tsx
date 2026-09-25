@@ -38,7 +38,7 @@ function PrivacyPolicyPage() {
           Event organisers receive your name, email, and phone number when you book their event. Stripe processes your payment data under their own privacy policy. We do not sell your data to any third parties.
         </Section>
         <Section title="5. Your Rights (GDPR)">
-          You have the right to access, correct, or delete your personal data at any time. To delete your account and all associated data, go to Profile → Delete account. For any data requests, contact: hello@majorkaracing.com.
+          You have the right to access, correct, or delete your personal data at any time. To delete your account and all associated data, go to Profile → Delete account. For any data requests, contact: hello@majorkariga.com.
         </Section>
         <Section title="6. Data Retention">
           Booking records are retained for 7 years for legal and tax compliance. Account data is deleted within 30 days of account deletion.
@@ -47,7 +47,7 @@ function PrivacyPolicyPage() {
           We use only essential cookies required for login session management. No tracking or advertising cookies are used.
         </Section>
         <Section title="8. Contact">
-          For privacy questions: hello@majorkaracing.com
+          For privacy questions: hello@majorkariga.com
         </Section>
       </div>
     </main>
