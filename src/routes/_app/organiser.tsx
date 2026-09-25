@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { eventCover } from "@/lib/event-cover";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import { cancelEventWithNotifications } from "@/server/cancel-event.functions";
+import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
 
 export const Route = createFileRoute("/_app/organiser")({
   head: () => ({ meta: [
