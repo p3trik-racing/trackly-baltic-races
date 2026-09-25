@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { LogoFull } from "@/components/Logo";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -39,9 +40,7 @@ function LoginPage() {
         <ArrowLeft size={20} /> Back
       </Link>
 
-      <div className="bg-white rounded-2xl p-4 mx-auto mb-6" style={{ width: "180px" }}>
-        <img src="/trackly-logo.png" alt="Trackly" className="w-full h-auto object-contain" />
-      </div>
+      <LogoFull className="w-[180px] h-auto mx-auto mb-6 text-foreground" />
 
       <h1 className="text-2xl font-semibold mb-1">Welcome back</h1>
       <p className="text-muted-foreground text-sm mb-6">Log in to continue</p>
@@ -64,7 +63,7 @@ function LoginPage() {
         Forgot your password?
       </button>
       <p className="text-center text-sm text-muted-foreground mt-6">
-        New to Trackly? <Link to="/signup" style={{ color: "var(--accent)" }}>Create an account</Link>
+        New to Majorka Racing? <Link to="/signup" style={{ color: "var(--accent)" }}>Create an account</Link>
       </p>
     </main>
   );

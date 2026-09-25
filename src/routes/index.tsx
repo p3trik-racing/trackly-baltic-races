@@ -1,8 +1,17 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { LogoFull } from "@/components/Logo";
 
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [
+    { title: "Majorka Racing — Motorsport events in the Baltics" },
+    { name: "description", content: "Track days, car meets and motorsport events in Riga and the Baltics — book your spot with Majorka Racing." },
+    { property: "og:title", content: "Majorka Racing — Motorsport events in the Baltics" },
+    { property: "og:description", content: "Track days and motorsport events in the Baltics" },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: Splash,
 });
 
@@ -22,11 +31,9 @@ function Splash() {
   return (
     <main className="min-h-screen flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center container-app text-center">
-        <div className="bg-white rounded-2xl p-5 flex items-center justify-center mx-auto mb-8" style={{ width: "240px" }}>
-          <img src="/trackly-logo.png" alt="Trackly" className="w-full h-auto object-contain" />
-        </div>
+        <LogoFull className="w-[220px] h-auto mx-auto mb-8 text-foreground" />
         <p className="mt-3 text-muted-foreground text-base max-w-xs">
-          Find and book legal motorsport events in the Baltics
+          Track days, car meets &amp; motorsport events in the Baltics
         </p>
       </div>
       <div className="container-app pb-10 space-y-3">
@@ -45,7 +52,7 @@ function Splash() {
           Browse events without signing up →
         </Link>
         <p className="text-center text-muted-foreground pt-2" style={{ fontSize: "11px" }}>
-          By using Trackly you agree to our{" "}
+          By using Majorka Racing you agree to our{" "}
           <Link to="/terms" style={{ color: "var(--accent)" }}>Terms of Service</Link>
           {" "}and{" "}
           <Link to="/privacy-policy" style={{ color: "var(--accent)" }}>Privacy Policy</Link>
