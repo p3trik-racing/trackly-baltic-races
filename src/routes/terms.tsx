@@ -47,7 +47,7 @@ function TermsPage() {
           These terms are governed by the laws of the Republic of Latvia.
         </Section>
         <Section title="8. Contact">
-          For any questions: hello@majorkaracing.com
+          For any questions: hello@majorkariga.com
         </Section>
       </div>
     </main>
