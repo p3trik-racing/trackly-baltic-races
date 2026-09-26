@@ -36,6 +36,7 @@ export const Route = createRootRoute({
       { property: "og:title", content: "Majorka Racing" },
       { property: "og:description", content: "Track days and motorsport events in the Baltics" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Majorka Racing" },
       { name: "twitter:title", content: "Majorka Racing" },
       { name: "twitter:description", content: "Track days and motorsport events in the Baltics" },
       { name: "twitter:card", content: "summary_large_image" },

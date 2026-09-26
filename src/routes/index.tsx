@@ -10,7 +10,13 @@ export const Route = createFileRoute("/")({
     { property: "og:title", content: "Majorka Racing — Motorsport events in the Baltics" },
     { property: "og:description", content: "Track days and motorsport events in the Baltics" },
     { property: "og:type", content: "website" },
+    { property: "og:url", content: "https://majorkaracing.com" },
+    { property: "og:image", content: "https://majorkaracing.com/og.png" },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
+    { property: "og:image:alt", content: "Majorka Racing" },
     { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:image", content: "https://majorkaracing.com/og.png" },
   ] }),
   component: Splash,
 });
