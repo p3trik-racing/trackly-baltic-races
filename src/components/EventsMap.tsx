@@ -34,6 +34,7 @@ function FitBounds({ clusters }: { clusters: Cluster[] }) {
   useEffect(() => {
     if (!clusters.length) return;
     const b = L.latLngBounds(clusters.map((c) => [c.lat, c.lng] as [number, number]));
+    map.invalidateSize();
     map.fitBounds(b, { padding: [48, 48], maxZoom: 11 });
   }, [clusters, map]);
   return null;
