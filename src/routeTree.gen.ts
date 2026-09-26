@@ -18,9 +18,11 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppOrganiserRouteImport } from './routes/_app/organiser'
+import { Route as AppMapRouteImport } from './routes/_app/map'
 import { Route as AppInboxRouteImport } from './routes/_app/inbox'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
+import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
 import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
 import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
@@ -72,6 +74,11 @@ const AppOrganiserRoute = AppOrganiserRouteImport.update({
   path: '/organiser',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMapRoute = AppMapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInboxRoute = AppInboxRouteImport.update({
   id: '/inbox',
   path: '/inbox',
@@ -85,6 +92,11 @@ const AppHomeRoute = AppHomeRouteImport.update({
 const AppExploreRoute = AppExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCalendarRoute = AppCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => AppRoute,
 } as any)
 const AppBookingsRoute = AppBookingsRouteImport.update({
@@ -127,9 +139,11 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/bookings': typeof AppBookingsRoute
+  '/calendar': typeof AppCalendarRoute
   '/explore': typeof AppExploreRoute
   '/home': typeof AppHomeRoute
   '/inbox': typeof AppInboxRoute
+  '/map': typeof AppMapRoute
   '/organiser': typeof AppOrganiserRoute
   '/profile': typeof AppProfileRoute
   '/book/$eventId': typeof AppBookEventIdRoute
@@ -146,9 +160,11 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/bookings': typeof AppBookingsRoute
+  '/calendar': typeof AppCalendarRoute
   '/explore': typeof AppExploreRoute
   '/home': typeof AppHomeRoute
   '/inbox': typeof AppInboxRoute
+  '/map': typeof AppMapRoute
   '/organiser': typeof AppOrganiserRoute
   '/profile': typeof AppProfileRoute
   '/book/$eventId': typeof AppBookEventIdRoute
@@ -167,9 +183,11 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/_app/bookings': typeof AppBookingsRoute
+  '/_app/calendar': typeof AppCalendarRoute
   '/_app/explore': typeof AppExploreRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/inbox': typeof AppInboxRoute
+  '/_app/map': typeof AppMapRoute
   '/_app/organiser': typeof AppOrganiserRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/book/$eventId': typeof AppBookEventIdRoute
@@ -188,9 +206,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/bookings'
+    | '/calendar'
     | '/explore'
     | '/home'
     | '/inbox'
+    | '/map'
     | '/organiser'
     | '/profile'
     | '/book/$eventId'
@@ -207,9 +227,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/bookings'
+    | '/calendar'
     | '/explore'
     | '/home'
     | '/inbox'
+    | '/map'
     | '/organiser'
     | '/profile'
     | '/book/$eventId'
@@ -227,9 +249,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/_app/bookings'
+    | '/_app/calendar'
     | '/_app/explore'
     | '/_app/home'
     | '/_app/inbox'
+    | '/_app/map'
     | '/_app/organiser'
     | '/_app/profile'
     | '/_app/book/$eventId'
@@ -314,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOrganiserRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/map': {
+      id: '/_app/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof AppMapRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/inbox': {
       id: '/_app/inbox'
       path: '/inbox'
@@ -333,6 +364,13 @@ declare module '@tanstack/react-router' {
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof AppExploreRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/calendar': {
+      id: '/_app/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof AppCalendarRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/bookings': {
@@ -382,9 +420,11 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppBookingsRoute: typeof AppBookingsRoute
+  AppCalendarRoute: typeof AppCalendarRoute
   AppExploreRoute: typeof AppExploreRoute
   AppHomeRoute: typeof AppHomeRoute
   AppInboxRoute: typeof AppInboxRoute
+  AppMapRoute: typeof AppMapRoute
   AppOrganiserRoute: typeof AppOrganiserRoute
   AppProfileRoute: typeof AppProfileRoute
   AppBookEventIdRoute: typeof AppBookEventIdRoute
@@ -396,9 +436,11 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppBookingsRoute: AppBookingsRoute,
+  AppCalendarRoute: AppCalendarRoute,
   AppExploreRoute: AppExploreRoute,
   AppHomeRoute: AppHomeRoute,
   AppInboxRoute: AppInboxRoute,
+  AppMapRoute: AppMapRoute,
   AppOrganiserRoute: AppOrganiserRoute,
   AppProfileRoute: AppProfileRoute,
   AppBookEventIdRoute: AppBookEventIdRoute,

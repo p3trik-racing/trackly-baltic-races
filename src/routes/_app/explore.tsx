@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
 import { countryLabel } from "@/lib/countries";
+import { ViewToggle } from "@/components/ViewToggle";
 import { Loader2, Search, SlidersHorizontal } from "lucide-react";
 
 export const Route = createFileRoute("/_app/explore")({
@@ -128,6 +129,7 @@ function ExplorePage() {
         </div>
       )}
       <h1 className="text-[22px] font-semibold">Explore</h1>
+      <ViewToggle />
 
       <div className="relative">
         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
