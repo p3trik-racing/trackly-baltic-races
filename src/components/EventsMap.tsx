@@ -1,5 +1,6 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import * as maplibregl from "maplibre-gl";
+import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLang, catLabel } from "@/i18n";
 import type { UpcomingEvent } from "@/lib/upcoming-events";
@@ -38,6 +39,7 @@ export default function EventsMap({ events, selected, onSelect }: {
 
   useEffect(() => {
     if (!containerRef.current) return;
+    maplibregl.setWorkerUrl(workerUrl);
     const instance = new maplibregl.Map({
       container: containerRef.current,
       style: currentStyleRef.current,
