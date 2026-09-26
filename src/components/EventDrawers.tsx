@@ -1,4 +1,5 @@
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { Navigation, Map, MapPin, CalendarDays, Download, ChevronRight } from "lucide-react";
 import { buildGoogleCalendarUrl, downloadIcs, type CalEvent } from "@/lib/calendar";
 import type { ReactNode } from "react";
@@ -35,18 +36,19 @@ interface Props { open: boolean; onOpenChange: (o: boolean) => void }
 
 export function DirectionsDrawer({ event, open, onOpenChange }: Props & { event: DirEvent }) {
   const l = directionLinks(event);
+  const { t } = useLang();
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
         <div className="container-app pb-8">
           <DrawerHeader className="px-0 text-left">
-            <DrawerTitle>Open in</DrawerTitle>
+            <DrawerTitle>{t("event.openIn")}</DrawerTitle>
             {event.location_name && <DrawerDescription>{event.location_name}</DrawerDescription>}
           </DrawerHeader>
           <div className="space-y-2">
-            <Row icon={<Navigation size={18} />} label="Waze" href={l.waze} />
-            <Row icon={<Map size={18} />} label="Google Maps" href={l.google} />
-            <Row icon={<MapPin size={18} />} label="Apple Maps" href={l.apple} />
+            <Row icon={<Navigation size={18} />} label={t("event.waze")} href={l.waze} />
+            <Row icon={<Map size={18} />} label={t("event.googleMaps")} href={l.google} />
+            <Row icon={<MapPin size={18} />} label={t("event.appleMaps")} href={l.apple} />
           </div>
         </div>
       </DrawerContent>
@@ -55,17 +57,18 @@ export function DirectionsDrawer({ event, open, onOpenChange }: Props & { event:
 }
 
 export function CalendarDrawer({ event, open, onOpenChange }: Props & { event: CalEvent }) {
+  const { t } = useLang();
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
         <div className="container-app pb-8">
           <DrawerHeader className="px-0 text-left">
-            <DrawerTitle>Add to calendar</DrawerTitle>
+            <DrawerTitle>{t("event.addToCalendar")}</DrawerTitle>
             <DrawerDescription>{event.title}</DrawerDescription>
           </DrawerHeader>
           <div className="space-y-2">
-            <Row icon={<CalendarDays size={18} />} label="Google Calendar" href={buildGoogleCalendarUrl(event)} />
-            <Row icon={<Download size={18} />} label="Apple / Outlook (.ics)" onClick={() => { downloadIcs(event); onOpenChange(false); }} />
+            <Row icon={<CalendarDays size={18} />} label={t("event.googleCalendar")} href={buildGoogleCalendarUrl(event)} />
+            <Row icon={<Download size={18} />} label={t("event.ics")} onClick={() => { downloadIcs(event); onOpenChange(false); }} />
           </div>
         </div>
       </DrawerContent>

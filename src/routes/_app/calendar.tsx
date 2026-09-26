@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { format, parseISO } from "date-fns";
@@ -25,6 +26,7 @@ const dayKey = (d: Date) => format(d, "yyyy-MM-dd");
 function CalendarPage() {
   const [events, setEvents] = useState<UpcomingEvent[]>([]);
   const [category, setCategory] = useState("all");
+  const { t } = useLang();
   const [mode, setMode] = useState<"month" | "upcoming">("month");
   const [selected, setSelected] = useState<Date | undefined>();
   const [month, setMonth] = useState<Date>(new Date());
@@ -63,13 +65,13 @@ function CalendarPage() {
   return (
     <main className="container-app py-6 space-y-5">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="text-[22px] font-semibold">Calendar</h1>
+        <h1 className="text-[22px] font-semibold">{t("calendar.title")}</h1>
         <ViewToggle />
       </header>
 
       <div data-scroll-x className="-mx-5 px-5 overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: "none" }}>
         <div className="flex gap-2 w-max pr-5">
-          {[{ value: "all", label: "All" }, ...CATEGORIES].map((c) => {
+          {[{ value: "all", label: t("common.all") }, ...CATEGORIES.map((c) => ({ value: c.value, label: catLabel(t, c.value) }))].map((c) => {
             const active = category === c.value;
             return (
               <button key={c.value} onClick={() => setCategory(c.value)}
@@ -94,7 +96,7 @@ function CalendarPage() {
               backgroundColor: mode === m ? "var(--accent)" : "transparent",
               color: mode === m ? "var(--accent-foreground)" : "var(--muted-foreground)",
             }}>
-            {m === "month" ? "Month" : "Upcoming"}
+            {m === "month" ? t("calendar.month") : t("calendar.upcoming")}
           </button>
         ))}
       </div>
@@ -154,16 +156,16 @@ function CalendarPage() {
           </div>
           <section className="space-y-3">
             <h2 className="text-base font-semibold">
-              {selected ? format(selected, "EEEE, d MMMM") : "Select a day"}
+              {selected ? format(selected, "EEEE, d MMMM") : t("calendar.selectDay")}
             </h2>
             {dayEvents.length === 0
-              ? <p className="text-sm text-muted-foreground py-4">No events on this day.</p>
+              ? <p className="text-sm text-muted-foreground py-4">{t("calendar.noEventsDay")}</p>
               : <div className="space-y-3">{dayEvents.map((e) => <EventCard key={e.id} event={e} />)}</div>}
           </section>
         </>
       ) : (
         <div className="space-y-6">
-          {grouped.length === 0 && loaded && <p className="text-sm text-muted-foreground">No upcoming events.</p>}
+          {grouped.length === 0 && loaded && <p className="text-sm text-muted-foreground">{t("calendar.noUpcoming")}</p>}
           {grouped.map((g) => (
             <section key={g.label} className="space-y-3">
               <h2 className="text-base font-semibold">{g.label}</h2>

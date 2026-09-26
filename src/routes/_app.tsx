@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useAuth } from "@/lib/auth-context";
 import { useEffect, useState } from "react";
 import { BottomNav } from "@/components/BottomNav";
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/_app")({
 
 function AppLayout() {
   const { user, loading } = useAuth();
+  const { t } = useLang();
   const [isOrganiser, setIsOrganiser] = useState(false);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ function AppLayout() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-muted-foreground">
-        Loading…
+        {t("common.loading")}
       </div>
     );
   }

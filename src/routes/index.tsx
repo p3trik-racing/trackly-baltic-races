@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { LogoFull } from "@/components/Logo";
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/")({
 function Splash() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLang();
 
   useEffect(() => {
     if (loading) return;
@@ -39,34 +41,35 @@ function Splash() {
       <div className="flex-1 flex flex-col items-center justify-center container-app text-center">
         <LogoFull className="w-[220px] h-auto mx-auto mb-8 text-foreground" />
         <p className="mt-3 text-muted-foreground text-base max-w-xs">
-          Track days, car meets &amp; motorsport events in the Baltics
+          {t("splash.tagline")}
         </p>
       </div>
       <div className="container-app pb-10 space-y-3">
-        <Link to="/signup" className="cta-button">Sign Up</Link>
+        <Link to="/signup" className="cta-button">{t("common.signUp")}</Link>
         <Link
           to="/login"
           className="cta-button"
           style={{ background: "transparent", border: "1px solid var(--border)", color: "var(--foreground)" }}
         >
-          Log In
+          {t("common.logIn")}
         </Link>
         <Link
           to="/home"
           className="block text-center text-sm text-muted-foreground py-3"
         >
-          Browse events without signing up →
+          {t("splash.browse")}
         </Link>
+        <LangSwitcher />
         <p className="text-center text-xs text-muted-foreground">
-          <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Majorka Riga</a>
+          <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t("splash.majorkaRiga")}</a>
           {" · "}
-          <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Shop</a>
+          <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t("splash.shop")}</a>
         </p>
         <p className="text-center text-muted-foreground pt-2" style={{ fontSize: "11px" }}>
-          By using Majorka Racing you agree to our{" "}
-          <Link to="/terms" style={{ color: "var(--accent)" }}>Terms of Service</Link>
-          {" "}and{" "}
-          <Link to="/privacy-policy" style={{ color: "var(--accent)" }}>Privacy Policy</Link>
+          {t("splash.agreePrefix")}{" "}
+          <Link to="/terms" style={{ color: "var(--accent)" }}>{t("splash.terms")}</Link>
+          {" "}{t("splash.and")}{" "}
+          <Link to="/privacy-policy" style={{ color: "var(--accent)" }}>{t("splash.privacy")}</Link>
         </p>
       </div>
     </main>

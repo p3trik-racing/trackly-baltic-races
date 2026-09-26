@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -18,25 +19,26 @@ export const Route = createFileRoute("/reset-password")({
 function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [done, setDone] = useState(false);
+  const { t } = useLang();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const { error } = await supabase.auth.updateUser({ password });
     if (error) return toast.error(error.message);
     setDone(true);
-    toast.success("Password updated");
+    toast.success(t("auth.reset.done"));
   }
 
   return (
     <main className="min-h-screen container-app py-10">
-      <h1 className="text-2xl font-semibold mb-6">Set a new password</h1>
+      <h1 className="text-2xl font-semibold mb-6">{t("auth.reset.title")}</h1>
       {done ? (
-        <a href="/login" className="cta-button">Back to login</a>
+        <a href="/login" className="cta-button">{t("auth.reset.backToLogin")}</a>
       ) : (
         <form onSubmit={onSubmit} className="space-y-3">
-          <input className="input-field" type="password" placeholder="New password"
+          <input className="input-field" type="password" placeholder={t("auth.reset.newPassword")}
             value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <button className="cta-button">Update password</button>
+          <button className="cta-button">{t("auth.reset.submit")}</button>
         </form>
       )}
     </main>

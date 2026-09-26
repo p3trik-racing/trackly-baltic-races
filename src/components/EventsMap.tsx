@@ -1,9 +1,9 @@
 import "leaflet/dist/leaflet.css";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import L from "leaflet";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import { useEffect, useMemo } from "react";
 import type { UpcomingEvent } from "@/lib/upcoming-events";
-import { categoryLabel } from "@/lib/categories";
 
 export interface Cluster { key: string; lat: number; lng: number; events: UpcomingEvent[] }
 
@@ -43,6 +43,7 @@ function FitBounds({ clusters }: { clusters: Cluster[] }) {
 export default function EventsMap({ events, selected, onSelect }: {
   events: UpcomingEvent[]; selected: string | null; onSelect: (key: string | null) => void;
 }) {
+  const { t } = useLang();
   const clusters = useMemo(() => clusterEvents(events), [events]);
   return (
     <MapContainer center={[56.95, 24.11]} zoom={7} className="w-full h-full" zoomControl={false} attributionControl>
@@ -56,8 +57,8 @@ export default function EventsMap({ events, selected, onSelect }: {
         <Marker
           key={c.key}
           position={[c.lat, c.lng]}
-          icon={icon(c.events.length > 1 ? String(c.events.length) : categoryLabel(c.events[0].category).charAt(0), selected === c.key)}
-          title={c.events.length > 1 ? `${c.events.length} events` : c.events[0].title}
+          icon={icon(c.events.length > 1 ? String(c.events.length) : catLabel(t, c.events[0].category).charAt(0), selected === c.key)}
+          title={c.events.length > 1 ? t("map.events", { count: c.events.length }) : c.events[0].title}
           eventHandlers={{ click: () => onSelect(c.key) }}
         />
       ))}

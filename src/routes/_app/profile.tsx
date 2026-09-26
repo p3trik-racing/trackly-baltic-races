@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useLang, catLabel, LANGS } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -42,6 +43,8 @@ function ProfilePage() {
   const [usernameDraft, setUsernameDraft] = useState("");
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const { theme, toggleTheme } = useTheme();
+  const { t, lang, setLang } = useLang();
+  const tr = t;
   
 
   useEffect(() => {
@@ -59,7 +62,7 @@ function ProfilePage() {
       .eq("id", user.id);
     setSavingInfo(false);
     if (error) return toast.error(error.message);
-    toast.success("Personal info saved");
+    toast.success(t("profile.infoSaved"));
   }
 
   async function toggleOrganiser() {
@@ -68,7 +71,7 @@ function ProfilePage() {
     const { error } = await supabase.from("profiles").update({ is_organiser: next }).eq("id", user.id);
     if (error) return toast.error(error.message);
     setProfile({ ...profile, is_organiser: next });
-    toast.success(next ? "Organiser mode enabled" : "Switched to user mode");
+    toast.success(next ? t("profile.organiserOn") : t("profile.organiserOff"));
   }
 
   async function toggleCategory(value: string) {
@@ -125,7 +128,7 @@ function ProfilePage() {
     closeCrop();
     if (dbErr) return toast.error(dbErr.message);
     setProfile((p) => p ? { ...p, avatar_url: pub.publicUrl } : p);
-    toast.success("Photo updated");
+    toast.success(t("profile.photoUpdated"));
   }
 
   async function changePassword() {
@@ -134,14 +137,14 @@ function ProfilePage() {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (error) return toast.error(error.message);
-    toast.success("Password reset email sent");
+    toast.success(t("profile.passwordResetSent"));
   }
 
   async function deleteAccount() {
-    if (!confirm("Delete your account? This cannot be undone.")) return;
+    if (!confirm(t("profile.deleteConfirm"))) return;
     // Account deletion requires admin privileges; sign out and notify.
     await supabase.auth.signOut();
-    toast.message("Account deletion requested. Please contact support to permanently delete your data.");
+    toast.message(t("profile.deleteRequested"));
     navigate({ to: "/" });
   }
 
@@ -151,18 +154,18 @@ function ProfilePage() {
   }
 
   if (!profile) {
-    return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
+    return <div className="container-app py-10 text-muted-foreground">{t("common.loading")}</div>;
   }
 
   return (
     <main className="container-app py-6 space-y-6">
-      <h1 className="text-[22px] font-semibold">Profile</h1>
+      <h1 className="text-[22px] font-semibold">{t("profile.title")}</h1>
 
       {/* Avatar */}
       <div className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4">
         <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center" style={{ backgroundColor: "var(--input)" }}>
           {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+            <img src={profile.avatar_url} alt={t("profile.avatarAlt")} className="w-full h-full object-cover" />
           ) : (
             <User size={28} className="text-muted-foreground" />
           )}
@@ -178,19 +181,19 @@ function ProfilePage() {
           onClick={() => openFilePicker(onPickAvatar, "image/jpeg,image/png,image/webp")}
           className="text-xs px-3 h-9 rounded-lg border border-border inline-flex items-center gap-1.5"
         >
-          <Upload size={14} /> {uploading ? "…" : "Upload"}
+          <Upload size={14} /> {uploading ? "…" : t("profile.upload")}
         </button>
       </div>
 
       {/* Username */}
       <div className="bg-card border border-border rounded-2xl p-5 space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className="font-medium text-sm">Username</h2>
+          <h2 className="font-medium text-sm">{t("profile.username")}</h2>
           {!editingUsername && (
             <button
               onClick={() => { setUsernameDraft(profile.username ?? ""); setEditingUsername(true); }}
               className="text-xs" style={{ color: "var(--accent)" }}>
-              {profile.username ? "Edit username" : "Set username"}
+              {profile.username ? t("profile.editUsername") : t("profile.setUsername")}
             </button>
           )}
         </div>
@@ -201,54 +204,54 @@ function ProfilePage() {
               value={usernameDraft}
               maxLength={30}
               onChange={(e) => setUsernameDraft(e.target.value.toLowerCase().replace(/\s/g, ""))}
-              placeholder="username"
+              placeholder={t("profile.usernamePlaceholder")}
             />
             <button
               onClick={async () => {
                 if (!user) return;
-                if (!/^[a-z0-9_]{3,30}$/.test(usernameDraft)) return toast.error("3-30 chars · letters, numbers, underscore");
+                if (!/^[a-z0-9_]{3,30}$/.test(usernameDraft)) return toast.error(t("profile.usernameHint"));
                 const { error } = await supabase.from("profiles").update({ username: usernameDraft }).eq("id", user.id);
-                if (error) return toast.error(error.message.includes("duplicate") ? "Username taken" : error.message);
+                if (error) return toast.error(error.message.includes("duplicate") ? t("profile.usernameTaken") : error.message);
                 setProfile((p) => p ? { ...p, username: usernameDraft } : p);
                 setEditingUsername(false);
-                toast.success("Username updated");
+                toast.success(t("profile.usernameUpdated"));
               }}
               className="px-4 h-12 rounded-xl text-sm font-medium text-accent-foreground"
-              style={{ backgroundColor: "var(--accent)" }}>Save</button>
+              style={{ backgroundColor: "var(--accent)" }}>{t("common.save")}</button>
             <button onClick={() => setEditingUsername(false)}
-              className="px-3 h-12 rounded-xl text-sm border border-border">Cancel</button>
+              className="px-3 h-12 rounded-xl text-sm border border-border">{t("common.cancel")}</button>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">{profile.username ? `@${profile.username}` : "Not set"}</p>
+          <p className="text-sm text-muted-foreground">{profile.username ? `@${profile.username}` : t("profile.notSet")}</p>
         )}
       </div>
       {/* Personal Info */}
       <section className="bg-card border border-border rounded-2xl p-5 space-y-3">
-        <h2 className="font-medium">Personal info</h2>
+        <h2 className="font-medium">{t("profile.personalInfo")}</h2>
         <div>
-          <label className="text-xs text-muted-foreground">Full name</label>
+          <label className="text-xs text-muted-foreground">{t("profile.fullName")}</label>
           <input className="input-field mt-1" value={profile.full_name ?? ""}
             onChange={(e) => setProfile({ ...profile, full_name: e.target.value })} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">Email</label>
+          <label className="text-xs text-muted-foreground">{t("profile.email")}</label>
           <input className="input-field mt-1 opacity-70" value={profile.email ?? user?.email ?? ""} readOnly />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">Phone number</label>
+          <label className="text-xs text-muted-foreground">{t("profile.phone")}</label>
           <input className="input-field mt-1" value={profile.phone ?? ""}
             onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
         </div>
         <button onClick={saveInfo} disabled={savingInfo} className="cta-button">
-          {savingInfo ? "Saving…" : "Save changes"}
+          {savingInfo ? t("common.saving") : t("profile.saveChanges")}
         </button>
       </section>
 
       {/* Preferences */}
       <section className="bg-card border border-border rounded-2xl p-5 space-y-4">
-        <h2 className="font-medium">Preferences</h2>
+        <h2 className="font-medium">{t("profile.preferences")}</h2>
         <div>
-          <p className="text-xs text-muted-foreground mb-2">Favourite categories</p>
+          <p className="text-xs text-muted-foreground mb-2">{t("profile.favouriteCategories")}</p>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((c) => {
               const active = profile.favourite_categories.includes(c.value);
@@ -260,27 +263,27 @@ function ProfilePage() {
                     backgroundColor: active ? "color-mix(in oklab, var(--accent) 20%, transparent)" : "transparent",
                     color: active ? "var(--accent)" : "var(--muted-foreground)",
                   }}>
-                  {c.label}
+                  {catLabel(t, c.value)}
                 </button>
               );
             })}
           </div>
         </div>
         <div className="border-t border-border pt-4 space-y-3">
-          <p className="text-xs text-muted-foreground">Notifications</p>
-          <ToggleRow label="Event reminders" checked={profile.event_reminders}
+          <p className="text-xs text-muted-foreground">{t("profile.notifications")}</p>
+          <ToggleRow label={t("profile.eventReminders")} checked={profile.event_reminders}
             onChange={(v) => setNotif("event_reminders", v)} />
-          <ToggleRow label="Booking confirmations" checked={profile.booking_confirmations}
+          <ToggleRow label={t("profile.bookingConfirmations")} checked={profile.booking_confirmations}
             onChange={(v) => setNotif("booking_confirmations", v)} />
         </div>
         <div className="border-t border-border pt-4 space-y-2">
-          <p className="text-xs text-muted-foreground">Appearance</p>
+          <p className="text-xs text-muted-foreground">{t("profile.appearance")}</p>
           <div className="flex gap-2">
-            {(["dark", "light"] as const).map((t) => {
-              const active = theme === t;
+            {(["dark", "light"] as const).map((th) => {
+              const active = theme === th;
               return (
                 <button
-                  key={t}
+                  key={th}
                   onClick={() => { if (!active) toggleTheme(); }}
                   className="flex-1 h-10 rounded-full text-xs font-medium border capitalize"
                   style={{
@@ -289,7 +292,27 @@ function ProfilePage() {
                      color: active ? "var(--accent-foreground)" : "var(--muted-foreground)",
                   }}
                 >
-                  {t}
+                  {tr(`profile.theme.${th}`)}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs text-muted-foreground pt-2">{tr("profile.language")}</p>
+          <div className="flex gap-2">
+            {LANGS.map((l) => {
+              const active = lang === l;
+              return (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className="flex-1 h-10 rounded-full text-xs font-medium border"
+                  style={{
+                    borderColor: active ? "var(--accent)" : "var(--border)",
+                    backgroundColor: active ? "var(--accent)" : "transparent",
+                    color: active ? "var(--accent-foreground)" : "var(--muted-foreground)",
+                  }}
+                >
+                  {l.toUpperCase()}
                 </button>
               );
             })}
@@ -300,19 +323,19 @@ function ProfilePage() {
       {/* Organiser */}
       <section className="bg-card border border-border rounded-2xl p-5 space-y-4">
         <div>
-          <p className="font-medium text-sm">Organiser mode</p>
+          <p className="font-medium text-sm">{t("profile.organiserMode")}</p>
           <p className="text-xs text-muted-foreground mt-1">
-            Post and manage your own motorsport events.
+            {t("profile.organiserHelp")}
           </p>
         </div>
         {profile.is_organiser ? (
           <>
-            <Link to="/organiser" className="cta-button">Go to Organiser Dashboard →</Link>
+            <Link to="/organiser" className="cta-button">{t("profile.goToOrganiser")}</Link>
             <button
               onClick={toggleOrganiser}
               className="w-full h-11 rounded-xl text-sm font-medium border border-border text-muted-foreground"
             >
-              Switch off organiser mode
+              {t("profile.switchOffOrganiser")}
             </button>
           </>
         ) : (
@@ -321,22 +344,22 @@ function ProfilePage() {
             className="w-full h-11 rounded-xl text-sm font-medium border"
             style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
           >
-            Switch to organiser mode
+            {t("profile.switchToOrganiser")}
           </button>
         )}
       </section>
 
       {/* Majorka */}
       <section className="bg-card border border-border rounded-2xl p-2">
-        <p className="px-3 pt-2 pb-1 text-xs text-muted-foreground">Majorka</p>
+        <p className="px-3 pt-2 pb-1 text-xs text-muted-foreground">{t("profile.majorka")}</p>
         <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer"
           className="w-full flex items-center justify-between px-3 h-12 text-sm">
-          <span className="inline-flex items-center gap-2"><Globe size={16} /> Community website — majorkariga.com</span>
+          <span className="inline-flex items-center gap-2"><Globe size={16} /> {t("profile.communitySite")}</span>
           <ChevronRight size={16} className="text-muted-foreground" />
         </a>
         <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer"
           className="w-full flex items-center justify-between px-3 h-12 text-sm">
-          <span className="inline-flex items-center gap-2"><ShoppingBag size={16} /> Shop — majorkashop.com</span>
+          <span className="inline-flex items-center gap-2"><ShoppingBag size={16} /> {t("profile.shop")}</span>
           <ChevronRight size={16} className="text-muted-foreground" />
         </a>
       </section>
@@ -345,19 +368,19 @@ function ProfilePage() {
       <section className="bg-card border border-border rounded-2xl p-2">
         <button onClick={changePassword}
           className="w-full flex items-center justify-between px-3 h-12 text-sm">
-          <span className="inline-flex items-center gap-2"><KeyRound size={16} /> Change password</span>
+          <span className="inline-flex items-center gap-2"><KeyRound size={16} /> {t("profile.changePassword")}</span>
           <ChevronRight size={16} className="text-muted-foreground" />
         </button>
       </section>
 
       <button onClick={logout} className="w-full h-12 rounded-xl border border-border text-sm font-medium flex items-center justify-center gap-2 text-muted-foreground">
-        <LogOut size={16} /> Log out
+        <LogOut size={16} /> {t("profile.logout")}
       </button>
 
       <button onClick={deleteAccount}
         className="w-full text-center text-sm font-medium py-4"
         style={{ color: "var(--accent)" }}>
-        Delete account
+        {t("profile.deleteAccount")}
       </button>
       {cropSrc && (
         <ImageCropModal

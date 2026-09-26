@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/_app/home")({
 
 function HomePage() {
   const { user } = useAuth();
+  const { t } = useLang();
   const [events, setEvents] = useState<EventCardData[]>([]);
   const [favourites, setFavourites] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("all");
@@ -96,7 +98,7 @@ function HomePage() {
       )}
       <header className="flex items-center gap-2">
         <LogoMark className="h-7 w-auto text-foreground" />
-        <p className="text-sm text-muted-foreground">Find your next session</p>
+        <p className="text-sm text-muted-foreground">{t("home.tagline")}</p>
       </header>
 
       <ViewToggle />
@@ -105,7 +107,7 @@ function HomePage() {
         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           className="input-field pl-11"
-          placeholder="Search events"
+          placeholder={t("home.search")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -117,7 +119,7 @@ function HomePage() {
         style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", backgroundColor: "var(--background)" }}
       >
         <div className="flex gap-2 w-max pr-5">
-          {[{ value: "all", label: "All" }, ...orderedCategories].map((c) => {
+          {[{ value: "all", label: t("common.all") }, ...orderedCategories.map((c) => ({ value: c.value, label: catLabel(t, c.value) }))].map((c) => {
             const active = category === c.value;
             const isFav = favourites.includes(c.value);
             return (
@@ -144,7 +146,7 @@ function HomePage() {
 
       {featured.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-base font-semibold">Featured</h2>
+          <h2 className="text-base font-semibold">{t("home.featured")}</h2>
           <div
             data-scroll-x
             className="-mx-5 px-5 overflow-x-auto scrollbar-hide py-3"
@@ -162,17 +164,17 @@ function HomePage() {
       )}
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold">Recently added</h2>
+        <h2 className="text-base font-semibold">{t("home.recent")}</h2>
         {recent.length === 0 ? (
           <div className="py-10 text-center space-y-2">
-            <p className="text-sm text-muted-foreground">No events match your filters.</p>
+            <p className="text-sm text-muted-foreground">{t("home.noMatch")}</p>
             {query && (
               <button
                 onClick={() => setQuery("")}
                 className="text-sm font-medium"
                 style={{ color: "var(--accent)" }}
               >
-                Clear search
+                {t("home.clearSearch")}
               </button>
             )}
           </div>
@@ -186,8 +188,8 @@ function HomePage() {
       {!user && (
         <div className="fixed bottom-20 left-0 right-0 px-4">
           <div className="container-app bg-card border border-border rounded-xl py-2.5 px-4 text-xs flex items-center justify-between shadow-lg">
-            <span className="text-muted-foreground">Join Majorka Racing to book events</span>
-            <Link to="/signup" className="font-semibold" style={{ color: "var(--accent)" }}>Sign Up</Link>
+            <span className="text-muted-foreground">{t("home.guestBanner")}</span>
+            <Link to="/signup" className="font-semibold" style={{ color: "var(--accent)" }}>{t("common.signUp")}</Link>
           </div>
         </div>
       )}

@@ -1,16 +1,18 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { List, Map, CalendarDays } from "lucide-react";
 
 const items = [
-  { to: "/home", label: "List", icon: List },
-  { to: "/map", label: "Map", icon: Map },
-  { to: "/calendar", label: "Calendar", icon: CalendarDays },
+  { to: "/home", label: "viewToggle.list", icon: List },
+  { to: "/map", label: "viewToggle.map", icon: Map },
+  { to: "/calendar", label: "viewToggle.calendar", icon: CalendarDays },
 ] as const;
 
 export function ViewToggle({ className = "" }: { className?: string }) {
   const { pathname } = useLocation();
+  const { t } = useLang();
   return (
-    <div className={`flex gap-1.5 ${className}`} role="tablist" aria-label="View">
+    <div className={`flex gap-1.5 ${className}`} role="tablist" aria-label={t("viewToggle.label")}>
       {items.map(({ to, label, icon: Icon }) => {
         const active = pathname === to || (to === "/home" && pathname === "/explore");
         return (
@@ -26,7 +28,7 @@ export function ViewToggle({ className = "" }: { className?: string }) {
               borderColor: active ? "var(--accent)" : "var(--border)",
             }}
           >
-            <Icon size={14} /> {label}
+            <Icon size={14} /> {t(label)}
           </Link>
         );
       })}

@@ -82,7 +82,7 @@ export function downloadIcs(e: CalEvent) {
   const url = URL.createObjectURL(new Blob([buildIcs(e)], { type: "text/calendar;charset=utf-8" }));
   const a = document.createElement("a");
   a.href = url;
-  a.download = `majorka-${slug || "event"}.ics`;
+  a.download = slug.startsWith("majorka") ? `${slug}.ics` : `majorka-${slug || "event"}.ics`;
   document.body.appendChild(a);
   a.click();
   a.remove();

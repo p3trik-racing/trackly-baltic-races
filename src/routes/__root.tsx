@@ -1,6 +1,7 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Link } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/lib/theme-context";
+import { LanguageProvider, useLang } from "@/i18n";
 import { Toaster } from "@/components/ui/sonner";
 
 const themeInitScript = `(function(){try{var s=localStorage.getItem('majorka-theme');var t=s==='light'||s==='dark'?s:(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();`;
@@ -8,15 +9,16 @@ const themeInitScript = `(function(){try{var s=localStorage.getItem('majorka-the
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
+  const { t } = useLang();
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold">404</h1>
-        <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
+        <h2 className="mt-4 text-xl font-semibold">{t("notFound.title")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist.
+          {t("notFound.body")}
         </p>
-        <Link to="/" className="mt-6 inline-flex cta-button max-w-xs">Go home</Link>
+        <Link to="/" className="mt-6 inline-flex cta-button max-w-xs">{t("notFound.home")}</Link>
       </div>
     </div>
   );
@@ -53,10 +55,12 @@ export const Route = createRootRoute({
   shellComponent: RootShell,
   component: () => (
     <ThemeProvider>
+      <LanguageProvider>
       <AuthProvider>
         <Outlet />
         <Toaster />
       </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   ),
   notFoundComponent: NotFoundComponent,

@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Download } from "lucide-react";
@@ -29,6 +30,7 @@ interface Booking {
 function EventBookingsPage() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
+  const { t } = useLang();
   const [event, setEvent] = useState<any>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
 
@@ -47,7 +49,7 @@ function EventBookingsPage() {
 
   function exportCsv() {
     const rows = [
-      ["Name", "Email", "Phone", "Reference", "Date", "Tickets", "Status"],
+      ["name", "email", "phone", "reference", "date", "tickets", "status"].map((k) => t(`organiser.bookings.csv.${k}` as any)),
       ...bookings.map((b) => [
         b.attendee_name, b.attendee_email, b.attendee_phone ?? "",
         b.id, new Date(b.created_at).toISOString(), String(b.ticket_count), b.status,
@@ -64,33 +66,33 @@ function EventBookingsPage() {
   return (
     <main className="container-app py-6 space-y-5">
       <button onClick={() => navigate({ to: "/organiser" })} className="inline-flex items-center gap-2 text-muted-foreground">
-        <ArrowLeft size={18} /> Back
+        <ArrowLeft size={18} /> {t("common.back")}
       </button>
 
-      <h1 className="text-[22px] font-semibold leading-tight">{event?.title ?? "Event"}</h1>
+      <h1 className="text-[22px] font-semibold leading-tight">{event?.title ?? t("common.event")}</h1>
 
       <div className="bg-card border border-border rounded-2xl p-4 grid grid-cols-3 text-center">
         <div>
           <p className="text-lg font-semibold">{active.length}</p>
-          <p className="text-[11px] text-muted-foreground">Bookings</p>
+          <p className="text-[11px] text-muted-foreground">{t("organiser.bookings.bookings")}</p>
         </div>
         <div className="border-x border-border">
           <p className="text-lg font-semibold">€{revenue.toFixed(0)}</p>
-          <p className="text-[11px] text-muted-foreground">Revenue</p>
+          <p className="text-[11px] text-muted-foreground">{t("organiser.bookings.revenue")}</p>
         </div>
         <div>
           <p className="text-lg font-semibold">{remaining}</p>
-          <p className="text-[11px] text-muted-foreground">Spots left</p>
+          <p className="text-[11px] text-muted-foreground">{t("organiser.bookings.spotsLeft")}</p>
         </div>
       </div>
 
       <button onClick={exportCsv} disabled={!bookings.length}
         className="w-full h-11 rounded-xl border border-border text-sm font-medium inline-flex items-center justify-center gap-2 text-muted-foreground disabled:opacity-40">
-        <Download size={16} /> Export CSV
+        <Download size={16} /> {t("organiser.bookings.export")}
       </button>
 
       {bookings.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-12 text-center">No bookings yet</p>
+        <p className="text-sm text-muted-foreground py-12 text-center">{t("organiser.bookings.empty")}</p>
       ) : (
         <div className="space-y-3">
           {bookings.map((b) => (
@@ -104,13 +106,13 @@ function EventBookingsPage() {
                       : "color-mix(in oklab, var(--success) 22%, transparent)",
                     color: b.status === "cancelled" ? "var(--accent)" : "oklch(0.78 0.16 145)",
                   }}>
-                  {b.status === "cancelled" ? "Cancelled" : "Confirmed"}
+                  {b.status === "cancelled" ? t("common.cancelled") : t("common.confirmed")}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">{b.attendee_email}</p>
               {b.attendee_phone && <p className="text-xs text-muted-foreground">{b.attendee_phone}</p>}
               <p className="text-[11px] text-muted-foreground pt-1">
-                Ref: {b.id.slice(0, 8).toUpperCase()} · {new Date(b.created_at).toLocaleDateString("en-GB")}
+                {t("common.ref", { ref: b.id.slice(0, 8).toUpperCase() })} · {new Date(b.created_at).toLocaleDateString("en-GB")}
               </p>
             </div>
           ))}

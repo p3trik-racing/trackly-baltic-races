@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useLang();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -34,45 +36,46 @@ function LoginPage() {
   }
 
   async function onReset() {
-    if (!email) return toast.error("Enter your email first");
+    if (!email) return toast.error(t("auth.login.enterEmailFirst"));
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (error) toast.error(error.message);
-    else toast.success("Reset email sent");
+    else toast.success(t("auth.login.resetSent"));
   }
 
   return (
     <main className="min-h-screen container-app py-6">
       <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground mb-6">
-        <ArrowLeft size={20} /> Back
+        <ArrowLeft size={20} /> {t("common.back")}
       </Link>
 
       <LogoFull className="w-[180px] h-auto mx-auto mb-6 text-foreground" />
 
-      <h1 className="text-2xl font-semibold mb-1">Welcome back</h1>
-      <p className="text-muted-foreground text-sm mb-6">Log in to continue</p>
+      <h1 className="text-2xl font-semibold mb-1">{t("auth.login.title")}</h1>
+      <p className="text-muted-foreground text-sm mb-6">{t("auth.login.subtitle")}</p>
 
       <form onSubmit={onSubmit} className="space-y-3">
-        <input className="input-field" type="email" placeholder="Email" value={email}
+        <input className="input-field" type="email" placeholder={t("auth.email")} value={email}
           onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
         <div className="relative">
-          <input className="input-field pr-12" type={showPw ? "text" : "password"} placeholder="Password" value={password}
+          <input className="input-field pr-12" type={showPw ? "text" : "password"} placeholder={t("auth.password")} value={password}
             onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
           <button type="button" onClick={() => setShowPw((s) => !s)}
-            aria-label={showPw ? "Hide password" : "Show password"}
+            aria-label={showPw ? t("auth.hidePassword") : t("auth.showPassword")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-2">
             {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
-        <button className="cta-button" disabled={loading}>{loading ? "Signing in…" : "Log in"}</button>
+        <button className="cta-button" disabled={loading}>{loading ? t("auth.login.submitting") : t("auth.login.submit")}</button>
       </form>
       <button onClick={onReset} className="block mx-auto mt-4 text-sm" style={{ color: "var(--accent)" }}>
-        Forgot your password?
+        {t("auth.login.forgot")}
       </button>
       <p className="text-center text-sm text-muted-foreground mt-6">
-        New to Majorka Racing? <Link to="/signup" style={{ color: "var(--accent)" }}>Create an account</Link>
+        {t("auth.login.newHere")} <Link to="/signup" style={{ color: "var(--accent)" }}>{t("auth.login.createAccount")}</Link>
       </p>
+      <LangSwitcher className="mt-8" />
     </main>
   );
 }

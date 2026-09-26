@@ -1,4 +1,5 @@
 import { createFileRoute, ClientOnly, Link } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { fetchUpcomingEvents, type UpcomingEvent } from "@/lib/upcoming-events";
 import { ViewToggle } from "@/components/ViewToggle";
@@ -26,6 +27,7 @@ function MapPage() {
   const [events, setEvents] = useState<UpcomingEvent[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [dirEvent, setDirEvent] = useState<UpcomingEvent | null>(null);
+  const { t } = useLang();
 
   useEffect(() => { fetchUpcomingEvents().then(setEvents); }, []);
 
@@ -39,8 +41,8 @@ function MapPage() {
       <div className="absolute top-3 left-0 right-0 z-[500] flex justify-center">
         <ViewToggle className="bg-background/80 backdrop-blur rounded-full p-1" />
       </div>
-      <ClientOnly fallback={<div className="h-full flex items-center justify-center text-muted-foreground text-sm">Loading map…</div>}>
-        <Suspense fallback={<div className="h-full flex items-center justify-center text-muted-foreground text-sm">Loading map…</div>}>
+      <ClientOnly fallback={<div className="h-full flex items-center justify-center text-muted-foreground text-sm">{t("map.loading")}</div>}>
+        <Suspense fallback={<div className="h-full flex items-center justify-center text-muted-foreground text-sm">{t("map.loading")}</div>}>
           <EventsMap events={events} selected={selected} onSelect={setSelected} />
         </Suspense>
       </ClientOnly>
@@ -49,9 +51,9 @@ function MapPage() {
         <div className="absolute bottom-3 left-3 right-3 z-[500] bg-card border border-border rounded-2xl shadow-xl">
           <div className="flex items-center justify-between px-4 pt-3">
             <p className="text-xs text-muted-foreground">
-              {selectedEvents.length > 1 ? `${selectedEvents.length} events here` : "Event"}
+              {selectedEvents.length > 1 ? t("map.eventsHere", { count: selectedEvents.length }) : t("common.event")}
             </p>
-            <button aria-label="Close" onClick={() => setSelected(null)} className="text-muted-foreground"><X size={16} /></button>
+            <button aria-label={t("common.close")} onClick={() => setSelected(null)} className="text-muted-foreground"><X size={16} /></button>
           </div>
           <div className="max-h-[45dvh] overflow-y-auto p-3 space-y-3">
             {selectedEvents.map((e) => (
@@ -67,17 +69,17 @@ function MapPage() {
                     <p className="text-xs text-muted-foreground truncate">
                       {[e.location_name, e.city].filter(Boolean).join(" · ")}
                     </p>
-                    <p className="text-sm font-semibold">{e.price === 0 ? "Free" : `€${e.price}`}</p>
+                    <p className="text-sm font-semibold">{e.price === 0 ? t("common.free") : `€${e.price}`}</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <Link to="/event/$eventId" params={{ eventId: e.id }}
                     className="flex-1 h-10 rounded-xl text-sm font-semibold flex items-center justify-center bg-primary text-primary-foreground">
-                    View event
+                    {t("map.viewEvent")}
                   </Link>
                   <button onClick={() => setDirEvent(e)}
                     className="flex-1 h-10 rounded-xl text-sm font-medium border border-border bg-background">
-                    Directions
+                    {t("common.directions")}
                   </button>
                 </div>
               </div>

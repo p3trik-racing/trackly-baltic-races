@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -27,6 +28,7 @@ interface Notif {
 function InboxPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLang();
   const [items, setItems] = useState<Notif[]>([]);
 
   useEffect(() => {
@@ -52,17 +54,17 @@ function InboxPage() {
   return (
     <main className="container-app py-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-[22px] font-semibold">Inbox</h1>
+        <h1 className="text-[22px] font-semibold">{t("inbox.title")}</h1>
         {items.some((i) => !i.read) && (
           <button onClick={markAllRead} className="text-sm" style={{ color: "var(--accent)" }}>
-            Mark all read
+            {t("inbox.markAllRead")}
           </button>
         )}
       </div>
       {items.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">
           <Bell size={32} className="mx-auto mb-3 opacity-60" />
-          <p className="text-sm">No notifications yet</p>
+          <p className="text-sm">{t("inbox.empty")}</p>
         </div>
       ) : (
         <div className="space-y-2">
