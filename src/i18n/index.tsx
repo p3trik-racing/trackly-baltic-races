@@ -87,3 +87,17 @@ export function LangSwitcher({ className = "" }: { className?: string }) {
     </p>
   );
 }
+
+/** Translated category label; unknown values pass through. */
+export function catLabel(t: TFn, v: string) {
+  const k = `categories.${v}` as TranslationKey;
+  return k in en ? t(k) : v;
+}
+
+const FLAGS: Record<string, string> = { Latvia: "🇱🇻", Estonia: "🇪🇪", Lithuania: "🇱🇹" };
+/** Translated country label with flag; unknown values pass through. */
+export function countryName(t: TFn, v?: string | null) {
+  if (!v) return "";
+  const k = `countries.${v}` as TranslationKey;
+  return k in en ? `${FLAGS[v]} ${t(k)}` : v;
+}
