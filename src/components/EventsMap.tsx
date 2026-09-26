@@ -51,10 +51,9 @@ export default function EventsMap({ events, selected, onSelect }: {
     <MapContainer center={[56.95, 24.11]} zoom={7} className="w-full h-full" zoomControl={false} attributionControl>
       <TileLayer
         key={theme}
-        url={`https://{s}.basemaps.cartocdn.com/${theme}_all/{z}/{x}/{y}{r}.png`}
-        subdomains="abcd"
+        url={`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${theme === "dark" ? "Dark" : "Light"}_Gray_Base/MapServer/tile/{z}/{y}/{x}`}
         maxZoom={19}
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        attribution='Tiles &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, GIS user community'
       />
       <FitBounds clusters={clusters} />
       {clusters.map((c) => (
