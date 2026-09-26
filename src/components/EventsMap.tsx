@@ -4,6 +4,7 @@ import L from "leaflet";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import { useEffect, useMemo } from "react";
 import type { UpcomingEvent } from "@/lib/upcoming-events";
+import { useTheme } from "@/lib/theme-context";
 
 export interface Cluster { key: string; lat: number; lng: number; events: UpcomingEvent[] }
 
@@ -44,13 +45,16 @@ export default function EventsMap({ events, selected, onSelect }: {
   events: UpcomingEvent[]; selected: string | null; onSelect: (key: string | null) => void;
 }) {
   const { t } = useLang();
+  const { theme } = useTheme();
   const clusters = useMemo(() => clusterEvents(events), [events]);
   return (
     <MapContainer center={[56.95, 24.11]} zoom={7} className="w-full h-full" zoomControl={false} attributionControl>
       <TileLayer
-        className="mr-tiles"
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        key={theme}
+        url={`https://{s}.basemaps.cartocdn.com/${theme}_all/{z}/{x}/{y}{r}.png`}
+        subdomains="abcd"
+        maxZoom={19}
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
       <FitBounds clusters={clusters} />
       {clusters.map((c) => (

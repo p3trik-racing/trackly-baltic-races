@@ -36,6 +36,9 @@ export const en = {
   "auth.login.subtitle": "Log in to continue",
   "auth.email": "Email",
   "auth.password": "Password",
+  "auth.confirmPassword": "Confirm password",
+  "auth.passwordMismatch": "Passwords don't match",
+  "auth.passwordsMatch": "Passwords match",
   "auth.showPassword": "Show password",
   "auth.hidePassword": "Hide password",
   "auth.login.submit": "Log in",
@@ -66,6 +69,7 @@ export const en = {
   // auth — reset password
   "auth.reset.title": "Set a new password",
   "auth.reset.newPassword": "New password",
+  "auth.reset.confirmNewPassword": "Confirm new password",
   "auth.reset.submit": "Update password",
   "auth.reset.done": "Password updated",
   "auth.reset.backToLogin": "Back to login",

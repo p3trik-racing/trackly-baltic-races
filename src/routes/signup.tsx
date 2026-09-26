@@ -21,7 +21,7 @@ export const Route = createFileRoute("/signup")({
 function SignupPage() {
   const navigate = useNavigate();
   const { t } = useLang();
-  const [form, setForm] = useState({ fullName: "", username: "", phone: "", email: "", password: "" });
+  const [form, setForm] = useState({ fullName: "", username: "", phone: "", email: "", password: "", confirmPassword: "" });
   const [showPw, setShowPw] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,6 +42,7 @@ function SignupPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (form.password !== form.confirmPassword) return toast.error(t("auth.passwordMismatch"));
     if (!agreed) return toast.error(t("auth.signup.acceptTerms"));
     if (form.password.length < 6) return toast.error(t("auth.signup.passwordShort"));
     if (!usernameValid) return toast.error(t("auth.signup.usernameInvalid"));
@@ -115,6 +116,18 @@ function SignupPage() {
               {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="signup-confirm-password" className="block text-xs text-muted-foreground">{t("auth.confirmPassword")}</label>
+          <input id="signup-confirm-password" className="input-field" type={showPw ? "text" : "password"} placeholder={t("auth.confirmPassword")}
+            value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} required autoComplete="new-password"
+            aria-describedby={form.password && form.confirmPassword ? "signup-password-match" : undefined} />
+          {form.password && form.confirmPassword && (
+            <p id="signup-password-match" role="status" className={`flex items-center gap-1 text-xs ${form.password === form.confirmPassword ? "text-success" : "text-accent"}`}>
+              {form.password === form.confirmPassword && <Check size={14} aria-hidden="true" />}
+              {t(form.password === form.confirmPassword ? "auth.passwordsMatch" : "auth.passwordMismatch")}
+            </p>
+          )}
         </div>
 
         <label className="flex items-start gap-2 text-sm text-muted-foreground py-2">
