@@ -49,14 +49,8 @@ export function eventLocation(e: CalEvent) {
 
 export function buildGoogleCalendarUrl(e: CalEvent) {
   const { start, end } = eventRange(e);
-  const p = new URLSearchParams({
-    action: "TEMPLATE",
-    text: e.title,
-    dates: `${utcBasic(start)}/${utcBasic(end)}`,
-    details: (e.description ?? "").slice(0, 1000),
-    location: eventLocation(e),
-  });
-  return `https://calendar.google.com/calendar/render?${p.toString()}`;
+  const enc = encodeURIComponent;
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(e.title)}&dates=${utcBasic(start)}/${utcBasic(end)}&details=${enc((e.description ?? "").slice(0, 1000))}&location=${enc(eventLocation(e))}`;
 }
 
 const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");

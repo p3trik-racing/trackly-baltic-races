@@ -113,6 +113,7 @@ function CalendarPage() {
               modifiers={{ hasEvents: (d) => !!byDay[dayKey(d)] }}
               className="w-full"
               classNames={{
+                root: "relative w-full",
                 months: "w-full",
                 month: "w-full space-y-3",
                 month_caption: "flex items-center justify-center h-9 relative",
