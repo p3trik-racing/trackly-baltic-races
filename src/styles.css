@@ -181,11 +181,11 @@ body {
 }
 
 /* Events map */
-html:not(.light) .mr-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); }
 .mr-pin {
   display: flex; align-items: center; justify-content: center;
   background: #C9B48C; color: #0A0A0A; border: 2px solid #0A0A0A; border-radius: 9999px;
   font: 700 12px/1 system-ui, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,.4);
 }
+html:not(.light) .mr-pin { box-shadow: 0 0 0 1px var(--foreground), 0 2px 6px rgba(0,0,0,.4); }
 .mr-pin-active { outline: 3px solid #F5F2EC; }
 .leaflet-container { background: var(--background); }
