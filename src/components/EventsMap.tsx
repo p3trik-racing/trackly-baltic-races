@@ -1,8 +1,7 @@
-import "leaflet/dist/leaflet.css";
-import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
-import L from "leaflet";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
-import { useEffect, useMemo } from "react";
+import "maplibre-gl/dist/maplibre-gl.css";
+import maplibregl from "maplibre-gl";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useLang, catLabel } from "@/i18n";
 import type { UpcomingEvent } from "@/lib/upcoming-events";
 import { useTheme } from "@/lib/theme-context";
 
@@ -20,26 +19,8 @@ export function clusterEvents(events: UpcomingEvent[]): Cluster[] {
   return [...map.values()];
 }
 
-function icon(label: string, selected: boolean) {
-  const size = selected ? 34 : 28;
-  return L.divIcon({
-    className: "",
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-    html: `<div class="mr-pin${selected ? " mr-pin-active" : ""}" style="width:${size}px;height:${size}px">${label}</div>`,
-  });
-}
-
-function FitBounds({ clusters }: { clusters: Cluster[] }) {
-  const map = useMap();
-  useEffect(() => {
-    if (!clusters.length) return;
-    const b = L.latLngBounds(clusters.map((c) => [c.lat, c.lng] as [number, number]));
-    map.invalidateSize();
-    map.fitBounds(b, { padding: [48, 48], maxZoom: 11 });
-  }, [clusters, map]);
-  return null;
-}
+const styleUrl = (theme: "dark" | "light") =>
+  `https://tiles.openfreemap.org/styles/${theme === "dark" ? "dark" : "positron"}`;
 
 export default function EventsMap({ events, selected, onSelect }: {
   events: UpcomingEvent[]; selected: string | null; onSelect: (key: string | null) => void;
@@ -47,24 +28,79 @@ export default function EventsMap({ events, selected, onSelect }: {
   const { t } = useLang();
   const { theme } = useTheme();
   const clusters = useMemo(() => clusterEvents(events), [events]);
-  return (
-    <MapContainer center={[56.95, 24.11]} zoom={7} className="w-full h-full" zoomControl={false} attributionControl>
-      <TileLayer
-        key={theme}
-        url={`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${theme === "dark" ? "Dark" : "Light"}_Gray_Base/MapServer/tile/{z}/{y}/{x}`}
-        maxZoom={19}
-        attribution='Tiles &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, GIS user community'
-      />
-      <FitBounds clusters={clusters} />
-      {clusters.map((c) => (
-        <Marker
-          key={c.key}
-          position={[c.lat, c.lng]}
-          icon={icon(c.events.length > 1 ? String(c.events.length) : catLabel(t, c.events[0].category).charAt(0), selected === c.key)}
-          title={c.events.length > 1 ? t("map.events", { count: c.events.length }) : c.events[0].title}
-          eventHandlers={{ click: () => onSelect(c.key) }}
-        />
-      ))}
-    </MapContainer>
-  );
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<maplibregl.Map | null>(null);
+  const [styleRevision, setStyleRevision] = useState(0);
+  const markersRef = useRef<maplibregl.Marker[]>([]);
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
+  const currentStyleRef = useRef(styleUrl(theme));
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const instance = new maplibregl.Map({
+      container: containerRef.current,
+      style: currentStyleRef.current,
+      center: [24.11, 56.95],
+      zoom: 6.5,
+      attributionControl: { compact: true },
+      dragRotate: false,
+      touchPitch: false,
+    });
+    instance.touchZoomRotate.disableRotation();
+    instance.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+    instance.on("style.load", () => setStyleRevision((n) => n + 1));
+    setMap(instance);
+    return () => {
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = [];
+      instance.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!map) return;
+    const nextStyle = styleUrl(theme);
+    if (currentStyleRef.current === nextStyle) return;
+    currentStyleRef.current = nextStyle;
+    // Style changes clear map layers. Refresh the markers once the new style is ready.
+    markersRef.current.forEach((marker) => marker.remove());
+    markersRef.current = [];
+    map.setStyle(nextStyle);
+  }, [map, theme]);
+
+  useEffect(() => {
+    if (!map || !clusters.length) return;
+    const bounds = new maplibregl.LngLatBounds();
+    clusters.forEach(({ lng, lat }) => bounds.extend([lng, lat]));
+    map.resize();
+    map.fitBounds(bounds, { padding: 48, maxZoom: 11, duration: 0 });
+  }, [map, clusters]);
+
+  useEffect(() => {
+    if (!map || !map.isStyleLoaded()) return;
+    markersRef.current.forEach((marker) => marker.remove());
+    markersRef.current = clusters.map((cluster) => {
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = `mr-pin${selected === cluster.key ? " mr-pin-active" : ""}`;
+      el.textContent = cluster.events.length > 1
+        ? String(cluster.events.length)
+        : catLabel(t, cluster.events[0].category).charAt(0);
+      el.title = cluster.events.length > 1
+        ? t("map.events", { count: cluster.events.length })
+        : cluster.events[0].title;
+      el.setAttribute("aria-label", el.title);
+      el.addEventListener("click", () => onSelectRef.current(cluster.key));
+      return new maplibregl.Marker({ element: el, anchor: "center" })
+        .setLngLat([cluster.lng, cluster.lat])
+        .addTo(map);
+    });
+    return () => {
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = [];
+    };
+  }, [map, clusters, selected, t, styleRevision]);
+
+  return <div ref={containerRef} className="h-full w-full" />;
 }

@@ -183,9 +183,12 @@ body {
 /* Events map */
 .mr-pin {
   display: flex; align-items: center; justify-content: center;
-  background: #C9B48C; color: #0A0A0A; border: 2px solid #0A0A0A; border-radius: 9999px;
-  font: 700 12px/1 system-ui, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,.4);
+  width: 28px; height: 28px; padding: 0;
+  background: var(--accent); color: var(--accent-foreground); border: 2px solid var(--background); border-radius: 9999px;
+  font: 700 12px/1 system-ui, sans-serif; box-shadow: 0 2px 6px color-mix(in oklab, var(--background) 40%, transparent);
+  cursor: pointer;
 }
-html:not(.light) .mr-pin { box-shadow: 0 0 0 1px var(--foreground), 0 2px 6px rgba(0,0,0,.4); }
-.mr-pin-active { outline: 3px solid #F5F2EC; }
-.leaflet-container { background: var(--background); }
+html:not(.light) .mr-pin { box-shadow: 0 0 0 1px var(--foreground), 0 2px 6px color-mix(in oklab, var(--background) 40%, transparent); }
+.mr-pin-active { width: 34px; height: 34px; outline: 3px solid var(--foreground); }
+.maplibregl-map { background: var(--background); }
+.maplibregl-ctrl-bottom-right .maplibregl-ctrl { margin: 0 12px 12px 0; }
