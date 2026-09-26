@@ -1,5 +1,5 @@
 import "maplibre-gl/dist/maplibre-gl.css";
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLang, catLabel } from "@/i18n";
 import type { UpcomingEvent } from "@/lib/upcoming-events";
