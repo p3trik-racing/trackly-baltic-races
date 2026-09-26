@@ -29,7 +29,7 @@ const RU: Partial<typeof EN> = {
   reference: "Номер брони",
   ticket: "Билетов: {count}",
   tickets: "Билетов: {count}",
-  totalPaid: "Оплачено: €{total}",
+  totalPaid: "Оплачено",
   waiver: "При бронировании ты принял отказ от претензий. Ты несёшь полную ответственность за свою безопасность на событии. За безопасность на месте отвечает исключительно организатор. Majorka Racing — только платформа для бронирования.",
   signoff: "Увидимся на трассе.",
   questions: "Вопросы? hello@majorkariga.com",
@@ -42,7 +42,7 @@ const LV: Partial<typeof EN> = {
   reference: "Rezervācijas numurs",
   ticket: "Biļetes: {count}",
   tickets: "Biļetes: {count}",
-  totalPaid: "Samaksāts: €{total}",
+  totalPaid: "Samaksāts",
   waiver: "Rezervējot tu apstiprināji atbildības atrunu. Tu uzņemies pilnu atbildību par savu drošību šajā pasākumā. Par drošību uz vietas atbild tikai pasākuma organizators. Majorka Racing ir tikai rezervāciju platforma.",
   signoff: "Tiekamies trasē.",
   questions: "Jautājumi? hello@majorkariga.com",
@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
             <p style="font-size:14px;color:#9A958C;margin:4px 0;">📅 ${escape(event_date || "")}${event_time ? " · " + escape(event_time) : ""}</p>
             ${event_location ? `<p style="font-size:14px;color:#9A958C;margin:4px 0;">📍 ${escape(event_location)}</p>` : ""}
             <p style="font-size:14px;color:#9A958C;margin:12px 0 4px;">${L(ticket_count > 1 ? "tickets" : "ticket", { count: ticket_count })}</p>
-            <p style="font-size:16px;font-weight:600;color:#F5F2EC;margin:4px 0 0;">${L("totalPaid", { total: Number(total_price).toFixed(2) })}</p>
+            <p style="font-size:16px;font-weight:600;color:#F5F2EC;margin:4px 0 0;">${lang === "en" ? L("totalPaid", { total: Number(total_price).toFixed(2) }) : `${L("totalPaid")}: €${Number(total_price).toFixed(2)}`}</p>
           </div>
 
           <p style="font-size:12px;color:#9A958C;line-height:1.5;margin:0 0 24px;">
