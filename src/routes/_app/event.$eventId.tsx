@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { eventCover } from "@/lib/event-cover";
 import { categoryLabel } from "@/lib/categories";
-import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink, Navigation, CalendarPlus } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
+import { DirectionsDrawer, CalendarDrawer } from "@/components/EventDrawers";
 
 export const Route = createFileRoute("/_app/event/$eventId")({
   head: () => ({ meta: [
@@ -27,6 +28,8 @@ function EventDetail() {
   const [bookedCount, setBookedCount] = useState(0);
   const [myBooking, setMyBooking] = useState<{ id: string } | null>(null);
   const [saved, setSaved] = useState(false);
+  const [dirOpen, setDirOpen] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle()
@@ -155,6 +158,18 @@ function EventDetail() {
               </div>
             );
           })()}
+          <div className="grid grid-cols-2 gap-2">
+            {(event.location_name || event.city || event.location_lat) && (
+              <button onClick={() => setDirOpen(true)}
+                className="h-11 rounded-xl border border-border bg-card text-sm font-medium flex items-center justify-center gap-2">
+                <Navigation size={16} /> Directions
+              </button>
+            )}
+            <button onClick={() => setCalOpen(true)}
+              className="h-11 rounded-xl border border-border bg-card text-sm font-medium flex items-center justify-center gap-2 last:odd:col-span-2">
+              <CalendarPlus size={16} /> Add to calendar
+            </button>
+          </div>
           {event.organiser_name && (
             <div className="flex items-center gap-3 text-foreground">
               <User size={16} className="text-muted-foreground" />
@@ -211,6 +226,8 @@ function EventDetail() {
           )}
         </div>
       </div>
+      <DirectionsDrawer event={event} open={dirOpen} onOpenChange={setDirOpen} />
+      <CalendarDrawer event={event} open={calOpen} onOpenChange={setCalOpen} />
     </main>
   );
 }

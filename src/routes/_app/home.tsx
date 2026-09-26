@@ -6,6 +6,7 @@ import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
 import { Loader2, Search } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
+import { ViewToggle } from "@/components/ViewToggle";
 
 export const Route = createFileRoute("/_app/home")({
   head: () => ({ meta: [
@@ -97,6 +98,8 @@ function HomePage() {
         <LogoMark className="h-7 w-auto text-foreground" />
         <p className="text-sm text-muted-foreground">Find your next session</p>
       </header>
+
+      <ViewToggle />
 
       <div className="relative">
         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
