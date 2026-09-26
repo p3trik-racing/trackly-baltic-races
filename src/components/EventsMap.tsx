@@ -80,7 +80,7 @@ export default function EventsMap({ events, selected, onSelect }: {
   }, [map, clusters]);
 
   useEffect(() => {
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map) return;
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = clusters.map((cluster) => {
       const el = document.createElement("button");
