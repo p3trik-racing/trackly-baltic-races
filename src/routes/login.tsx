@@ -56,16 +56,22 @@ function LoginPage() {
       <p className="text-muted-foreground text-sm mb-6">{t("auth.login.subtitle")}</p>
 
       <form onSubmit={onSubmit} className="space-y-3">
-        <input className="input-field" type="email" placeholder={t("auth.email")} value={email}
-          onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
-        <div className="relative">
-          <input className="input-field pr-12" type={showPw ? "text" : "password"} placeholder={t("auth.password")} value={password}
-            onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
-          <button type="button" onClick={() => setShowPw((s) => !s)}
-            aria-label={showPw ? t("auth.hidePassword") : t("auth.showPassword")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-2">
-            {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+        <div className="space-y-1">
+          <label htmlFor="login-email" className="block text-xs text-muted-foreground">{t("auth.email")}</label>
+          <input id="login-email" className="input-field" type="email" placeholder={t("auth.email")} value={email}
+            onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="login-password" className="block text-xs text-muted-foreground">{t("auth.password")}</label>
+          <div className="relative">
+            <input id="login-password" className="input-field pr-12" type={showPw ? "text" : "password"} placeholder={t("auth.password")} value={password}
+              onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
+            <button type="button" onClick={() => setShowPw((s) => !s)}
+              aria-label={showPw ? t("auth.hidePassword") : t("auth.showPassword")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-2">
+              {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
         <button className="cta-button" disabled={loading}>{loading ? t("auth.login.submitting") : t("auth.login.submit")}</button>
       </form>

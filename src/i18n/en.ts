@@ -61,6 +61,7 @@ export const en = {
   "auth.signup.passwordShort": "Password must be at least 6 characters",
   "auth.signup.usernameInvalid": "Username must be 3+ chars, letters/numbers/underscore",
   "auth.signup.usernameTaken": "Username already taken",
+  "auth.signup.usernameTakenHint": "That username is taken — try another (letters, numbers, underscore).",
   "auth.signup.welcome": "Welcome to Majorka Racing!",
   // auth — reset password
   "auth.reset.title": "Set a new password",

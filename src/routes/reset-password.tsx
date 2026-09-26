@@ -36,8 +36,11 @@ function ResetPasswordPage() {
         <a href="/login" className="cta-button">{t("auth.reset.backToLogin")}</a>
       ) : (
         <form onSubmit={onSubmit} className="space-y-3">
-          <input className="input-field" type="password" placeholder={t("auth.reset.newPassword")}
-            value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <div className="space-y-1">
+            <label htmlFor="reset-password" className="block text-xs text-muted-foreground">{t("auth.reset.newPassword")}</label>
+            <input id="reset-password" className="input-field" type="password" placeholder={t("auth.reset.newPassword")}
+              value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </div>
           <button className="cta-button">{t("auth.reset.submit")}</button>
         </form>
       )}

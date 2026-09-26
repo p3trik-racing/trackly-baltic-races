@@ -56,6 +56,7 @@ export const ru: Partial<Record<keyof typeof en, string>> = {
   "auth.signup.passwordShort": "Пароль должен быть не короче 6 символов",
   "auth.signup.usernameInvalid": "Имя пользователя: от 3 символов, буквы/цифры/подчёркивание",
   "auth.signup.usernameTaken": "Это имя пользователя уже занято",
+  "auth.signup.usernameTakenHint": "Это имя пользователя занято — попробуй другое (буквы, цифры, подчёркивание).",
   "auth.signup.welcome": "Добро пожаловать в Majorka Racing!",
   "auth.reset.title": "Задай новый пароль",
   "auth.reset.newPassword": "Новый пароль",
