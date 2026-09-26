@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import Cropper, { Area } from "react-easy-crop";
 
 interface Props {
@@ -31,6 +32,7 @@ export function ImageCropModal({ imageSrc, aspectRatio, onConfirm, onCancel }: P
   const [zoom, setZoom] = useState(1);
   const [areaPx, setAreaPx] = useState<Area | null>(null);
   const [busy, setBusy] = useState(false);
+  const { t } = useLang();
 
   const onCropComplete = useCallback((_: Area, pixels: Area) => setAreaPx(pixels), []);
 
@@ -67,7 +69,7 @@ export function ImageCropModal({ imageSrc, aspectRatio, onConfirm, onCancel }: P
           onClick={onCancel}
           className="flex-1 h-12 rounded-xl border border-border text-sm font-medium text-muted-foreground"
         >
-          Cancel
+          {t("common.cancel")}
         </button>
         <button
           onClick={handleConfirm}
@@ -75,7 +77,7 @@ export function ImageCropModal({ imageSrc, aspectRatio, onConfirm, onCancel }: P
           className="flex-1 h-12 rounded-xl text-sm font-semibold text-accent-foreground disabled:opacity-60"
           style={{ backgroundColor: "var(--accent)" }}
         >
-          {busy ? "Cropping…" : "Crop & Upload"}
+          {busy ? t("crop.cropping") : t("crop.confirm")}
         </button>
       </div>
     </div>

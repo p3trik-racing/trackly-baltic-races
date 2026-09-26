@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -39,6 +40,8 @@ interface BookingAgg {
 
 function OrganiserDashboard() {
   const { user } = useAuth();
+  const { t } = useLang();
+  const tr = t;
   
   const [events, setEvents] = useState<OrgEvent[]>([]);
   const [aggs, setAggs] = useState<Record<string, BookingAgg>>({});
@@ -82,16 +85,16 @@ function OrganiserDashboard() {
       const accessToken = sessionData?.session?.access_token;
 
       if (sessionError || !accessToken) {
-        throw new Error("Please log in again");
+        throw new Error(t("organiser.loginAgain"));
       }
 
       const res = await cancelEventWithNotifications({ data: { eventId: id, accessToken } });
-      if (!res?.ok) throw new Error(res?.error ?? "Failed to cancel event");
+      if (!res?.ok) throw new Error(res?.error ?? t("organiser.cancelFailed"));
       setEvents((es) => es.map((e) => e.id === id ? { ...e, status: "cancelled" } : e));
       setConfirmingCancel(null);
-      toast.success("Event cancelled — attendees have been notified");
+      toast.success(t("organiser.cancelledToast"));
     } catch (e: any) {
-      toast.error(e?.message ?? "Failed to cancel event");
+      toast.error(e?.message ?? t("organiser.cancelFailed"));
     } finally {
       setCancellingId(null);
     }
@@ -102,10 +105,10 @@ function OrganiserDashboard() {
     let label = e.status;
     let bg = "var(--input)";
     let color = "var(--foreground)";
-    if (e.status === "cancelled") { label = "Cancelled"; bg = "color-mix(in oklab, var(--accent) 20%, transparent)"; color = "var(--accent)"; }
-    else if (isPast) { label = "Past"; bg = "var(--input)"; color = "var(--muted-foreground)"; }
-    else if (e.status === "live") { label = "Live"; bg = "color-mix(in oklab, var(--success) 22%, transparent)"; color = "oklch(0.78 0.16 145)"; }
-    else if (e.status === "draft") { label = "Draft"; bg = "var(--input)"; color = "var(--muted-foreground)"; }
+    if (e.status === "cancelled") { label = t("organiser.status.cancelled"); bg = "color-mix(in oklab, var(--accent) 20%, transparent)"; color = "var(--accent)"; }
+    else if (isPast) { label = t("organiser.status.past"); bg = "var(--input)"; color = "var(--muted-foreground)"; }
+    else if (e.status === "live") { label = t("organiser.status.live"); bg = "color-mix(in oklab, var(--success) 22%, transparent)"; color = "oklch(0.78 0.16 145)"; }
+    else if (e.status === "draft") { label = t("organiser.status.draft"); bg = "var(--input)"; color = "var(--muted-foreground)"; }
     return (
       <span className="text-[11px] px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: bg, color }}>
         {label}
@@ -116,11 +119,11 @@ function OrganiserDashboard() {
   return (
     <main className="container-app py-6 space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-[22px] font-semibold">My Events</h1>
+        <h1 className="text-[22px] font-semibold">{t("organiser.title")}</h1>
         <Link to="/organiser/post-event"
           className="inline-flex items-center gap-1 px-3 h-10 rounded-xl text-sm font-medium text-accent-foreground"
           style={{ backgroundColor: "var(--accent)" }}>
-          <Plus size={16} /> Post New Event
+          <Plus size={16} /> {t("organiser.postNew")}
         </Link>
       </div>
 
@@ -132,7 +135,7 @@ function OrganiserDashboard() {
               backgroundColor: tab === t ? "var(--accent)" : "transparent",
                color: tab === t ? "var(--accent-foreground)" : "var(--muted-foreground)",
             }}>
-            {t === "active" ? "Active" : "Past & Cancelled"}
+            {t === "active" ? tr("organiser.tab.active") : tr("organiser.tab.past")}
           </button>
         ))}
       </div>
@@ -147,13 +150,13 @@ function OrganiserDashboard() {
             : isCancelled || isPast;
         });
         return loading ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Loading…</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">{t("common.loading")}</p>
         ) : filtered.length === 0 ? (
           <div className="bg-card border border-border rounded-2xl p-8 text-center">
             <p className="text-sm text-muted-foreground">
               {events.length === 0
-                ? "You haven't posted any events yet. Post your first event to get started."
-                : tab === "active" ? "No active events." : "No past or cancelled events."}
+                ? t("organiser.emptyAll")
+                : tab === "active" ? t("organiser.emptyActive") : t("organiser.emptyPast")}
             </p>
           </div>
         ) : (
@@ -175,30 +178,30 @@ function OrganiserDashboard() {
                       {e.city ? ` · ${e.city}` : ""}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {agg.count} bookings · €{agg.revenue.toFixed(0)}
+                      {t("organiser.stats", { count: agg.count, revenue: agg.revenue.toFixed(0) })}
                     </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 border-t border-border text-xs">
                   <Link to="/organiser/events/$eventId/bookings" params={{ eventId: e.id }}
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">
-                    View Bookings
+                    {t("organiser.viewBookings")}
                   </Link>
                   <Link to="/organiser/post-event" search={{ edit: e.id }}
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">
-                    Edit
+                    {t("common.edit")}
                   </Link>
                   <button onClick={() => setConfirmingCancel(e.id)}
                     disabled={e.status === "cancelled"}
                     className="py-3 text-center disabled:opacity-40"
                     style={{ color: "var(--accent)" }}>
-                    Cancel
+                    {t("organiser.cancel")}
                   </button>
                 </div>
                 {confirmingCancel === e.id && (
                   <div className="m-3 bg-card border border-border rounded-2xl p-4 space-y-3">
                     <p className="text-sm">
-                      Cancel "{e.title}"? Attendees will see it as cancelled and be notified.
+                      {t("organiser.cancelPrompt", { title: e.title })}
                     </p>
                     <div className="flex gap-2">
                       <button
@@ -206,7 +209,7 @@ function OrganiserDashboard() {
                         disabled={cancellingId === e.id}
                         className="flex-1 h-10 rounded-xl border border-border text-xs font-medium"
                       >
-                        Keep Event
+                        {t("organiser.keep")}
                       </button>
                       <button
                         onClick={() => cancelEvent(e.id)}
@@ -214,7 +217,7 @@ function OrganiserDashboard() {
                         className="flex-1 h-10 rounded-xl text-xs font-medium text-accent-foreground"
                         style={{ backgroundColor: "var(--accent)" }}
                       >
-                        {cancellingId === e.id ? "Cancelling…" : "Yes, Cancel"}
+                        {cancellingId === e.id ? t("common.cancelling") : t("common.yesCancel")}
                       </button>
                     </div>
                   </div>

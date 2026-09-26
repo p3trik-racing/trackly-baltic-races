@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -37,6 +38,7 @@ function BookPage() {
   const { eventId } = Route.useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t, lang } = useLang();
   const [event, setEvent] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [tickets, setTickets] = useState(1);
@@ -85,7 +87,7 @@ function BookPage() {
       .then(({ data }) => setExistingBooking(data ?? null));
   }, [user, eventId]);
 
-  if (!event) return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
+  if (!event) return <div className="container-app py-10 text-muted-foreground">{t("common.loading")}</div>;
 
   const isFree = Number(event.price) === 0;
   const unlimited = !event.capacity || event.capacity === 0;
@@ -97,8 +99,8 @@ function BookPage() {
 
   async function confirmFreeBooking() {
     if (!user) return;
-    if (!form.name || !form.email) return toast.error("Please fill in your details");
-    if (!waiver) return toast.error("Please accept the liability waiver");
+    if (!form.name || !form.email) return toast.error(t("book.fillDetails"));
+    if (!waiver) return toast.error(t("book.acceptWaiver"));
     setPaymentError(null);
     setSubmitting(true);
     setPaymentStep("processing");
@@ -114,7 +116,7 @@ function BookPage() {
         },
       });
       if (error || data?.error || !data?.id) {
-        throw new Error(data?.error || error?.message || "Could not create booking");
+        throw new Error(data?.error || error?.message || t("book.createFailed"));
       }
 
       supabase.functions.invoke("send-booking-email", {
@@ -129,12 +131,13 @@ function BookPage() {
           ticket_count: tickets,
           total_price: 0,
           booking_reference: data.id.slice(0, 8).toUpperCase(),
+          lang,
         },
       }).catch(() => {});
 
       navigate({ to: "/booking/$bookingId", params: { bookingId: data.id } });
     } catch (e: any) {
-      setPaymentError(e?.message ?? "Could not create booking");
+      setPaymentError(e?.message ?? t("book.createFailed"));
       setPaymentStep("details");
     } finally {
       setSubmitting(false);
@@ -144,8 +147,8 @@ function BookPage() {
 
   async function continueToPayment() {
     if (!user) return;
-    if (!form.name || !form.email) return toast.error("Please fill in your details");
-    if (!waiver) return toast.error("Please accept the liability waiver");
+    if (!form.name || !form.email) return toast.error(t("book.fillDetails"));
+    if (!waiver) return toast.error(t("book.acceptWaiver"));
     setPaymentError(null);
     setSubmitting(true);
     try {
@@ -154,15 +157,15 @@ function BookPage() {
           amount: Math.round(total * 100),
           currency: (event.currency || "eur").toLowerCase(),
           event_id: event.id,
-          description: `Booking: ${event.title}`,
+          description: t("book.description", { title: event.title }),
         },
       });
       if (error) throw new Error(error.message);
-      if (!data?.clientSecret) throw new Error(data?.error || "Could not start payment");
+      if (!data?.clientSecret) throw new Error(data?.error || t("book.startPaymentFailed"));
       setClientSecret(data.clientSecret);
       setPaymentStep("payment");
     } catch (e: any) {
-      setPaymentError(e?.message ?? "Could not start payment");
+      setPaymentError(e?.message ?? t("book.startPaymentFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -183,7 +186,7 @@ function BookPage() {
         },
       });
       if (error || data?.error || !data?.id) {
-        throw new Error(data?.error || error?.message || "Could not create booking");
+        throw new Error(data?.error || error?.message || t("book.createFailed"));
       }
 
       // Fire-and-forget booking confirmation email
@@ -199,12 +202,13 @@ function BookPage() {
           ticket_count: tickets,
           total_price: total,
           booking_reference: data.id.slice(0, 8).toUpperCase(),
+          lang,
         },
       }).catch(() => {});
 
       navigate({ to: "/booking/$bookingId", params: { bookingId: data.id } });
     } catch (e: any) {
-      setPaymentError(e?.message ?? "Could not create booking");
+      setPaymentError(e?.message ?? t("book.createFailed"));
       setPaymentStep("payment");
     }
   }
@@ -214,7 +218,7 @@ function BookPage() {
     return (
       <main className="container-app py-20 flex flex-col items-center gap-4 text-muted-foreground">
         <Loader2 className="animate-spin" size={28} />
-        <p>Confirming your booking…</p>
+        <p>{t("book.confirming")}</p>
       </main>
     );
   }
@@ -228,18 +232,18 @@ function BookPage() {
             onClick={() => { setPaymentStep("details"); setPaymentError(null); }}
             className="inline-flex items-center gap-2 text-muted-foreground mb-4"
           >
-            <ArrowLeft size={18} /> Back
+            <ArrowLeft size={18} /> {t("common.back")}
           </button>
-          <h1 className="text-[22px] font-semibold">Payment</h1>
+          <h1 className="text-[22px] font-semibold">{t("book.payment")}</h1>
         </header>
         <section className="container-app space-y-5">
           <div className="bg-card border border-border rounded-2xl p-4 space-y-1">
             <p className="font-medium">{event.title}</p>
             <p className="text-sm text-muted-foreground">
               {new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-              {" · "}{tickets} ticket{tickets > 1 ? "s" : ""}
+              {" · "}{t(tickets > 1 ? "book.ticketsCountPlural" : "book.ticketsCount", { count: tickets })}
             </p>
-            <p className="text-sm font-semibold mt-2">Total: €{total.toFixed(2)}</p>
+            <p className="text-sm font-semibold mt-2">{t("book.totalValue", { total: total.toFixed(2) })}</p>
           </div>
 
           <Elements
@@ -291,14 +295,14 @@ function BookPage() {
         <header className="container-app py-5">
           <button onClick={() => navigate({ to: "/event/$eventId", params: { eventId } })}
             className="inline-flex items-center gap-2 text-muted-foreground mb-4">
-            <ArrowLeft size={18} /> Back
+            <ArrowLeft size={18} /> {t("common.back")}
           </button>
-          <h1 className="text-[22px] font-semibold">Checkout</h1>
+          <h1 className="text-[22px] font-semibold">{t("book.checkout")}</h1>
         </header>
         <section className="container-app space-y-4">
           <div className="bg-card border border-border rounded-2xl p-6 flex flex-col items-center text-center gap-3">
             <CheckCircle2 size={48} className="text-green-500" />
-            <p className="font-medium">You already have a booking for this event</p>
+            <p className="font-medium">{t("book.alreadyBooked")}</p>
             <p className="text-xs text-muted-foreground font-mono">
               {existingBooking.id.slice(0, 8).toUpperCase()}
             </p>
@@ -306,13 +310,13 @@ function BookPage() {
               onClick={() => navigate({ to: "/booking/$bookingId", params: { bookingId: existingBooking.id } })}
               className="cta-button mt-2"
             >
-              View Booking
+              {t("book.viewBooking")}
             </button>
             <button
               onClick={() => setDismissedExisting(true)}
               className="w-full mt-1 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent/10"
             >
-              Buy more tickets
+              {t("book.buyMore")}
             </button>
           </div>
         </section>
@@ -325,14 +329,14 @@ function BookPage() {
       <header className="container-app py-5">
         <button onClick={() => navigate({ to: "/event/$eventId", params: { eventId } })}
           className="inline-flex items-center gap-2 text-muted-foreground mb-4">
-          <ArrowLeft size={18} /> Back
+          <ArrowLeft size={18} /> {t("common.back")}
         </button>
-        <h1 className="text-[22px] font-semibold">Checkout</h1>
+        <h1 className="text-[22px] font-semibold">{t("book.checkout")}</h1>
       </header>
 
       <section className="container-app space-y-5">
         <div className="bg-card border border-border rounded-2xl p-4">
-          <p className="text-xs text-muted-foreground">Event</p>
+          <p className="text-xs text-muted-foreground">{t("book.event")}</p>
           <p className="font-medium">{event.title}</p>
           <p className="text-sm text-muted-foreground mt-1">
             {new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
@@ -340,18 +344,18 @@ function BookPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs text-muted-foreground">Attendee details</label>
-          <input className="input-field" placeholder="Full name" value={form.name}
+          <label className="text-xs text-muted-foreground">{t("book.attendee")}</label>
+          <input className="input-field" placeholder={t("book.fullName")} value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <input className="input-field" placeholder="Email" type="email" value={form.email}
+          <input className="input-field" placeholder={t("book.email")} type="email" value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })} />
-          <input className="input-field" placeholder="Phone" type="tel" value={form.phone}
+          <input className="input-field" placeholder={t("book.phone")} type="tel" value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })} />
         </div>
 
         <div className="bg-card border border-border rounded-2xl p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">Tickets</p>
+            <p className="text-sm font-medium">{t("book.tickets")}</p>
             <div className="flex items-center gap-3">
               <button onClick={() => setTickets((t) => Math.max(1, t - 1))}
                 className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
@@ -368,7 +372,7 @@ function BookPage() {
           </div>
           {!unlimited && (
             <p className="text-xs text-muted-foreground">
-              {soldOut ? "Sold Out" : `${remaining} spots remaining`}
+              {soldOut ? t("common.soldOut") : t("book.spotsRemaining", { count: remaining })}
             </p>
           )}
         </div>
@@ -376,19 +380,19 @@ function BookPage() {
         {!isFree && (
           <div className="bg-card border border-border rounded-2xl p-4 space-y-2 text-sm">
             <div className="flex justify-between text-muted-foreground">
-              <span>Tickets ({tickets} × €{event.price})</span><span>€{subtotal.toFixed(2)}</span>
+              <span>{t("book.ticketsLine", { count: tickets, price: event.price })}</span><span>€{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
-              <span>Majorka Racing platform fee (5%)</span><span>€{fee.toFixed(2)}</span>
+              <span>{t("book.platformFee")}</span><span>€{fee.toFixed(2)}</span>
             </div>
             <div className="border-t border-border pt-2 flex justify-between font-semibold">
-              <span>Total</span><span>€{total.toFixed(2)}</span>
+              <span>{t("book.total")}</span><span>€{total.toFixed(2)}</span>
             </div>
           </div>
         )}
         {isFree && (
           <div className="bg-card border border-border rounded-2xl p-4 flex justify-between font-semibold text-sm">
-            <span>Total</span><span>Free</span>
+            <span>{t("book.total")}</span><span>{t("common.free")}</span>
           </div>
         )}
 
@@ -396,7 +400,7 @@ function BookPage() {
           <input type="checkbox" checked={waiver} onChange={(e) => setWaiver(e.target.checked)}
             className="mt-1 accent-[var(--accent)] flex-shrink-0" />
           <span>
-             I accept full responsibility for my safety at this event. The event organiser is solely liable for safety on site. Majorka Racing is a booking platform only and holds no liability.
+             {t("book.waiver")}
           </span>
         </label>
 
@@ -428,12 +432,12 @@ function BookPage() {
             className="cta-button"
           >
             {soldOut
-              ? "Sold Out"
+              ? t("common.soldOut")
               : submitting
-                ? "Loading…"
+                ? t("common.loading")
                 : isFree
-                  ? "Confirm Booking (Free)"
-                  : "Continue to Payment →"}
+                  ? t("book.confirmFree")
+                  : t("book.continueToPayment")}
           </button>
         </div>
       </div>
@@ -453,6 +457,7 @@ function PaymentForm({
   const stripe = useStripe();
   const elements = useElements();
   const [paying, setPaying] = useState(false);
+  const { t } = useLang();
 
   async function handlePay() {
     if (!stripe || !elements) return;
@@ -464,11 +469,11 @@ function PaymentForm({
         redirect: "if_required",
       });
       if (error) {
-        onError(error.message ?? "Payment failed");
+        onError(error.message ?? t("book.paymentFailed"));
       } else if (paymentIntent && paymentIntent.status === "succeeded") {
         onSuccess(paymentIntent.id);
       } else {
-        onError("Payment did not complete");
+        onError(t("book.paymentIncomplete"));
       }
     } finally {
       setPaying(false);
@@ -484,7 +489,7 @@ function PaymentForm({
       >
         <div className="container-app py-3">
           <button onClick={handlePay} disabled={!stripe || paying} className="cta-button">
-            {paying ? "Processing…" : `Pay €${total.toFixed(2)}`}
+            {paying ? t("book.processing") : t("book.pay", { total: total.toFixed(2) })}
           </button>
         </div>
       </div>

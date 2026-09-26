@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { eventCover } from "@/lib/event-cover";
-import { categoryLabel } from "@/lib/categories";
 import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink, Navigation, CalendarPlus } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ function EventDetail() {
   const { eventId } = Route.useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLang();
   const [event, setEvent] = useState<any>(null);
   const [bookedCount, setBookedCount] = useState(0);
   const [myBooking, setMyBooking] = useState<{ id: string } | null>(null);
@@ -59,11 +60,11 @@ function EventDetail() {
     const url = window.location.href;
     if (navigator.share) {
       try {
-        await navigator.share({ title: event.title, text: `Check out ${event.title} on Majorka Racing`, url });
+        await navigator.share({ title: event.title, text: t("event.shareText", { title: event.title }), url });
       } catch {}
     } else {
       await navigator.clipboard.writeText(url);
-      toast.success("Link copied to clipboard");
+      toast.success(t("event.linkCopied"));
     }
   }
 
@@ -75,13 +76,13 @@ function EventDetail() {
       ? current.filter((id) => id !== eventId)
       : [...current, eventId];
     const { error } = await supabase.from("profiles").update({ saved_events: next }).eq("id", user.id);
-    if (error) { toast.error("Could not update"); return; }
+    if (error) { toast.error(t("event.updateFailed")); return; }
     setSaved(next.includes(eventId));
-    toast.success(next.includes(eventId) ? "Event saved" : "Removed from saved");
+    toast.success(next.includes(eventId) ? t("event.saved") : t("event.unsaved"));
   }
 
   if (!event) {
-    return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
+    return <div className="container-app py-10 text-muted-foreground">{t("common.loading")}</div>;
   }
   const soldOut = event.capacity > 0 && bookedCount >= event.capacity;
 
@@ -112,7 +113,7 @@ function EventDetail() {
 
       <div className="container-app py-5 space-y-5">
         <div className="space-y-2">
-          <span className="category-pill">{categoryLabel(event.category)}</span>
+          <span className="category-pill">{catLabel(t, event.category)}</span>
           <h1 className="text-[24px] font-semibold leading-tight">{event.title}</h1>
         </div>
 
@@ -148,12 +149,12 @@ function EventDetail() {
                     src={embed}
                     style={{ width: "100%", height: 180, border: 0, borderRadius: 16, pointerEvents: "none" }}
                     loading="lazy"
-                    title="Event location map"
+                    title={t("event.mapTitle")}
                   />
                 </div>
                 <a href={url} target="_blank" rel="noopener noreferrer"
                   className="text-xs text-muted-foreground inline-flex items-center gap-1">
-                  Open in Google Maps <ExternalLink size={11} />
+                  {t("event.openInGoogleMaps")} <ExternalLink size={11} />
                 </a>
               </div>
             );
@@ -162,25 +163,25 @@ function EventDetail() {
             {(event.location_name || event.city || event.location_lat) && (
               <button onClick={() => setDirOpen(true)}
                 className="h-11 rounded-xl border border-border bg-card text-sm font-medium flex items-center justify-center gap-2">
-                <Navigation size={16} /> Directions
+                <Navigation size={16} /> {t("common.directions")}
               </button>
             )}
             <button onClick={() => setCalOpen(true)}
               className="h-11 rounded-xl border border-border bg-card text-sm font-medium flex items-center justify-center gap-2 last:odd:col-span-2">
-              <CalendarPlus size={16} /> Add to calendar
+              <CalendarPlus size={16} /> {t("event.addToCalendar")}
             </button>
           </div>
           {event.organiser_name && (
             <div className="flex items-center gap-3 text-foreground">
               <User size={16} className="text-muted-foreground" />
-              Organised by {event.organiser_name}
+              {t("event.organisedBy", { name: event.organiser_name })}
             </div>
           )}
         </div>
 
         {event.description && (
           <div>
-            <h2 className="text-base font-semibold mb-2">About</h2>
+            <h2 className="text-base font-semibold mb-2">{t("event.about")}</h2>
             <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
               {event.description}
             </p>
@@ -189,12 +190,12 @@ function EventDetail() {
 
         <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between">
           <div>
-            <p className="text-xs text-muted-foreground">From</p>
-            <p className="text-2xl font-semibold">{event.price === 0 ? "Free" : `€${event.price}`}</p>
+            <p className="text-xs text-muted-foreground">{t("event.from")}</p>
+            <p className="text-2xl font-semibold">{event.price === 0 ? t("common.free") : `€${event.price}`}</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-muted-foreground">Capacity</p>
-            <p className="text-sm font-medium">{event.capacity} spots</p>
+            <p className="text-xs text-muted-foreground">{t("event.capacity")}</p>
+            <p className="text-sm font-medium">{t("event.spots", { count: event.capacity })}</p>
           </div>
         </div>
       </div>
@@ -207,21 +208,21 @@ function EventDetail() {
           {event.status === "cancelled" ? (
             <button disabled className="cta-button opacity-80 cursor-not-allowed"
               style={{ backgroundColor: "var(--accent)" }}>
-              Event Cancelled
+              {t("event.cancelled")}
             </button>
           ) : !user ? (
-            <Link to="/login" className="cta-button">Log in to book</Link>
+            <Link to="/login" className="cta-button">{t("event.loginToBook")}</Link>
           ) : myBooking ? (
             <Link to="/booking/$bookingId" params={{ bookingId: myBooking.id }}
               className="cta-button"
               style={{ backgroundColor: "var(--success)", color: "#fff" }}>
-              You're attending
+              {t("event.attending")}
             </Link>
           ) : soldOut ? (
-            <button disabled className="cta-button opacity-60 cursor-not-allowed">Sold Out</button>
+            <button disabled className="cta-button opacity-60 cursor-not-allowed">{t("common.soldOut")}</button>
           ) : (
             <Link to="/book/$eventId" params={{ eventId }} className="cta-button">
-              Book Now
+              {t("event.bookNow")}
             </Link>
           )}
         </div>

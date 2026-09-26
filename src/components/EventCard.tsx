@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { MapPin, Calendar } from "lucide-react";
-import { categoryLabel } from "@/lib/categories";
 import { eventCover } from "@/lib/event-cover";
 
 export interface EventCardData {
@@ -19,6 +19,7 @@ export interface EventCardData {
 
 export function EventCard({ event, large = false }: { event: EventCardData; large?: boolean }) {
   const cover = eventCover(event.category, event.cover_image_url);
+  const { t } = useLang();
   const dateStr = new Date(event.date).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",
@@ -51,7 +52,7 @@ export function EventCard({ event, large = false }: { event: EventCardData; larg
       </div>
       <div className="p-3 space-y-2">
         <div className="flex items-center justify-between">
-          <span className="category-pill">{categoryLabel(event.category)}</span>
+          <span className="category-pill">{catLabel(t, event.category)}</span>
           {soldOut ? (
             <span
               className="text-[11px] px-2 py-0.5 rounded-full font-semibold"
@@ -60,11 +61,11 @@ export function EventCard({ event, large = false }: { event: EventCardData; larg
                 color: "var(--accent)",
               }}
             >
-              Sold Out
+              {t("common.soldOut")}
             </span>
           ) : (
             <span className="text-foreground font-semibold text-sm">
-              {event.price === 0 ? "Free" : `€${event.price}`}
+              {event.price === 0 ? t("common.free") : `€${event.price}`}
             </span>
           )}
         </div>

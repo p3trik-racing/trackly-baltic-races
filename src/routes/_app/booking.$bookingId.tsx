@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Check } from "lucide-react";
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_app/booking/$bookingId")({
 function ConfirmationPage() {
   const { bookingId } = Route.useParams();
   const navigate = useNavigate();
+  const { t } = useLang();
   const [booking, setBooking] = useState<any>(null);
   const [cancelling, setCancelling] = useState(false);
   const [confirmingCancel, setConfirmingCancel] = useState(false);
@@ -32,7 +34,7 @@ function ConfirmationPage() {
       .then(({ data }) => setBooking(data));
   }, [bookingId]);
 
-  if (!booking) return <div className="container-app py-10 text-muted-foreground">Loading…</div>;
+  if (!booking) return <div className="container-app py-10 text-muted-foreground">{t("common.loading")}</div>;
 
   const ev = booking.events;
   const eventDateTime = new Date(`${ev.date}T${ev.time ?? "00:00"}`);
@@ -49,12 +51,12 @@ function ConfirmationPage() {
     });
     setCancelling(false);
     if (error || data?.error) {
-      toast.error(data?.error || error?.message || "Could not cancel");
+      toast.error(data?.error || error?.message || t("booking.cancelFailed"));
       return;
     }
     setBooking({ ...booking, status: "cancelled" });
     setConfirmingCancel(false);
-    toast.success("Booking cancelled. Refund is being processed.");
+    toast.success(t("booking.cancelledToast"));
   }
 
   return (
@@ -67,20 +69,20 @@ function ConfirmationPage() {
       </div>
       <div>
         <h1 className="text-2xl font-semibold">
-          {booking.status === "cancelled" ? "Booking Cancelled" : "Booking Confirmed!"}
+          {booking.status === "cancelled" ? t("booking.cancelledTitle") : t("booking.confirmedTitle")}
         </h1>
         <p className="text-sm text-muted-foreground mt-2">
-          A confirmation has been sent to {booking.attendee_email}
+          {t("booking.sentTo", { email: booking.attendee_email })}
         </p>
       </div>
 
       <div className="bg-card border border-border rounded-2xl p-5 text-left space-y-3">
         <div>
-          <p className="text-xs text-muted-foreground">Reference</p>
+          <p className="text-xs text-muted-foreground">{t("booking.reference")}</p>
           <p className="font-mono font-semibold">{booking.id.slice(0, 8).toUpperCase()}</p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground">Event</p>
+          <p className="text-xs text-muted-foreground">{t("booking.event")}</p>
           <p className="font-medium">{ev.title}</p>
           <p className="text-sm text-muted-foreground">
             {new Date(ev.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
@@ -88,26 +90,26 @@ function ConfirmationPage() {
           </p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground">Tickets</p>
-          <p className="text-sm">{booking.ticket_count} × — Total €{Number(booking.total_price).toFixed(2)}</p>
+          <p className="text-xs text-muted-foreground">{t("booking.tickets")}</p>
+          <p className="text-sm">{t("booking.ticketsLine", { count: booking.ticket_count, total: Number(booking.total_price).toFixed(2) })}</p>
         </div>
         {ev.organiser_name && (
           <div>
-            <p className="text-xs text-muted-foreground">Organiser</p>
+            <p className="text-xs text-muted-foreground">{t("booking.organiser")}</p>
             <p className="text-sm">{ev.organiser_name}</p>
           </div>
         )}
       </div>
 
       <div className="space-y-3">
-        <Link to="/bookings" className="cta-button">View My Bookings</Link>
+        <Link to="/bookings" className="cta-button">{t("booking.viewMyBookings")}</Link>
 
         {canBuyMore && (
           <button
             onClick={() => navigate({ to: "/book/$eventId", params: { eventId: ev.id } })}
             className="w-full h-14 rounded-xl border border-border text-sm font-medium text-muted-foreground"
           >
-            Buy more tickets
+            {t("booking.buyMore")}
           </button>
         )}
 
@@ -117,14 +119,14 @@ function ConfirmationPage() {
             disabled={cancelling}
             className="w-full h-14 rounded-xl border border-border text-sm font-medium text-muted-foreground"
           >
-            Cancel Booking
+            {t("booking.cancel")}
           </button>
         )}
 
         {canCancel && confirmingCancel && (
           <div className="bg-card border border-border rounded-2xl p-4 space-y-3 text-left">
             <p className="text-sm">
-              Cancel your booking for {ev.title}? You'll receive a full refund within 5-10 business days.
+              {t("booking.cancelPrompt", { title: ev.title })}
             </p>
             <div className="flex gap-2">
               <button
@@ -132,7 +134,7 @@ function ConfirmationPage() {
                 disabled={cancelling}
                 className="flex-1 h-11 rounded-xl border border-border text-sm font-medium"
               >
-                Keep Booking
+                {t("booking.keep")}
               </button>
               <button
                 onClick={onCancel}
@@ -140,7 +142,7 @@ function ConfirmationPage() {
                 className="flex-1 h-11 rounded-xl text-sm font-medium text-accent-foreground"
                 style={{ backgroundColor: "var(--accent)" }}
               >
-                {cancelling ? "Cancelling…" : "Yes, Cancel"}
+                {cancelling ? t("common.cancelling") : t("common.yesCancel")}
               </button>
             </div>
           </div>

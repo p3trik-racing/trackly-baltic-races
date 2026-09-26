@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { CATEGORIES } from "@/lib/categories";
-import { countryLabel } from "@/lib/countries";
 import { ViewToggle } from "@/components/ViewToggle";
 import { Loader2, Search, SlidersHorizontal } from "lucide-react";
 
@@ -24,6 +24,7 @@ type SortKey = "soonest" | "newest" | "price_asc" | "price_desc";
 
 function ExplorePage() {
   const { user } = useAuth();
+  const { t } = useLang();
   const [events, setEvents] = useState<EventCardData[]>([]);
   const [bookingCounts, setBookingCounts] = useState<Record<string, number>>({});
   const [favourites, setFavourites] = useState<string[]>([]);
@@ -128,14 +129,14 @@ function ExplorePage() {
           <Loader2 size={18} className="animate-spin text-muted-foreground" />
         </div>
       )}
-      <h1 className="text-[22px] font-semibold">Explore</h1>
+      <h1 className="text-[22px] font-semibold">{t("explore.title")}</h1>
       <ViewToggle />
 
       <div className="relative">
         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           className="input-field pl-11"
-          placeholder="Search events"
+          placeholder={t("home.search")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -146,34 +147,34 @@ function ExplorePage() {
           onClick={() => setShowFilters((s) => !s)}
           className="flex items-center gap-2 text-sm text-muted-foreground"
         >
-          <SlidersHorizontal size={16} /> Filters
+          <SlidersHorizontal size={16} /> {t("explore.filters")}
         </button>
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
           className="input-field h-9 w-auto px-3 text-sm"
         >
-          <option value="soonest">Soonest</option>
-          <option value="newest">Newest</option>
-          <option value="price_asc">Price: low to high</option>
-          <option value="price_desc">Price: high to low</option>
+          <option value="soonest">{t("explore.sort.soonest")}</option>
+          <option value="newest">{t("explore.sort.newest")}</option>
+          <option value="price_asc">{t("explore.sort.priceAsc")}</option>
+          <option value="price_desc">{t("explore.sort.priceDesc")}</option>
         </select>
       </div>
 
       {showFilters && (
         <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
           <div>
-            <label className="text-xs text-muted-foreground">Category</label>
+            <label className="text-xs text-muted-foreground">{t("explore.category")}</label>
             <select className="input-field mt-1" value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="all">All</option>
-              {orderedCategories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+              <option value="all">{t("common.all")}</option>
+              {orderedCategories.map((c) => <option key={c.value} value={c.value}>{catLabel(t, c.value)}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground">Country</label>
+            <label className="text-xs text-muted-foreground">{t("explore.country")}</label>
             <select className="input-field mt-1" value={country} onChange={(e) => setCountry(e.target.value)}>
-              <option value="all">All</option>
-              {countries.map((c) => <option key={c} value={c}>{countryLabel(c)}</option>)}
+              <option value="all">{t("common.all")}</option>
+              {countries.map((c) => <option key={c} value={c}>{countryName(t, c)}</option>)}
             </select>
           </div>
         </div>
@@ -181,7 +182,7 @@ function ExplorePage() {
 
       {filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
-          No events match your filters.
+          {t("home.noMatch")}
         </p>
       ) : (
         <div className="space-y-3">
