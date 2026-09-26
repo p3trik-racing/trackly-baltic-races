@@ -21,8 +21,33 @@ const EN = {
   questions: "Questions? hello@majorkariga.com",
 };
 type Lang = "en" | "ru" | "lv";
-// ru / lv to be filled in; missing strings fall back to EN.
-const STRINGS: Record<Lang, Partial<typeof EN>> = { en: EN, ru: {}, lv: {} };
+const RU: Partial<typeof EN> = {
+  subject: "Бронь подтверждена — {title}",
+  greeting: "Привет, {name}! Твоя бронь подтверждена.",
+  there: "друг",
+  intro: "Вот детали твоей брони.",
+  reference: "Номер брони",
+  ticket: "Билетов: {count}",
+  tickets: "Билетов: {count}",
+  totalPaid: "Оплачено: €{total}",
+  waiver: "При бронировании ты принял отказ от претензий. Ты несёшь полную ответственность за свою безопасность на событии. За безопасность на месте отвечает исключительно организатор. Majorka Racing — только платформа для бронирования.",
+  signoff: "Увидимся на трассе.",
+  questions: "Вопросы? hello@majorkariga.com",
+};
+const LV: Partial<typeof EN> = {
+  subject: "Rezervācija apstiprināta — {title}",
+  greeting: "Sveiks, {name}! Tava rezervācija ir apstiprināta.",
+  there: "draugs",
+  intro: "Šeit ir tavas rezervācijas dati.",
+  reference: "Rezervācijas numurs",
+  ticket: "Biļetes: {count}",
+  tickets: "Biļetes: {count}",
+  totalPaid: "Samaksāts: €{total}",
+  waiver: "Rezervējot tu apstiprināji atbildības atrunu. Tu uzņemies pilnu atbildību par savu drošību šajā pasākumā. Par drošību uz vietas atbild tikai pasākuma organizators. Majorka Racing ir tikai rezervāciju platforma.",
+  signoff: "Tiekamies trasē.",
+  questions: "Jautājumi? hello@majorkariga.com",
+};
+const STRINGS: Record<Lang, Partial<typeof EN>> = { en: EN, ru: RU, lv: LV };
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
