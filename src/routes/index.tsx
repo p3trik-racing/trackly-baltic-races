@@ -51,6 +51,11 @@ function Splash() {
         >
           Browse events without signing up →
         </Link>
+        <p className="text-center text-xs text-muted-foreground">
+          <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Majorka Riga</a>
+          {" · "}
+          <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Shop</a>
+        </p>
         <p className="text-center text-muted-foreground pt-2" style={{ fontSize: "11px" }}>
           By using Majorka Racing you agree to our{" "}
           <Link to="/terms" style={{ color: "var(--accent)" }}>Terms of Service</Link>

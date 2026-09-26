@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES } from "@/lib/categories";
-import { LogOut, User, Upload, ChevronRight, KeyRound } from "lucide-react";
+import { LogOut, User, Upload, ChevronRight, KeyRound, Globe, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import { useTheme } from "@/lib/theme-context";
@@ -324,6 +324,21 @@ function ProfilePage() {
             Switch to organiser mode
           </button>
         )}
+      </section>
+
+      {/* Majorka */}
+      <section className="bg-card border border-border rounded-2xl p-2">
+        <p className="px-3 pt-2 pb-1 text-xs text-muted-foreground">Majorka</p>
+        <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer"
+          className="w-full flex items-center justify-between px-3 h-12 text-sm">
+          <span className="inline-flex items-center gap-2"><Globe size={16} /> Community website — majorkariga.com</span>
+          <ChevronRight size={16} className="text-muted-foreground" />
+        </a>
+        <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer"
+          className="w-full flex items-center justify-between px-3 h-12 text-sm">
+          <span className="inline-flex items-center gap-2"><ShoppingBag size={16} /> Shop — majorkashop.com</span>
+          <ChevronRight size={16} className="text-muted-foreground" />
+        </a>
       </section>
 
       {/* Account */}
