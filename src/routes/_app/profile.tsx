@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES } from "@/lib/categories";
-import { LogOut, User, Upload, ChevronRight, KeyRound } from "lucide-react";
+import { LogOut, User, Upload, ChevronRight, KeyRound, Globe, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import { useTheme } from "@/lib/theme-context";
