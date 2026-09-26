@@ -56,6 +56,7 @@ export const lv: Partial<Record<keyof typeof en, string>> = {
   "auth.signup.passwordShort": "Parolei jābūt vismaz 6 zīmes garai",
   "auth.signup.usernameInvalid": "Lietotājvārds: vismaz 3 zīmes, burti/cipari/pasvītra",
   "auth.signup.usernameTaken": "Šāds lietotājvārds jau ir aizņemts",
+  "auth.signup.usernameTakenHint": "Šis lietotājvārds ir aizņemts — pamēģini citu (burti, cipari, pasvītra).",
   "auth.signup.welcome": "Laipni lūgts Majorka Racing!",
   "auth.reset.title": "Iestati jaunu paroli",
   "auth.reset.newPassword": "Jaunā parole",

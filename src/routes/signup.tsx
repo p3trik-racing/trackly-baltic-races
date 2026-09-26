@@ -45,7 +45,7 @@ function SignupPage() {
     if (!agreed) return toast.error(t("auth.signup.acceptTerms"));
     if (form.password.length < 6) return toast.error(t("auth.signup.passwordShort"));
     if (!usernameValid) return toast.error(t("auth.signup.usernameInvalid"));
-    if (usernameStatus === "taken") return toast.error(t("auth.signup.usernameTaken"));
+    if (usernameStatus === "taken") return toast.error(t("auth.signup.usernameTakenHint"));
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email: form.email,
@@ -71,36 +71,50 @@ function SignupPage() {
       <p className="text-muted-foreground text-sm mb-6">{t("auth.signup.subtitle")}</p>
 
       <form onSubmit={onSubmit} className="space-y-3">
-        <input className="input-field" placeholder={t("auth.signup.fullName")} value={form.fullName}
-          onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
-
-        <div className="relative">
-          <input className="input-field pr-10" placeholder={t("auth.signup.username")} value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase().replace(/\s/g, "") })}
-            required minLength={3} maxLength={30} autoComplete="off" />
-          {form.username && (
-            <span className="absolute right-3 top-1/2 -translate-y-1/2">
-              {usernameStatus === "available" && <Check size={18} className="text-[oklch(0.78_0.16_145)]" />}
-              {(usernameStatus === "taken" || usernameStatus === "invalid") && <X size={18} style={{ color: "var(--accent)" }} />}
-            </span>
-          )}
+        <div className="space-y-1">
+          <label htmlFor="signup-full-name" className="block text-xs text-muted-foreground">{t("auth.signup.fullName")}</label>
+          <input id="signup-full-name" className="input-field" placeholder={t("auth.signup.fullName")} value={form.fullName}
+            onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
         </div>
-        {form.username && usernameStatus === "invalid" && (
-          <p className="text-[11px] -mt-2" style={{ color: "var(--accent)" }}>{t("auth.signup.usernameHint")}</p>
-        )}
 
-        <input className="input-field" type="tel" placeholder={t("auth.signup.phone")} value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-        <input className="input-field" type="email" placeholder={t("auth.email")} value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })} required autoComplete="email" />
-        <div className="relative">
-          <input className="input-field pr-12" type={showPw ? "text" : "password"} placeholder={t("auth.password")} value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })} required autoComplete="new-password" />
-          <button type="button" onClick={() => setShowPw((s) => !s)}
-            aria-label={showPw ? t("auth.hidePassword") : t("auth.showPassword")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-2">
-            {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+        <div className="space-y-1">
+          <label htmlFor="signup-username" className="block text-xs text-muted-foreground">{t("auth.signup.username")}</label>
+          <div className="relative">
+            <span aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+            <input id="signup-username" className="input-field pl-8 pr-10" placeholder={t("auth.signup.username")} value={form.username}
+              onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase().replace(/\s/g, "") })}
+              required minLength={3} maxLength={30} autoComplete="off" aria-describedby="signup-username-hint" />
+            {form.username && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                {usernameStatus === "available" && <Check size={18} className="text-success" />}
+                {(usernameStatus === "taken" || usernameStatus === "invalid") && <X size={18} className="text-accent" />}
+              </span>
+            )}
+          </div>
+          <p id="signup-username-hint" className="text-xs text-muted-foreground">{t("auth.signup.usernameHint")}</p>
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="signup-phone" className="block text-xs text-muted-foreground">{t("auth.signup.phone")}</label>
+          <input id="signup-phone" className="input-field" type="tel" placeholder={t("auth.signup.phone")} value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="signup-email" className="block text-xs text-muted-foreground">{t("auth.email")}</label>
+          <input id="signup-email" className="input-field" type="email" placeholder={t("auth.email")} value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })} required autoComplete="email" />
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="signup-password" className="block text-xs text-muted-foreground">{t("auth.password")}</label>
+          <div className="relative">
+            <input id="signup-password" className="input-field pr-12" type={showPw ? "text" : "password"} placeholder={t("auth.password")} value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })} required autoComplete="new-password" />
+            <button type="button" onClick={() => setShowPw((s) => !s)}
+              aria-label={showPw ? t("auth.hidePassword") : t("auth.showPassword")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-2">
+              {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         <label className="flex items-start gap-2 text-sm text-muted-foreground py-2">
