@@ -42,7 +42,7 @@ function ConfirmationPage() {
   const hoursUntil = (eventDateTime.getTime() - now.getTime()) / 36e5;
   const isFuture = eventDateTime.getTime() > now.getTime();
   const canBuyMore = isFuture && ev.status === "live" && booking.status !== "cancelled";
-  const canCancel = hoursUntil > 2 && booking.status === "confirmed";
+  const canCancel = hoursUntil >= 48 && booking.status === "confirmed";
 
   async function onCancel() {
     setCancelling(true);

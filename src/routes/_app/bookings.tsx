@@ -108,7 +108,7 @@ function BookingsPage() {
           {filtered.map((b) => {
             const dt = new Date(`${b.events.date}T${b.events.time ?? "00:00"}`);
             const hoursUntil = (dt.getTime() - Date.now()) / 36e5;
-            const canCancel = tab === "upcoming" && b.status === "confirmed" && hoursUntil > 2;
+             const canCancel = tab === "upcoming" && b.status === "confirmed" && hoursUntil >= 48;
             return (
               <div key={b.id} className="bg-card border border-border rounded-2xl overflow-hidden">
                 <Link
