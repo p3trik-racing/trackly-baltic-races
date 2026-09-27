@@ -1,0 +1,2 @@
+ALTER TABLE public.events ADD COLUMN deposit numeric NULL, ADD COLUMN format text NULL, ADD COLUMN requirements text[] NOT NULL DEFAULT '{}'::text[];
+ALTER TABLE public.events ADD CONSTRAINT events_requirements_allowed CHECK (requirements <@ ARRAY['helmet', 'tech_ok', 'sound_limit', 'driver_only', 'studded_tyres', 'rwd_only']::text[]);
