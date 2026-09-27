@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
     // Fetch event server-side to get authoritative price
     const { data: event, error: evErr } = await admin
       .from("events")
-      .select("id,title,price,currency,status,capacity,organiser_id")
+      .select("id,title,price,deposit,currency,status,capacity,organiser_id")
       .eq("id", event_id)
       .maybeSingle();
     if (evErr || !event) return json({ error: "Event not found" }, 404);
@@ -76,7 +76,9 @@ Deno.serve(async (req) => {
 
     const price = Number(event.price) || 0;
     const isFree = price === 0;
-    const subtotal = +(price * tc).toFixed(2);
+    const deposit = Number(event.deposit) || 0;
+    const onlinePrice = deposit > 0 && deposit < price ? deposit : price;
+    const subtotal = +(onlinePrice * tc).toFixed(2);
     const platform_fee = isFree ? 0 : +(subtotal * 0.05).toFixed(2);
     const total_price = isFree ? 0 : +(subtotal + platform_fee).toFixed(2);
     const organiser_payout = isFree ? 0 : subtotal;

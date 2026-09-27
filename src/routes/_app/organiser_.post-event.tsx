@@ -27,6 +27,7 @@ export const Route = createFileRoute("/_app/organiser_/post-event")({
 });
 
 const DURATIONS = ["2 hours", "4 hours", "6 hours", "Full day", "Multi-day"];
+const REQUIREMENTS = ["helmet", "tech_ok", "sound_limit", "driver_only", "studded_tyres", "rwd_only"] as const;
 const DURATION_KEYS: Record<string, TranslationKey> = {
   "2 hours": "organiser.post.duration.2h", "4 hours": "organiser.post.duration.4h", "6 hours": "organiser.post.duration.6h",
   "Full day": "organiser.post.duration.fullDay", "Multi-day": "organiser.post.duration.multiDay",
@@ -57,6 +58,9 @@ function PostEventPage() {
     location_lng: "" as string,
     capacity: 20,
     price: 0,
+    deposit: "",
+    format: "",
+    requirements: [] as string[],
   });
 
   useEffect(() => {
@@ -77,6 +81,9 @@ function PostEventPage() {
         location_lng: data.location_lng != null ? String(data.location_lng) : "",
         capacity: data.capacity ?? 0,
         price: Number(data.price ?? 0),
+        deposit: data.deposit != null ? String(data.deposit) : "",
+        format: data.format ?? "",
+        requirements: data.requirements ?? [],
       });
       setExistingCover(data.cover_image_url);
       if (data.status === "live") setWaiver(true);
@@ -150,6 +157,9 @@ function PostEventPage() {
       location_lng: form.location_lng ? Number(form.location_lng) : null,
       capacity: Number(form.capacity) || 0,
       price: Number(form.price) || 0,
+      deposit: form.deposit === "" ? null : Number(form.deposit),
+      format: form.format || null,
+      requirements: form.requirements,
       currency: "EUR",
       cover_image_url: cover,
       status,
@@ -241,6 +251,27 @@ function PostEventPage() {
               onFocus={(e) => e.target.select()}
               onChange={(e) => setField("price", Number(e.target.value))} />
           </Field>
+        </div>
+
+        <Field label={t("organiser.post.deposit")}>
+          <input className="input-field" type="number" min={0} step="0.01" value={form.deposit}
+            onChange={(e) => setField("deposit", e.target.value)} />
+        </Field>
+        <Field label={t("organiser.post.format")}>
+          <input className="input-field" type="text" value={form.format}
+            onChange={(e) => setField("format", e.target.value)} />
+        </Field>
+        <div>
+          <p className="text-xs text-muted-foreground mb-2">{t("organiser.post.requirements")}</p>
+          <div className="flex flex-wrap gap-2">
+            {REQUIREMENTS.map((key) => (
+              <label key={key} className={`cursor-pointer rounded-full border px-3 py-2 text-xs ${form.requirements.includes(key) ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card"}`}>
+                <input type="checkbox" className="sr-only" checked={form.requirements.includes(key)}
+                  onChange={(e) => setField("requirements", e.target.checked ? [...form.requirements, key] : form.requirements.filter((v) => v !== key))} />
+                {t(`req.${key}`)}
+              </label>
+            ))}
+          </div>
         </div>
 
         <Field label={t("organiser.post.cover")}>

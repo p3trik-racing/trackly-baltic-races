@@ -93,9 +93,11 @@ export type Database = {
           created_at: string
           currency: string
           date: string
+          deposit: number | null
           description: string | null
           duration: string | null
           featured: boolean
+          format: string | null
           id: string
           location_lat: number | null
           location_lng: number | null
@@ -103,6 +105,7 @@ export type Database = {
           organiser_id: string | null
           organiser_name: string | null
           price: number
+          requirements: string[]
           status: Database["public"]["Enums"]["event_status"]
           time: string | null
           title: string
@@ -116,9 +119,11 @@ export type Database = {
           created_at?: string
           currency?: string
           date: string
+          deposit?: number | null
           description?: string | null
           duration?: string | null
           featured?: boolean
+          format?: string | null
           id?: string
           location_lat?: number | null
           location_lng?: number | null
@@ -126,6 +131,7 @@ export type Database = {
           organiser_id?: string | null
           organiser_name?: string | null
           price?: number
+          requirements?: string[]
           status?: Database["public"]["Enums"]["event_status"]
           time?: string | null
           title: string
@@ -139,9 +145,11 @@ export type Database = {
           created_at?: string
           currency?: string
           date?: string
+          deposit?: number | null
           description?: string | null
           duration?: string | null
           featured?: boolean
+          format?: string | null
           id?: string
           location_lat?: number | null
           location_lng?: number | null
@@ -149,6 +157,7 @@ export type Database = {
           organiser_id?: string | null
           organiser_name?: string | null
           price?: number
+          requirements?: string[]
           status?: Database["public"]["Enums"]["event_status"]
           time?: string | null
           title?: string

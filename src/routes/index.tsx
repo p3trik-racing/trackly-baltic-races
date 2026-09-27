@@ -7,7 +7,7 @@ import { LogoFull } from "@/components/Logo";
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "Majorka Racing — Motorsport events in the Baltics" },
-    { name: "description", content: "Track days, car meets and motorsport events in Riga and the Baltics — book your spot with Majorka Racing." },
+    { name: "description", content: "Book track days and drift events across Latvia, Estonia and Lithuania." },
     { property: "og:title", content: "Majorka Racing — Motorsport events in the Baltics" },
     { property: "og:description", content: "Track days and motorsport events in the Baltics" },
     { property: "og:type", content: "website" },

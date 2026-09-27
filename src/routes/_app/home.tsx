@@ -12,9 +12,9 @@ import { ViewToggle } from "@/components/ViewToggle";
 export const Route = createFileRoute("/_app/home")({
   head: () => ({ meta: [
     { title: "Home — Majorka Racing" },
-    { name: "description", content: "Discover track days, car meets and motorsport events in the Baltics." },
+    { name: "description", content: "Book track days and drift events across Latvia, Estonia and Lithuania." },
     { property: "og:title", content: "Home — Majorka Racing" },
-    { property: "og:description", content: "Discover track days, car meets and motorsport events in the Baltics." },
+    { property: "og:description", content: "Book track days and drift events across Latvia, Estonia and Lithuania." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),

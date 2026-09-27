@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     const ev = booking.events as any;
     const eventDateTime = new Date(`${ev.date}T${ev.time ?? "00:00"}`);
     const hoursUntil = (eventDateTime.getTime() - Date.now()) / 36e5;
-    if (hoursUntil < 2) return json({ error: "Too late to cancel (less than 2 hours)" }, 400);
+    if (hoursUntil < 48) return json({ error: "Too late to cancel (less than 48 hours)" }, 400);
 
     let refundId: string | null = null;
     if (booking.stripe_payment_intent_id) {
