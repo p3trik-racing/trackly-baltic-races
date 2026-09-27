@@ -16,9 +16,9 @@ import {
 export const Route = createFileRoute("/_app/book/$eventId")({
   head: () => ({ meta: [
     { title: "Book an event — Majorka Racing" },
-    { name: "description", content: "Reserve tickets for a motorsport event with Majorka Racing." },
+    { name: "description", content: "Book your spot at a track day or drift event with Majorka Racing." },
     { property: "og:title", content: "Book an event — Majorka Racing" },
-    { property: "og:description", content: "Reserve tickets for a motorsport event with Majorka Racing." },
+    { property: "og:description", content: "Book your spot at a track day or drift event with Majorka Racing." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
@@ -49,7 +49,6 @@ function BookPage() {
   const [paymentStep, setPaymentStep] = useState<PaymentStep>("details");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [existingBooking, setExistingBooking] = useState<any>(null);
-  const [dismissedExisting, setDismissedExisting] = useState(false);
   const [bookedCount, setBookedCount] = useState(0);
 
   useEffect(() => {
@@ -90,10 +89,12 @@ function BookPage() {
   if (!event) return <div className="container-app py-10 text-muted-foreground">{t("common.loading")}</div>;
 
   const isFree = Number(event.price) === 0;
+  const hasDeposit = Number(event.deposit) > 0 && Number(event.deposit) < Number(event.price);
+  const onlinePrice = hasDeposit ? Number(event.deposit) : Number(event.price);
   const unlimited = !event.capacity || event.capacity === 0;
   const remaining = unlimited ? Infinity : Math.max(0, event.capacity - bookedCount);
   const soldOut = !unlimited && remaining === 0;
-  const subtotal = Number(event.price) * tickets;
+  const subtotal = onlinePrice * tickets;
   const fee = isFree ? 0 : +(subtotal * 0.05).toFixed(2);
   const total = isFree ? 0 : +(subtotal + fee).toFixed(2);
 
@@ -112,6 +113,7 @@ function BookPage() {
           attendee_email: form.email,
           attendee_phone: form.phone,
           ticket_count: tickets,
+          amount_paid: 0,
           waiver_accepted: true,
         },
       });
@@ -181,6 +183,7 @@ function BookPage() {
           attendee_email: form.email,
           attendee_phone: form.phone,
           ticket_count: tickets,
+          amount_paid: total,
           waiver_accepted: true,
           stripe_payment_intent_id: paymentIntentId,
         },
@@ -241,7 +244,7 @@ function BookPage() {
             <p className="font-medium">{event.title}</p>
             <p className="text-sm text-muted-foreground">
               {new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-              {" · "}{t(tickets > 1 ? "book.ticketsCountPlural" : "book.ticketsCount", { count: tickets })}
+              {" · "}{t(tickets > 1 ? "book.spotsCountPlural" : "book.spotsCount", { count: tickets })}
             </p>
             <p className="text-sm font-semibold mt-2">{t("book.totalValue", { total: total.toFixed(2) })}</p>
           </div>
@@ -264,6 +267,7 @@ function BookPage() {
           >
             <PaymentForm
               total={total}
+              hasDeposit={hasDeposit}
               onError={setPaymentError}
               onSuccess={onPaymentSuccess}
             />
@@ -289,7 +293,7 @@ function BookPage() {
     );
   }
 
-  if (existingBooking && !dismissedExisting) {
+  if (existingBooking) {
     return (
       <main className="pb-32">
         <header className="container-app py-5">
@@ -311,12 +315,6 @@ function BookPage() {
               className="cta-button mt-2"
             >
               {t("book.viewBooking")}
-            </button>
-            <button
-              onClick={() => setDismissedExisting(true)}
-              className="w-full mt-1 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent/10"
-            >
-              {t("book.buyMore")}
             </button>
           </div>
         </section>
@@ -355,7 +353,7 @@ function BookPage() {
 
         <div className="bg-card border border-border rounded-2xl p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">{t("book.tickets")}</p>
+            <p className="text-sm font-medium">{t("book.spots")}</p>
             <div className="flex items-center gap-3">
               <button onClick={() => setTickets((t) => Math.max(1, t - 1))}
                 className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
@@ -380,7 +378,7 @@ function BookPage() {
         {!isFree && (
           <div className="bg-card border border-border rounded-2xl p-4 space-y-2 text-sm">
             <div className="flex justify-between text-muted-foreground">
-              <span>{t("book.ticketsLine", { count: tickets, price: event.price })}</span><span>€{subtotal.toFixed(2)}</span>
+              <span>{t(hasDeposit ? "book.depositNow" : "book.spotsLine", { count: tickets, price: onlinePrice.toFixed(2) })}</span><span>€{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
               <span>{t("book.platformFee")}</span><span>€{fee.toFixed(2)}</span>
@@ -388,6 +386,7 @@ function BookPage() {
             <div className="border-t border-border pt-2 flex justify-between font-semibold">
               <span>{t("book.total")}</span><span>€{total.toFixed(2)}</span>
             </div>
+            {hasDeposit && <p className="text-xs text-muted-foreground">{t("book.balanceAtTrack", { amount: ((Number(event.price) - Number(event.deposit)) * tickets).toFixed(2) })}</p>}
           </div>
         )}
         {isFree && (
@@ -447,10 +446,12 @@ function BookPage() {
 
 function PaymentForm({
   total,
+  hasDeposit,
   onError,
   onSuccess,
 }: {
   total: number;
+  hasDeposit: boolean;
   onError: (msg: string | null) => void;
   onSuccess: (paymentIntentId: string) => void;
 }) {
@@ -489,7 +490,7 @@ function PaymentForm({
       >
         <div className="container-app py-3">
           <button onClick={handlePay} disabled={!stripe || paying} className="cta-button">
-            {paying ? t("book.processing") : t("book.pay", { total: total.toFixed(2) })}
+            {paying ? t("book.processing") : t(hasDeposit ? "book.payDeposit" : "book.pay", { total: total.toFixed(2) })}
           </button>
         </div>
       </div>
