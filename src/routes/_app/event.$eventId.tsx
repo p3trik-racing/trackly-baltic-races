@@ -3,7 +3,7 @@ import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { eventCover } from "@/lib/event-cover";
-import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink, Navigation, CalendarPlus } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink, Navigation, CalendarPlus, Flag } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { DirectionsDrawer, CalendarDrawer } from "@/components/EventDrawers";
@@ -11,9 +11,9 @@ import { DirectionsDrawer, CalendarDrawer } from "@/components/EventDrawers";
 export const Route = createFileRoute("/_app/event/$eventId")({
   head: () => ({ meta: [
     { title: "Event details — Majorka Racing" },
-    { name: "description", content: "See dates, locations, tickets and details for a Baltic motorsport event." },
+     { name: "description", content: "Book track days and drift events across the Baltics — dates, spots, deposits and requirements." },
     { property: "og:title", content: "Event details — Majorka Racing" },
-    { property: "og:description", content: "See dates, locations, tickets and details for a Baltic motorsport event." },
+     { property: "og:description", content: "Book track days and drift events across the Baltics — dates, spots, deposits and requirements." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
@@ -188,10 +188,31 @@ function EventDetail() {
           </div>
         )}
 
+        <section className="space-y-3 text-sm">
+          {event.format && (
+            <div className="flex items-start gap-3">
+              <Flag size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
+              <div><h2 className="font-semibold">{t("event.format")}</h2><p className="text-muted-foreground">{event.format}</p></div>
+            </div>
+          )}
+          {event.requirements?.length > 0 && (
+            <div>
+              <h2 className="font-semibold mb-2">{t("event.requirements")}</h2>
+              <div className="flex flex-wrap gap-2">
+                {event.requirements.map((key: string) => <span key={key} className="rounded-full border border-border bg-card px-3 py-1 text-xs">{t(`req.${key}` as import("@/i18n/en").TranslationKey)}</span>)}
+              </div>
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground leading-relaxed">{t("event.refund")}</p>
+        </section>
+
         <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground">{t("event.from")}</p>
             <p className="text-2xl font-semibold">{event.price === 0 ? t("common.free") : `€${event.price}`}</p>
+            {Number(event.deposit) > 0 && Number(event.deposit) < Number(event.price) && (
+              <p className="text-xs text-muted-foreground mt-1">{t("event.depositLine", { deposit: Number(event.deposit).toFixed(2), balance: (Number(event.price) - Number(event.deposit)).toFixed(2) })}</p>
+            )}
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground">{t("event.capacity")}</p>
