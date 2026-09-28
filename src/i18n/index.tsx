@@ -6,7 +6,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 function saveProfileLang(l: string, userId?: string | null) {
   if (!userId) return;
-  supabase.from("profiles").update({ lang: l }).eq("id", userId).then(() => {}, () => {});
+  // Only write when it actually differs from the stored value.
+  supabase.from("profiles").select("lang").eq("id", userId).maybeSingle().then(({ data }) => {
+    if (!data || (data as any).lang === l) return;
+    supabase.from("profiles").update({ lang: l }).eq("id", userId).then(() => {}, () => {});
+  }, () => {});
 }
 
 export const LANGS = ["en", "ru", "lv"] as const;
