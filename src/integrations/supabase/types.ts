@@ -268,6 +268,7 @@ export type Database = {
         | "car_meets"
         | "snow_drift"
         | "festivals"
+        | "majorka_special"
       event_status: "draft" | "live" | "cancelled" | "past"
     }
     CompositeTypes: {
@@ -404,6 +405,7 @@ export const Constants = {
         "car_meets",
         "snow_drift",
         "festivals",
+        "majorka_special",
       ],
       event_status: ["draft", "live", "cancelled", "past"],
     },
