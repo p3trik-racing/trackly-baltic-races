@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
-import { orderCategories, sortWithSpecial } from "@/lib/categories";
+import { orderCategories, orderEvents } from "@/lib/categories";
 import { COUNTRIES } from "@/lib/countries";
 import { ViewToggle } from "@/components/ViewToggle";
 import { Loader2, Search, SlidersHorizontal } from "lucide-react";
@@ -88,7 +88,6 @@ function ExplorePage() {
       .then(({ data }) => {
         const favs = (data?.favourite_categories ?? []) as string[];
         setFavourites(favs);
-        if (favs.length === 1) setCategory(favs[0]);
       });
   }, [user]);
 
@@ -100,7 +99,7 @@ function ExplorePage() {
         (country === "all" || e.country === country) &&
         (!query || e.title.toLowerCase().includes(query.toLowerCase())),
     );
-    if (sort === "soonest") list = sortWithSpecial(list.sort((a, b) => a.date.localeCompare(b.date)), category);
+    if (sort === "soonest") list = orderEvents(list.sort((a, b) => a.date.localeCompare(b.date)), category, favourites);
     else {
       list = list.filter((e) => category === "all" || e.category === category);
       if (sort === "price_asc") list = list.sort((a, b) => a.price - b.price);
@@ -108,7 +107,7 @@ function ExplorePage() {
       else list = list.sort((a: any, b: any) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
     }
     return list.map((e) => ({ ...e, bookings_count: bookingCounts[e.id] ?? 0 }));
-  }, [events, category, country, query, sort, bookingCounts]);
+  }, [events, category, country, query, sort, bookingCounts, favourites]);
 
   return (
     <main

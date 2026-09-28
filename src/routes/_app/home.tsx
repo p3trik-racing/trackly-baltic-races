@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
-import { SPECIAL, orderCategories, sortWithSpecial } from "@/lib/categories";
+import { SPECIAL, orderCategories, orderEvents } from "@/lib/categories";
 import { Loader2, Search } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
 import { ViewToggle } from "@/components/ViewToggle";
@@ -72,8 +72,8 @@ function HomePage() {
   const orderedCategories = useMemo(() => orderCategories(favourites), [favourites]);
 
   const filtered = events.filter((e) => !query || e.title.toLowerCase().includes(query.toLowerCase()));
-  const featured = sortWithSpecial(filtered.filter((e: any) => e.featured), category).slice(0, 4);
-  const recent = sortWithSpecial(filtered, category);
+  const featured = orderEvents(filtered.filter((e: any) => e.featured), category, favourites).slice(0, 4);
+  const recent = orderEvents(filtered, category, favourites);
 
   return (
     <main
@@ -161,7 +161,9 @@ function HomePage() {
       )}
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold">{t("home.recent")}</h2>
+        <h2 className="text-base font-semibold">
+          {category === "all" ? t("home.upcoming") : t("home.upcomingIn", { category: catLabel(t, category) })}
+        </h2>
         {recent.length === 0 ? (
           <div className="py-10 text-center space-y-2">
             <p className="text-sm text-muted-foreground">{t("home.noMatch")}</p>
@@ -178,14 +180,7 @@ function HomePage() {
         ) : (
           <div className="space-y-3">
             {category === "races" && <CompeteBanner />}
-            {recent.map((e, index) => (
-              <div key={e.id} className="space-y-3">
-                {category !== "all" && category !== SPECIAL && e.category === SPECIAL && recent[index - 1]?.category !== SPECIAL && (
-                  <p className="text-xs text-muted-foreground pt-2">{t("home.alsoSpecial")}</p>
-                )}
-                <EventCard event={e} />
-              </div>
-            ))}
+            {recent.map((e) => <EventCard key={e.id} event={e} />)}
           </div>
         )}
       </section>
