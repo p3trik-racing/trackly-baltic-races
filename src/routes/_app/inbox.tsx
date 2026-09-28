@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ExternalLink } from "lucide-react";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +24,8 @@ interface Notif {
   message: string;
   read: boolean;
   created_at: string;
+  title?: string | null;
+  link?: string | null;
 }
 
 function InboxPage() {
@@ -72,7 +75,20 @@ function InboxPage() {
             <div key={n.id} className="bg-card border border-border rounded-2xl p-4 flex gap-3">
               {!n.read && <span className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: "var(--accent)" }} />}
               <div className="flex-1">
-                <p className="text-sm">{n.message}</p>
+                {n.type === "organiser_message" && (
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-0.5">{t("inbox.fromOrganiser")}</p>
+                )}
+                {n.type === "new_event" && (
+                  <p className="text-[11px] uppercase tracking-wide mb-0.5" style={{ color: "var(--accent)" }}>{t("inbox.newEvent")}</p>
+                )}
+                {n.title && <p className="text-sm font-semibold">{n.title}</p>}
+                <p className="text-sm whitespace-pre-wrap">{n.message}</p>
+                {n.link && (
+                  <a href={n.link} className="text-xs inline-flex items-center gap-1 mt-1" style={{ color: "var(--accent)" }}
+                    {...(/^https?:/.test(n.link) ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                    {t("inbox.open")} <ExternalLink size={11} />
+                  </a>
+                )}
                 <p className="text-xs text-muted-foreground mt-1">
                   {new Date(n.created_at).toLocaleDateString()}
                 </p>

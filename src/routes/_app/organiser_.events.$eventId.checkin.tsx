@@ -228,7 +228,7 @@ function CheckInDesk() {
       )}
 
       {confirmRow && (
-        <div className="bg-card border rounded-2xl p-4 space-y-3" style={{ borderColor: "var(--accent)" }}>
+        <div className="fixed left-4 right-4 bottom-24 z-40 bg-card border rounded-2xl p-4 space-y-3 shadow-lg" style={{ borderColor: "var(--accent)" }}>
           <p className="text-sm">{t("checkin.confirmRow", { name: confirmRow.attendee_name })}</p>
           <div className="flex gap-2">
             <button onClick={() => setConfirmRow(null)} className="flex-1 h-11 rounded-xl border border-border text-sm">{t("common.cancel")}</button>
