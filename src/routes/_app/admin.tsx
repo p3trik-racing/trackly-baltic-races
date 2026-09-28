@@ -79,7 +79,7 @@ function Applications() {
     const { error } = await supabase.rpc("review_organiser_application", { _id: id, _approve: approve, _note: notes[id] || undefined });
     if (error) return toast.error(error.message);
     toast.success(approve ? "Approved" : "Rejected");
-    token().then((accessToken) => accessToken && emailOrganiserApplication({ data: { type: approve ? "approved" : "rejected", applicationId: id, accessToken } })).catch(() => {});
+    token().then((accessToken): unknown => accessToken && emailOrganiserApplication({ data: { type: approve ? "approved" : "rejected", applicationId: id, accessToken } })).catch(() => {});
     load();
   }
 
