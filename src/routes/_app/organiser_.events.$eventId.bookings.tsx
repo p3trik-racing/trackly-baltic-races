@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { MessageAttendees } from "@/components/MessageAttendees";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft, Download, ScanLine } from "lucide-react";
 import { useOrganiserGuard } from "@/lib/roles";
 
 export const Route = createFileRoute("/_app/organiser_/events/$eventId/bookings")({
@@ -26,6 +27,8 @@ interface Booking {
   organiser_payout: number;
   status: string;
   created_at: string;
+  checked_in_at: string | null;
+  no_show: boolean;
 }
 
 function EventBookingsPage() {
@@ -39,7 +42,7 @@ function EventBookingsPage() {
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle().then(({ data }) => setEvent(data));
     supabase.from("bookings")
-      .select("id,attendee_name,attendee_email,attendee_phone,ticket_count,organiser_payout,status,created_at")
+      .select("id,attendee_name,attendee_email,attendee_phone,ticket_count,organiser_payout,status,created_at,checked_in_at,no_show")
       .eq("event_id", eventId).order("created_at", { ascending: false })
       .then(({ data }) => setBookings((data as any) ?? []));
   }, [eventId]);
@@ -47,14 +50,16 @@ function EventBookingsPage() {
   const active = bookings.filter((b) => b.status !== "cancelled");
   const totalTickets = active.reduce((s, b) => s + b.ticket_count, 0);
   const revenue = active.reduce((s, b) => s + Number(b.organiser_payout ?? 0), 0);
+  const confirmedList = bookings.filter((b) => b.status === "confirmed");
+  const checkedCount = confirmedList.filter((b) => b.checked_in_at).length;
   const remaining = event ? Math.max(0, (event.capacity ?? 0) - totalTickets) : 0;
 
   function exportCsv() {
     const rows = [
-      ["name", "email", "phone", "reference", "date", "tickets", "status"].map((k) => t(`organiser.bookings.csv.${k}` as any)),
+      ["name", "email", "phone", "reference", "date", "tickets", "status", "checkedInAt", "noShow"].map((k) => t(`organiser.bookings.csv.${k}` as any)),
       ...bookings.map((b) => [
         b.attendee_name, b.attendee_email, b.attendee_phone ?? "",
-        b.id, new Date(b.created_at).toISOString(), String(b.ticket_count), b.status,
+        b.id, new Date(b.created_at).toISOString(), String(b.ticket_count), b.status, b.checked_in_at ?? "", b.no_show ? "yes" : "no",
       ]),
     ];
     const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
@@ -87,6 +92,13 @@ function EventBookingsPage() {
           <p className="text-[11px] text-muted-foreground">{t("organiser.bookings.spotsLeft")}</p>
         </div>
       </div>
+
+      <Link to="/organiser/events/$eventId/checkin" params={{ eventId }}
+        className="cta-button inline-flex items-center justify-center gap-2">
+        <ScanLine size={18} /> {t("checkin.action")} · {t("checkin.stat", { done: checkedCount, total: confirmedList.length })}
+      </Link>
+
+      <MessageAttendees eventId={eventId} />
 
       <button onClick={exportCsv} disabled={!bookings.length}
         className="w-full h-11 rounded-xl border border-border text-sm font-medium inline-flex items-center justify-center gap-2 text-muted-foreground disabled:opacity-40">

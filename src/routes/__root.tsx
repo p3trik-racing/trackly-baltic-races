@@ -3,6 +3,13 @@ import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/lib/theme-context";
 import { LanguageProvider, useLang } from "@/i18n";
 import { Toaster } from "@/components/ui/sonner";
+import { useEffect } from "react";
+import { initPwa } from "@/lib/pwa";
+
+function PwaInit() {
+  useEffect(() => { initPwa(); }, []);
+  return null;
+}
 
 const themeInitScript = `(function(){try{var s=localStorage.getItem('majorka-theme');var t=s==='light'||s==='dark'?s:(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();`;
 
@@ -30,6 +37,9 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0A0A0A" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "Majorka" },
       { title: "Majorka Racing" },
       {
         name: "description",
@@ -45,7 +55,8 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
-      { rel: "apple-touch-icon", href: "/favicon.svg" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" },
@@ -59,6 +70,7 @@ export const Route = createRootRoute({
       <AuthProvider>
         <Outlet />
         <Toaster />
+        <PwaInit />
       </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>

@@ -7,16 +7,55 @@ import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink, 
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { DirectionsDrawer, CalendarDrawer } from "@/components/EventDrawers";
+import { ShareSheet } from "@/components/ShareSheet";
+import { getEventOg } from "@/lib/og.functions";
+import { SITE_URL, absoluteAsset } from "@/lib/site";
+
+const GENERIC_EVENT_META = [
+  { title: "Event details — Majorka Racing" },
+  { name: "description", content: "Book track days and drift events across the Baltics — dates, spots, deposits and requirements." },
+  { property: "og:title", content: "Event details — Majorka Racing" },
+  { property: "og:description", content: "Book track days and drift events across the Baltics — dates, spots, deposits and requirements." },
+  { property: "og:type", content: "website" },
+  { name: "twitter:card", content: "summary_large_image" },
+];
+
 
 export const Route = createFileRoute("/_app/event/$eventId")({
-  head: () => ({ meta: [
-    { title: "Event details — Majorka Racing" },
-     { name: "description", content: "Book track days and drift events across the Baltics — dates, spots, deposits and requirements." },
-    { property: "og:title", content: "Event details — Majorka Racing" },
-     { property: "og:description", content: "Book track days and drift events across the Baltics — dates, spots, deposits and requirements." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-  ] }),
+  loader: async ({ params }) => {
+    try { return { og: await getEventOg({ data: { id: params.eventId } }) }; } catch { return { og: null }; }
+  },
+  head: ({ loaderData }) => {
+    const e = loaderData?.og;
+    if (!e) return { meta: GENERIC_EVENT_META };
+    const url = `${SITE_URL}/event/${e.id}`;
+    const date = new Date(e.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    const price = Number(e.price) === 0 ? "Free" : `from €${Number(e.price)}`;
+    const desc = [date, e.city, price].filter(Boolean).join(" · ");
+    const title = `${e.title} — Majorka Racing`;
+    const isHosted = !!e.cover_image_url && /^https:\/\//.test(e.cover_image_url);
+    const image = absoluteAsset(eventCover(e.category, e.cover_image_url));
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { property: "og:site_name", content: "Majorka Racing" },
+        { property: "og:image", content: image },
+        ...(isHosted ? [] : [{ property: "og:image:width", content: "1200" }, { property: "og:image:height", content: "630" }]),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        { name: "twitter:image", content: image },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
+  errorComponent: () => <div className="container-app py-10 text-muted-foreground">Something went wrong.</div>,
+  notFoundComponent: () => <div className="container-app py-10 text-muted-foreground">Event not found.</div>,
   component: EventDetail,
 });
 
@@ -31,6 +70,9 @@ function EventDetail() {
   const [saved, setSaved] = useState(false);
   const [dirOpen, setDirOpen] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [following, setFollowing] = useState(false);
+  const [followBusy, setFollowBusy] = useState(false);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle()
@@ -56,16 +98,24 @@ function EventDetail() {
       });
   }, [eventId, user]);
 
-  async function onShare() {
-    const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: event.title, text: t("event.shareText", { title: event.title }), url });
-      } catch {}
-    } else {
-      await navigator.clipboard.writeText(url);
-      toast.success(t("event.linkCopied"));
-    }
+  function onShare() { setShareOpen(true); }
+
+  useEffect(() => {
+    if (!user || !event?.organiser_id || event.organiser_id === user.id) { setFollowing(false); return; }
+    supabase.from("follows").select("organiser_id").eq("user_id", user.id).eq("organiser_id", event.organiser_id).maybeSingle()
+      .then(({ data }) => setFollowing(!!data));
+  }, [user, event?.organiser_id]);
+
+  async function onToggleFollow() {
+    if (!user) { navigate({ to: "/login" }); return; }
+    if (!event?.organiser_id) return;
+    setFollowBusy(true);
+    const { error } = following
+      ? await supabase.from("follows").delete().eq("user_id", user.id).eq("organiser_id", event.organiser_id)
+      : await supabase.from("follows").insert({ user_id: user.id, organiser_id: event.organiser_id });
+    setFollowBusy(false);
+    if (error) return toast.error(t("follow.failed"));
+    setFollowing(!following);
   }
 
   async function onToggleSave() {
@@ -179,7 +229,16 @@ function EventDetail() {
           {event.organiser_name && (
             <div className="flex items-center gap-3 text-foreground">
               <User size={16} className="text-muted-foreground" />
-              {t("event.organisedBy", { name: event.organiser_name })}
+              <span className="flex-1">{t("event.organisedBy", { name: event.organiser_name })}</span>
+              {event.organiser_id && event.organiser_id !== user?.id && (
+                <button onClick={onToggleFollow} disabled={followBusy}
+                  className="px-3 h-8 rounded-full text-xs font-medium border disabled:opacity-50"
+                  style={following
+                    ? { borderColor: "var(--border)", color: "var(--muted-foreground)" }
+                    : { borderColor: "var(--accent)", backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}>
+                  {following ? t("follow.following") : t("follow.follow")}
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -262,6 +321,10 @@ function EventDetail() {
       </div>
       <DirectionsDrawer event={event} open={dirOpen} onOpenChange={setDirOpen} />
       <CalendarDrawer event={event} open={calOpen} onOpenChange={setCalOpen} />
+      <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={event.title}
+        url={`${SITE_URL}/event/${event.id}`}
+        text={[t("event.shareText", { title: event.title }),
+          new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "long" }), event.city].filter(Boolean).join(" · ")} />
     </main>
   );
 }

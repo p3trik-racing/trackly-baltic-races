@@ -19,11 +19,16 @@ export type Database = {
           attendee_email: string
           attendee_name: string
           attendee_phone: string | null
+          check_in_code: string
+          checked_in_at: string | null
+          checked_in_by: string | null
           created_at: string
           event_id: string
           id: string
+          no_show: boolean
           organiser_payout: number
           platform_fee: number
+          reminder_sent_at: string | null
           status: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id: string | null
           stripe_refund_id: string | null
@@ -36,11 +41,16 @@ export type Database = {
           attendee_email: string
           attendee_name: string
           attendee_phone?: string | null
+          check_in_code?: string
+          checked_in_at?: string | null
+          checked_in_by?: string | null
           created_at?: string
           event_id: string
           id?: string
+          no_show?: boolean
           organiser_payout: number
           platform_fee: number
+          reminder_sent_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
@@ -53,11 +63,16 @@ export type Database = {
           attendee_email?: string
           attendee_name?: string
           attendee_phone?: string | null
+          check_in_code?: string
+          checked_in_at?: string | null
+          checked_in_by?: string | null
           created_at?: string
           event_id?: string
           id?: string
+          no_show?: boolean
           organiser_payout?: number
           platform_fee?: number
+          reminder_sent_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
@@ -213,6 +228,7 @@ export type Database = {
       }
       events: {
         Row: {
+          announced_at: string | null
           capacity: number
           category: Database["public"]["Enums"]["event_category"]
           city: string | null
@@ -239,6 +255,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          announced_at?: string | null
           capacity?: number
           category: Database["public"]["Enums"]["event_category"]
           city?: string | null
@@ -265,6 +282,7 @@ export type Database = {
           title: string
         }
         Update: {
+          announced_at?: string | null
           capacity?: number
           category?: Database["public"]["Enums"]["event_category"]
           city?: string | null
@@ -300,32 +318,66 @@ export type Database = {
           },
         ]
       }
+      follows: {
+        Row: {
+          created_at: string
+          organiser_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          organiser_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          organiser_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
+          event_id: string | null
           id: string
+          link: string | null
           message: string
           read: boolean
+          title: string | null
           type: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          event_id?: string | null
           id?: string
+          link?: string | null
           message: string
           read?: boolean
+          title?: string | null
           type: string
           user_id: string
         }
         Update: {
           created_at?: string
+          event_id?: string | null
           id?: string
+          link?: string | null
           message?: string
           read?: boolean
+          title?: string | null
           type?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "notifications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
@@ -440,6 +492,41 @@ export type Database = {
         }
         Relationships: []
       }
+      organiser_messages: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          message: string
+          recipients: number
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          message: string
+          recipients?: number
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          message?: string
+          recipients?: number
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organiser_messages_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -453,6 +540,10 @@ export type Database = {
           full_name: string | null
           id: string
           is_organiser: boolean
+          lang: string
+          notify_favourites: boolean
+          notify_followed: boolean
+          notify_organiser_messages: boolean
           phone: string | null
           saved_events: string[]
           username: string | null
@@ -469,6 +560,10 @@ export type Database = {
           full_name?: string | null
           id: string
           is_organiser?: boolean
+          lang?: string
+          notify_favourites?: boolean
+          notify_followed?: boolean
+          notify_organiser_messages?: boolean
           phone?: string | null
           saved_events?: string[]
           username?: string | null
@@ -485,6 +580,10 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_organiser?: boolean
+          lang?: string
+          notify_favourites?: boolean
+          notify_followed?: boolean
+          notify_organiser_messages?: boolean
           phone?: string | null
           saved_events?: string[]
           username?: string | null
@@ -514,6 +613,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      announce_event: { Args: { _event_id: string }; Returns: Json }
+      can_manage_event: { Args: { _event_id: string }; Returns: boolean }
+      check_in_booking: {
+        Args: { _booking_id?: string; _code?: string; _event_id?: string }
+        Returns: Json
+      }
+      close_check_in: { Args: { _event_id: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -528,6 +634,10 @@ export type Database = {
         Args: { _approve: boolean; _id: string; _note?: string }
         Returns: undefined
       }
+      send_attendee_message: {
+        Args: { _event_id: string; _message: string }
+        Returns: Json
+      }
       set_organiser_role: {
         Args: { _on: boolean; _user_id: string }
         Returns: undefined
@@ -536,6 +646,7 @@ export type Database = {
         Args: { _blocked: boolean; _reason?: string; _user_id: string }
         Returns: undefined
       }
+      undo_check_in: { Args: { _booking_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "organiser"

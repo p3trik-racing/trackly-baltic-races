@@ -37,6 +37,8 @@ interface BookingAgg {
   event_id: string;
   count: number;
   revenue: number;
+  confirmed: number;
+  checked: number;
 }
 
 function OrganiserDashboard() {
@@ -51,6 +53,13 @@ function OrganiserDashboard() {
   const [tab, setTab] = useState<"active" | "past">("active");
   const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [followers, setFollowers] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("follows").select("user_id", { count: "exact", head: true }).eq("organiser_id", user.id)
+      .then(({ count }) => setFollowers(count ?? 0));
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -64,14 +73,15 @@ function OrganiserDashboard() {
       if (list.length) {
         const ids = list.map((e: OrgEvent) => e.id);
         const { data: bks } = await supabase
-          .from("bookings").select("event_id,total_price,organiser_payout,status")
+          .from("bookings").select("event_id,total_price,organiser_payout,status,checked_in_at")
           .in("event_id", ids);
         const map: Record<string, BookingAgg> = {};
         (bks ?? []).forEach((b: any) => {
           if (b.status === "cancelled") return;
-          const a = map[b.event_id] ?? { event_id: b.event_id, count: 0, revenue: 0 };
+          const a = map[b.event_id] ?? { event_id: b.event_id, count: 0, revenue: 0, confirmed: 0, checked: 0 };
           a.count += 1;
           a.revenue += Number(b.organiser_payout ?? 0);
+          if (b.status === "confirmed") { a.confirmed += 1; if (b.checked_in_at) a.checked += 1; }
           map[b.event_id] = a;
         });
         setAggs(map);
@@ -121,7 +131,10 @@ function OrganiserDashboard() {
   return (
     <main className="container-app py-6 space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-[22px] font-semibold">{t("organiser.title")}</h1>
+        <div>
+          <h1 className="text-[22px] font-semibold">{t("organiser.title")}</h1>
+          <p className="text-xs text-muted-foreground">{t("organiser.followers", { count: followers })}</p>
+        </div>
         <Link to="/organiser/post-event"
           className="inline-flex items-center gap-1 px-3 h-10 rounded-xl text-sm font-medium text-accent-foreground"
           style={{ backgroundColor: "var(--accent)" }}>
@@ -164,7 +177,7 @@ function OrganiserDashboard() {
         ) : (
           <div className="space-y-3">
             {filtered.map((e) => {
-            const agg = aggs[e.id] ?? { count: 0, revenue: 0 };
+            const agg = aggs[e.id] ?? { count: 0, revenue: 0, confirmed: 0, checked: 0 };
             return (
               <div key={e.id} className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="flex gap-3 p-3">
@@ -181,13 +194,18 @@ function OrganiserDashboard() {
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {t("organiser.stats", { count: agg.count, revenue: agg.revenue.toFixed(0) })}
+                      {" · "}{t("checkin.stat", { done: agg.checked, total: agg.confirmed })}
                     </p>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 border-t border-border text-xs">
+                <div className="grid grid-cols-4 border-t border-border text-xs">
                   <Link to="/organiser/events/$eventId/bookings" params={{ eventId: e.id }}
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">
                     {t("organiser.viewBookings")}
+                  </Link>
+                  <Link to="/organiser/events/$eventId/checkin" params={{ eventId: e.id }}
+                    className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">
+                    {t("checkin.action")}
                   </Link>
                   <Link to="/organiser/post-event" search={{ edit: e.id }}
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">

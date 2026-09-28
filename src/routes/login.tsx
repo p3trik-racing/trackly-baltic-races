@@ -7,6 +7,10 @@ import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { LogoFull } from "@/components/Logo";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => {
+    const r = s.redirect;
+    return typeof r === "string" && r.startsWith("/") && !r.startsWith("//") ? { redirect: r } : {};
+  },
   head: () => ({ meta: [
     { title: "Log in — Majorka Racing" },
     { name: "description", content: "Log in to Majorka Racing to manage your motorsport bookings." },
@@ -20,6 +24,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
   const { t } = useLang();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +37,8 @@ function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return toast.error(error.message);
-    navigate({ to: "/home" });
+    if (redirect) window.location.assign(redirect);
+    else navigate({ to: "/home" });
   }
 
   async function onReset() {

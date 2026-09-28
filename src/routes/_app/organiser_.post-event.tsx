@@ -169,12 +169,18 @@ function PostEventPage() {
       status,
     };
 
-    const { error } = editId
-      ? await supabase.from("events").update(payload).eq("id", editId)
-      : await supabase.from("events").insert(payload);
+    const { data: saved, error } = editId
+      ? await supabase.from("events").update(payload).eq("id", editId).select("id").maybeSingle()
+      : await supabase.from("events").insert(payload).select("id").single();
 
     setSubmitting(false);
     if (error) return toast.error(error.message);
+    const savedId = (saved as any)?.id ?? editId;
+    if (status === "live" && savedId) {
+      const { data: ann } = await supabase.rpc("announce_event", { _event_id: savedId });
+      const n = Number((ann as any)?.recipients ?? 0);
+      if (n > 0) toast.success(t("organiser.followersNotified", { count: n }));
+    }
     toast.success(editId
       ? t("organiser.post.updated")
       : status === "live" ? t("organiser.post.published") : t("organiser.post.drafted"));

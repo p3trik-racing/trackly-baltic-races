@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Check } from "lucide-react";
 import { toast } from "sonner";
+import { QrPass } from "@/components/QrPass";
 
 export const Route = createFileRoute("/_app/booking/$bookingId")({
   head: () => ({ meta: [
@@ -28,7 +29,7 @@ function ConfirmationPage() {
   useEffect(() => {
     supabase
       .from("bookings")
-      .select("id,event_id,user_id,attendee_name,attendee_email,attendee_phone,ticket_count,total_price,organiser_payout,platform_fee,status,waiver_accepted,created_at, events(id,title,date,time,city,status,organiser_name)")
+      .select("id,event_id,user_id,attendee_name,attendee_email,attendee_phone,ticket_count,total_price,organiser_payout,platform_fee,status,waiver_accepted,created_at,check_in_code,checked_in_at, events(id,title,date,time,city,status,organiser_name)")
       .eq("id", bookingId)
       .maybeSingle()
       .then(({ data }) => setBooking(data));
@@ -75,6 +76,10 @@ function ConfirmationPage() {
           {t("booking.sentTo", { email: booking.attendee_email })}
         </p>
       </div>
+
+      {booking.status === "confirmed" && booking.check_in_code && (
+        <QrPass bookingId={booking.id} code={booking.check_in_code} checkedInAt={booking.checked_in_at} />
+      )}
 
       <div className="bg-card border border-border rounded-2xl p-5 text-left space-y-3">
         <div>

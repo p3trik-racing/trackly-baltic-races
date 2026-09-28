@@ -2,6 +2,12 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 import { en, type TranslationKey } from "./en";
 import { ru } from "./ru";
 import { lv } from "./lv";
+import { supabase } from "@/integrations/supabase/client";
+
+function saveProfileLang(l: string, userId?: string | null) {
+  if (!userId) return;
+  supabase.from("profiles").update({ lang: l }).eq("id", userId).then(() => {}, () => {});
+}
 
 export const LANGS = ["en", "ru", "lv"] as const;
 export type Lang = (typeof LANGS)[number];
@@ -56,9 +62,20 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => { setLangState(detectLang()); }, []);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
 
+  // Persist the UI language on login so emails can use it later.
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event !== "SIGNED_IN") return;
+      const l = detectLang();
+      setTimeout(() => saveProfileLang(l, session?.user?.id), 0);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   const setLang = useCallback((l: Lang) => {
     try { window.localStorage.setItem(STORAGE_KEY, l); } catch {}
     setLangState(l);
+    supabase.auth.getSession().then(({ data }) => saveProfileLang(l, data.session?.user?.id), () => {});
   }, []);
   const t = useCallback<TFn>((k, v) => translate(lang, k, v), [lang]);
 

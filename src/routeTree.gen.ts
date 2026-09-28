@@ -31,10 +31,12 @@ import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organis
 import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
 import { Route as AppCompetitionsSlugRouteImport } from './routes/_app/competitions_.$slug'
+import { Route as AppCheckinBookingIdRouteImport } from './routes/_app/checkin.$bookingId'
 import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
 import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as AppOrganiserEventsEventIdCheckinRouteImport } from './routes/_app/organiser_.events.$eventId.checkin'
 import { Route as AppOrganiserEventsEventIdBookingsRouteImport } from './routes/_app/organiser_.events.$eventId.bookings'
 
 const TermsRoute = TermsRouteImport.update({
@@ -146,6 +148,11 @@ const AppCompetitionsSlugRoute = AppCompetitionsSlugRouteImport.update({
   path: '/competitions/$slug',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCheckinBookingIdRoute = AppCheckinBookingIdRouteImport.update({
+  id: '/checkin/$bookingId',
+  path: '/checkin/$bookingId',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppBookingBookingIdRoute = AppBookingBookingIdRouteImport.update({
   id: '/booking/$bookingId',
   path: '/booking/$bookingId',
@@ -166,6 +173,12 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppOrganiserEventsEventIdCheckinRoute =
+  AppOrganiserEventsEventIdCheckinRouteImport.update({
+    id: '/organiser_/events/$eventId/checkin',
+    path: '/organiser/events/$eventId/checkin',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppOrganiserEventsEventIdBookingsRoute =
   AppOrganiserEventsEventIdBookingsRouteImport.update({
     id: '/organiser_/events/$eventId/bookings',
@@ -193,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/competitions/$slug': typeof AppCompetitionsSlugRoute
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
@@ -200,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
+  '/organiser/events/$eventId/checkin': typeof AppOrganiserEventsEventIdCheckinRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -221,6 +236,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/competitions/$slug': typeof AppCompetitionsSlugRoute
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
@@ -228,6 +244,7 @@ export interface FileRoutesByTo {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
+  '/organiser/events/$eventId/checkin': typeof AppOrganiserEventsEventIdCheckinRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -251,6 +268,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/book/$eventId': typeof AppBookEventIdRoute
   '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/_app/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/_app/competitions_/$slug': typeof AppCompetitionsSlugRoute
   '/_app/event/$eventId': typeof AppEventEventIdRoute
   '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
@@ -258,6 +276,7 @@ export interface FileRoutesById {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/_app/organiser_/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
+  '/_app/organiser_/events/$eventId/checkin': typeof AppOrganiserEventsEventIdCheckinRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -281,6 +300,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/book/$eventId'
     | '/booking/$bookingId'
+    | '/checkin/$bookingId'
     | '/competitions/$slug'
     | '/event/$eventId'
     | '/organiser/apply'
@@ -288,6 +308,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/organiser/events/$eventId/bookings'
+    | '/organiser/events/$eventId/checkin'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -309,6 +330,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/book/$eventId'
     | '/booking/$bookingId'
+    | '/checkin/$bookingId'
     | '/competitions/$slug'
     | '/event/$eventId'
     | '/organiser/apply'
@@ -316,6 +338,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/organiser/events/$eventId/bookings'
+    | '/organiser/events/$eventId/checkin'
   id:
     | '__root__'
     | '/'
@@ -338,6 +361,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/book/$eventId'
     | '/_app/booking/$bookingId'
+    | '/_app/checkin/$bookingId'
     | '/_app/competitions_/$slug'
     | '/_app/event/$eventId'
     | '/_app/organiser_/apply'
@@ -345,6 +369,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/_app/organiser_/events/$eventId/bookings'
+    | '/_app/organiser_/events/$eventId/checkin'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -516,6 +541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCompetitionsSlugRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/checkin/$bookingId': {
+      id: '/_app/checkin/$bookingId'
+      path: '/checkin/$bookingId'
+      fullPath: '/checkin/$bookingId'
+      preLoaderRoute: typeof AppCheckinBookingIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/booking/$bookingId': {
       id: '/_app/booking/$bookingId'
       path: '/booking/$bookingId'
@@ -544,6 +576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/organiser_/events/$eventId/checkin': {
+      id: '/_app/organiser_/events/$eventId/checkin'
+      path: '/organiser/events/$eventId/checkin'
+      fullPath: '/organiser/events/$eventId/checkin'
+      preLoaderRoute: typeof AppOrganiserEventsEventIdCheckinRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/organiser_/events/$eventId/bookings': {
       id: '/_app/organiser_/events/$eventId/bookings'
       path: '/organiser/events/$eventId/bookings'
@@ -567,11 +606,13 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppBookEventIdRoute: typeof AppBookEventIdRoute
   AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
+  AppCheckinBookingIdRoute: typeof AppCheckinBookingIdRoute
   AppCompetitionsSlugRoute: typeof AppCompetitionsSlugRoute
   AppEventEventIdRoute: typeof AppEventEventIdRoute
   AppOrganiserApplyRoute: typeof AppOrganiserApplyRoute
   AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
   AppOrganiserEventsEventIdBookingsRoute: typeof AppOrganiserEventsEventIdBookingsRoute
+  AppOrganiserEventsEventIdCheckinRoute: typeof AppOrganiserEventsEventIdCheckinRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -587,12 +628,14 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppBookEventIdRoute: AppBookEventIdRoute,
   AppBookingBookingIdRoute: AppBookingBookingIdRoute,
+  AppCheckinBookingIdRoute: AppCheckinBookingIdRoute,
   AppCompetitionsSlugRoute: AppCompetitionsSlugRoute,
   AppEventEventIdRoute: AppEventEventIdRoute,
   AppOrganiserApplyRoute: AppOrganiserApplyRoute,
   AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
   AppOrganiserEventsEventIdBookingsRoute:
     AppOrganiserEventsEventIdBookingsRoute,
+  AppOrganiserEventsEventIdCheckinRoute: AppOrganiserEventsEventIdCheckinRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

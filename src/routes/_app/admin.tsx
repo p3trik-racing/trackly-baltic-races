@@ -251,6 +251,11 @@ function Events() {
   async function update(id: string, patch: any) {
     const { error } = await supabase.from("events").update(patch).eq("id", id);
     if (error) return toast.error(error.message);
+    if (patch?.status === "live") {
+      const { data: ann } = await supabase.rpc("announce_event", { _event_id: id });
+      const n = Number((ann as any)?.recipients ?? 0);
+      if (n > 0) toast.success(`Followers notified (${n})`);
+    }
     load();
   }
   async function cancel(id: string) {
