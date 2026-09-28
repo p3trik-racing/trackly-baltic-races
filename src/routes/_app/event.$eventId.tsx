@@ -113,7 +113,12 @@ function EventDetail() {
 
       <div className="container-app py-5 space-y-5">
         <div className="space-y-2">
-          <span className="category-pill">{catLabel(t, event.category)}</span>
+          <span
+            className="category-pill"
+            style={event.category === "majorka_special" ? { background: "var(--accent)", color: "var(--accent-foreground)" } : undefined}
+          >
+            {catLabel(t, event.category)}
+          </span>
           <h1 className="text-[24px] font-semibold leading-tight">{event.title}</h1>
         </div>
 
@@ -216,7 +221,11 @@ function EventDetail() {
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground">{t("event.capacity")}</p>
-            <p className="text-sm font-medium">{t("event.spots", { count: event.capacity })}</p>
+            <p className="text-sm font-medium">
+              {event.category === "majorka_special"
+                ? t("event.limitedTo", { count: event.capacity })
+                : t("event.spots", { count: event.capacity })}
+            </p>
           </div>
         </div>
       </div>
