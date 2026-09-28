@@ -401,7 +401,7 @@ function BookPage() {
           <span>
             {t("book.waiverPrefix")} {" "}
             <Link to="/event-terms" target="_blank" className="text-accent underline">
-              {t("eventTerms.title")}
+              {t("book.waiverLink")}
             </Link>
           </span>
         </label>

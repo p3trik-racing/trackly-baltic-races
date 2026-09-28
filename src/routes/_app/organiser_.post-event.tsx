@@ -47,6 +47,7 @@ function PostEventPage() {
   const [existingCover, setExistingCover] = useState<string | null>(null);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [customRequirement, setCustomRequirement] = useState("");
+  const [addingRequirement, setAddingRequirement] = useState(false);
   const [form, setForm] = useState({
     title: "",
     category: CATEGORIES[0].value as string,
@@ -286,19 +287,26 @@ function PostEventPage() {
               </button>
             ))}
           </div>
-          <div className="mt-2 flex gap-2">
-            <input className="input-field" value={customRequirement} placeholder={t("organiser.post.customRequirementPlaceholder")}
-              onChange={(e) => setCustomRequirement(e.target.value)} />
-            <button type="button" className="h-12 shrink-0 rounded-xl border border-border px-4 text-sm"
-              onClick={() => {
-                const value = customRequirement.trim();
-                if (!value || form.requirements.includes(value)) return;
-                setField("requirements", [...form.requirements, value]);
-                setCustomRequirement("");
-              }}>
+          {addingRequirement ? (
+            <div className="mt-2 flex gap-2">
+              <input className="input-field" value={customRequirement} placeholder={t("organiser.post.customRequirementPlaceholder")}
+                onChange={(e) => setCustomRequirement(e.target.value)} />
+              <button type="button" className="h-12 shrink-0 rounded-xl border border-border px-4 text-sm"
+                onClick={() => {
+                  const value = customRequirement.trim();
+                  if (!value || form.requirements.includes(value)) return;
+                  setField("requirements", [...form.requirements, value]);
+                  setCustomRequirement("");
+                  setAddingRequirement(false);
+                }}>
+                {t("organiser.post.add")}
+              </button>
+            </div>
+          ) : (
+            <button type="button" className="mt-2 text-sm text-accent" onClick={() => setAddingRequirement(true)}>
               {t("organiser.post.addRequirement")}
             </button>
-          </div>
+          )}
         </div>
 
         <Field label={t("organiser.post.cover")}>
