@@ -20,7 +20,7 @@ const GENERIC_COMP_META = [
 import { useLang, countryName } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { HELP_OPTIONS, type Round } from "@/lib/competitions";
+import { HELP_OPTIONS, isRoundPast, type Round } from "@/lib/competitions";
 
 export const Route = createFileRoute("/_app/competitions_/$slug")({
   loader: async ({ params }) => {
