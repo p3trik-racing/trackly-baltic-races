@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,7 +46,7 @@ function AdminPage() {
   return (
     <main className="container-app py-6 space-y-4">
       <h1 className="text-[22px] font-semibold">Admin</h1>
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1 -mx-4 px-4">
         {TABS.map((t) => (
           <button key={t} onClick={() => setTab(t)} className="px-3 h-9 rounded-full text-xs border whitespace-nowrap"
             style={tab === t ? { ...accent, borderColor: "var(--accent)" } : { borderColor: "var(--border)" }}>{t}</button>
@@ -93,7 +94,7 @@ function Applications() {
         <Card key={a.id}>
           <div className="flex justify-between gap-2">
             <p className="font-medium">{a.full_name}</p>
-            <span className="text-xs text-muted-foreground">{a.status} · {new Date(a.created_at).toLocaleDateString()}</span>
+            <span className="text-xs text-muted-foreground">{a.status} · {formatDate(a.created_at, "en")}</span>
           </div>
           {fields.map(([l, k]) => a[k] ? <p key={k} className="text-xs"><span className="text-muted-foreground">{l}: </span><span className="whitespace-pre-wrap">{a[k]}</span></p> : null)}
           {a.event_types?.length > 0 && <p className="text-xs"><span className="text-muted-foreground">Event types: </span>{a.event_types.join(", ")}</p>}
@@ -169,7 +170,7 @@ function Codes() {
           </div>
           {c.note && <p className="text-xs text-muted-foreground">{c.note}</p>}
           <p className="text-xs">
-            {c.revoked ? "Revoked" : c.used_by ? `Used by ${emails[c.used_by] || c.used_by} · ${new Date(c.used_at).toLocaleDateString()}` : "Unused"}
+            {c.revoked ? "Revoked" : c.used_by ? `Used by ${emails[c.used_by] || c.used_by} · ${formatDate(c.used_at, "en")}` : "Unused"}
           </p>
         </Card>
       ))}
@@ -227,7 +228,7 @@ function Users() {
             <p className="font-medium text-sm">{r.full_name || "—"} {r.username && <span className="text-muted-foreground">@{r.username}</span>}</p>
             <p className="text-xs text-muted-foreground">{r.email}</p>
             <p className="text-xs">Roles: {rs.length ? rs.join(", ") : "user"}{r.blocked && <span style={{ color: "var(--destructive)" }}> · Blocked{r.blocked_reason ? ` (${r.blocked_reason})` : ""}</span>}</p>
-            {r.id !== user?.id && (
+            {r.id !== user?.id && !rs.includes("admin") && (
               <div className="flex gap-2 flex-wrap">
                 <button className={btn} onClick={() => setOrg(r.id, !isOrg)}>{isOrg ? "Remove organiser" : "Make organiser"}</button>
                 <button className={btn} onClick={() => setBlocked(r.id, !r.blocked)}>{r.blocked ? "Unblock" : "Block"}</button>
@@ -297,7 +298,7 @@ function Bookings() {
         <Card key={b.id}>
           <p className="font-medium text-sm">{b.events?.title ?? "—"}</p>
           <p className="text-xs text-muted-foreground">{b.attendee_name} · {b.attendee_email}</p>
-          <p className="text-xs">{b.ticket_count} × · €{Number(b.total_price).toFixed(2)} · {b.status} · {new Date(b.created_at).toLocaleDateString()}</p>
+          <p className="text-xs">{b.ticket_count} × · €{Number(b.total_price).toFixed(2)} · {b.status} · {formatDate(b.created_at, "en")}</p>
         </Card>
       ))}
     </div>
@@ -337,7 +338,7 @@ function Competitions() {
         <Card key={e.id}>
           <div className="flex justify-between gap-2">
             <p className="font-medium text-sm">{nameOf(e.competition_id)}</p>
-            <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleDateString()}</span>
+            <span className="text-xs text-muted-foreground">{formatDate(e.created_at, "en")}</span>
           </div>
           <p className="text-sm">{e.full_name}</p>
           <p className="text-xs text-muted-foreground">{e.email} · {e.phone}</p>

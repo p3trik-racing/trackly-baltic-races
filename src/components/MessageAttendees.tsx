@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { formatDate } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/i18n";
 import { toast } from "sonner";
@@ -6,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { MessageSquare } from "lucide-react";
 
 export function MessageAttendees({ eventId }: { eventId: string }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -43,7 +44,7 @@ export function MessageAttendees({ eventId }: { eventId: string }) {
           {history.map((m) => (
             <div key={m.id} className="text-sm">
               <p className="whitespace-pre-wrap">{m.message}</p>
-              <p className="text-[11px] text-muted-foreground">{new Date(m.created_at).toLocaleString("en-GB")}</p>
+              <p className="text-[11px] text-muted-foreground">{formatDate(m.created_at, lang, "dateTime")}</p>
             </div>
           ))}
         </div>

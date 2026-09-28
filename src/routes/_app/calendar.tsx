@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
@@ -26,7 +27,7 @@ const dayKey = (d: Date) => format(d, "yyyy-MM-dd");
 function CalendarPage() {
   const [events, setEvents] = useState<UpcomingEvent[]>([]);
   const [category, setCategory] = useState("all");
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [mode, setMode] = useState<"month" | "upcoming">("month");
   const [selected, setSelected] = useState<Date | undefined>();
   const [month, setMonth] = useState<Date>(new Date());
@@ -55,7 +56,7 @@ function CalendarPage() {
   const grouped = useMemo(() => {
     const g: { label: string; items: UpcomingEvent[] }[] = [];
     filtered.forEach((e) => {
-      const label = format(parseISO(e.date), "MMMM yyyy");
+      const label = formatDate(e.date.slice(0, 10), lang, "monthYear");
       const last = g[g.length - 1];
       if (last?.label === label) last.items.push(e); else g.push({ label, items: [e] });
     });
@@ -156,7 +157,7 @@ function CalendarPage() {
           </div>
           <section className="space-y-3">
             <h2 className="text-base font-semibold">
-              {selected ? format(selected, "EEEE, d MMMM") : t("calendar.selectDay")}
+              {selected ? formatDate(selected, lang, "weekday") : t("calendar.selectDay")}
             </h2>
             {dayEvents.length === 0
               ? <p className="text-sm text-muted-foreground py-4">{t("calendar.noEventsDay")}</p>

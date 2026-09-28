@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -214,7 +215,7 @@ function BookPage() {
           <div className="bg-card border border-border rounded-2xl p-4 space-y-1">
             <p className="font-medium">{event.title}</p>
             <p className="text-sm text-muted-foreground">
-              {new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+              {formatDate(event.date, lang, "medium")}
               {" · "}{t(tickets > 1 ? "book.spotsCountPlural" : "book.spotsCount", { count: tickets })}
             </p>
             <p className="text-sm font-semibold mt-2">{t("book.totalValue", { total: total.toFixed(2) })}</p>
@@ -308,7 +309,7 @@ function BookPage() {
           <p className="text-xs text-muted-foreground">{t("book.event")}</p>
           <p className="font-medium">{event.title}</p>
           <p className="text-sm text-muted-foreground mt-1">
-            {new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+            {formatDate(event.date, lang, "medium")}
           </p>
         </div>
 

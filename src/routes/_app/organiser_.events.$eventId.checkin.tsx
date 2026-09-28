@@ -49,11 +49,13 @@ function CheckInDesk() {
   const scannerRef = useRef<any>(null);
   const lastScan = useRef<{ text: string; at: number }>({ text: "", at: 0 });
 
+  const rowsRef = useRef<Row[]>([]);
   const load = useCallback(async () => {
     const { data } = await supabase.from("bookings")
       .select("id,attendee_name,attendee_phone,ticket_count,check_in_code,checked_in_at,no_show")
       .eq("event_id", eventId).eq("status", "confirmed").order("attendee_name");
-    setRows((data as any) ?? []);
+    rowsRef.current = (data as any) ?? [];
+    setRows(rowsRef.current);
   }, [eventId]);
 
   useEffect(() => {
@@ -63,24 +65,27 @@ function CheckInDesk() {
     return () => clearInterval(iv);
   }, [eventId, load]);
 
-  function showResult(r: CheckInResult) {
+  function showResult(r: CheckInResult, fallbackId?: string) {
     if (r.ok) {
       try { navigator.vibrate?.(100); } catch {}
-      setOverlay(r);
-      setTimeout(() => setOverlay((o) => (o === r ? null : o)), 3500);
+      const withId: CheckInResult = { ...r, booking_id: r.booking_id ?? fallbackId };
+      setOverlay(withId);
+      setTimeout(() => setOverlay((o) => (o === withId ? null : o)), 6000);
     } else if (r.error === "not_found") toast.error(t("checkin.invalid"));
     else if (r.error === "booking_cancelled") toast.error(t("checkin.cancelled"));
     else toast.error(t("checkin.error"));
     load();
   }
 
+  const idForCode = (c: string) => rowsRef.current.find((r) => r.check_in_code?.toUpperCase() === c.toUpperCase())?.id;
+
   const onDecode = useCallback(async (text: string) => {
     const now = Date.now();
     if (lastScan.current.text === text && now - lastScan.current.at < 3000) return;
     lastScan.current = { text, at: now };
     const p = parseScan(text);
-    if (p.bookingId) showResult(await checkIn({ bookingId: p.bookingId, code: p.code }));
-    else if (p.code) showResult(await checkIn({ code: p.code, eventId }));
+    if (p.bookingId) showResult(await checkIn({ bookingId: p.bookingId, code: p.code }), p.bookingId);
+    else if (p.code) showResult(await checkIn({ code: p.code, eventId }), idForCode(p.code));
     else toast.error(t("checkin.invalid"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
@@ -113,16 +118,17 @@ function CheckInDesk() {
   async function submitCode() {
     const c = code.trim().toUpperCase();
     if (c.length !== 8) return;
-    showResult(await checkIn({ code: c, eventId }));
+    showResult(await checkIn({ code: c, eventId }), idForCode(c));
     setCode("");
   }
 
-  async function undo(id: string) {
+  async function undo(id?: string) {
+    if (!id) return toast.error(t("checkin.error"));
     const { error } = await supabase.rpc("undo_check_in", { _booking_id: id });
     if (error) return toast.error(error.message);
     toast.success(t("checkin.undone"));
     setOverlay(null);
-    load();
+    await load();
   }
 
   async function closeCheckIn() {
@@ -157,9 +163,7 @@ function CheckInDesk() {
           {overlay.already && <p className="font-semibold">{t("checkin.already", { time: hhmm(overlay.checked_in_at) })}</p>}
           <p className="text-xl font-semibold">{t("checkin.ok", { name: overlay.name ?? "" })}</p>
           <p>{t("checkin.spots", { count: overlay.spots ?? 1 })}</p>
-          {overlay.booking_id && (
-            <button onClick={() => undo(overlay.booking_id!)} className="text-sm underline">{t("checkin.undo")}</button>
-          )}
+          <button type="button" onClick={() => undo(overlay.booking_id)} className="text-sm underline">{t("checkin.undo")}</button>
         </div>
       )}
 
@@ -234,7 +238,7 @@ function CheckInDesk() {
             <button onClick={() => setConfirmRow(null)} className="flex-1 h-11 rounded-xl border border-border text-sm">{t("common.cancel")}</button>
             <button onClick={async () => {
               const r = confirmRow; setConfirmRow(null);
-              showResult(await checkIn({ bookingId: r.id, code: r.check_in_code }));
+              showResult(await checkIn({ bookingId: r.id, code: r.check_in_code }), r.id);
             }} className="flex-1 h-11 rounded-xl text-sm font-medium text-accent-foreground" style={{ backgroundColor: "var(--accent)" }}>
               {t("checkin.submitCode")}
             </button>

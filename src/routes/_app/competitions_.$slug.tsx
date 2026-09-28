@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { formatRoundDate } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Share2 } from "lucide-react";
@@ -19,7 +20,7 @@ const GENERIC_COMP_META = [
 import { useLang, countryName } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { HELP_OPTIONS, type Round } from "@/lib/competitions";
+import { HELP_OPTIONS, isRoundPast, type Round } from "@/lib/competitions";
 
 export const Route = createFileRoute("/_app/competitions_/$slug")({
   loader: async ({ params }) => {
@@ -57,7 +58,7 @@ export const Route = createFileRoute("/_app/competitions_/$slug")({
 
 function CompetitionPage() {
   const { slug } = Route.useParams();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [c, setC] = useState<any | null | undefined>(undefined);
@@ -136,8 +137,12 @@ function CompetitionPage() {
         <section className="bg-card border border-border rounded-2xl p-4 space-y-2">
           <h2 className="font-medium text-sm">{t("compete.rounds")}</h2>
           {rounds.map((r, i) => (
-            <div key={i} className="flex justify-between gap-3 text-sm">
-              <span>{r.date}</span><span className="text-muted-foreground text-right">{r.venue}</span>
+            <div key={i} className={`flex justify-between gap-3 text-sm ${isRoundPast(r) ? "opacity-50" : ""}`}>
+              <span className="flex items-center gap-2">
+                {formatRoundDate(r.date, lang)}
+                {isRoundPast(r) && <span className="text-[10px] px-1.5 py-0.5 rounded-full border border-border text-muted-foreground">{t("compete.done")}</span>}
+              </span>
+              <span className="text-muted-foreground text-right">{r.venue}</span>
             </div>
           ))}
         </section>

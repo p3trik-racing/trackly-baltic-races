@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, hasTranslationKey, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,7 +64,7 @@ function EventDetail() {
   const { eventId } = Route.useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [event, setEvent] = useState<any>(null);
   const [bookedCount, setBookedCount] = useState(0);
   const [myBooking, setMyBooking] = useState<{ id: string } | null>(null);
@@ -137,8 +138,8 @@ function EventDetail() {
   const soldOut = event.capacity > 0 && bookedCount >= event.capacity;
 
   return (
-    <main className="pb-32">
-      <div className="relative aspect-[4/3]">
+    <main className="pb-32 md:container-app md:pt-6">
+      <div className="relative aspect-[4/3] md:aspect-auto md:h-[360px] md:rounded-2xl md:overflow-hidden">
         <img
           src={eventCover(event.category, event.cover_image_url)}
           alt={event.title}
@@ -146,22 +147,22 @@ function EventDetail() {
         />
         <div className="absolute inset-0 gradient-overlay" />
         <div className="absolute top-4 left-4 right-4 flex justify-between">
-          <button onClick={() => navigate({ to: "/home" })}
+          <button aria-label={t("common.back")} onClick={() => navigate({ to: "/home" })}
             className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
             <ArrowLeft size={18} color="#fff" />
           </button>
           <div className="flex gap-2">
-            <button onClick={onShare} className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
+            <button aria-label={t("aria.share")} onClick={onShare} className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
               <Share2 size={16} color="#fff" />
             </button>
-            <button onClick={onToggleSave} className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
+            <button aria-label={saved ? t("aria.unsave") : t("aria.save")} aria-pressed={saved} onClick={onToggleSave} className="w-10 h-10 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
               <Heart size={16} color={saved ? "var(--accent)" : "#fff"} fill={saved ? "var(--accent)" : "none"} />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="container-app py-5 space-y-5">
+      <div className="container-app md:px-0 py-5 space-y-5">
         <div className="space-y-2">
           <span
             className="category-pill"
@@ -175,7 +176,7 @@ function EventDetail() {
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-3 text-foreground">
             <Calendar size={16} className="text-muted-foreground" />
-            {new Date(event.date).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
+            {formatDate(event.date, lang, "weekday")}
             {event.time && <> · {String(event.time).slice(0, 5)}</>}
           </div>
           {event.duration && (
@@ -324,7 +325,7 @@ function EventDetail() {
       <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={event.title}
         url={`${SITE_URL}/event/${event.id}`}
         text={[t("event.shareText", { title: event.title }),
-          new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "long" }), event.city].filter(Boolean).join(" · ")} />
+          formatDate(event.date, lang, "long"), event.city].filter(Boolean).join(" · ")} />
     </main>
   );
 }

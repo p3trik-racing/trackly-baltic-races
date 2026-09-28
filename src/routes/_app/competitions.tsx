@@ -4,6 +4,7 @@ import { useLang, countryName } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
 import { nextRound, type Round } from "@/lib/competitions";
+import { formatRoundDate } from "@/lib/format";
 
 export const Route = createFileRoute("/_app/competitions")({
   head: () => ({ meta: [
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/_app/competitions")({
 });
 
 function CompetitionsPage() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [rows, setRows] = useState<any[] | null>(null);
   const [country, setCountry] = useState("all");
   const [beginner, setBeginner] = useState(false);
@@ -77,7 +78,7 @@ function CompetitionsPage() {
                   )}
                 </div>
                 {c.season && <p className="text-xs text-muted-foreground">{t("compete.season")}: {c.season}</p>}
-                {r && <p className="text-xs text-muted-foreground">{t("compete.nextRound")}: {r.date}{r.venue ? ` · ${r.venue}` : ""}</p>}
+                <p className="text-xs text-muted-foreground">{r ? <>{t("compete.nextRound")}: {formatRoundDate(r.date, lang)}{r.venue ? ` · ${r.venue}` : ""}</> : t("compete.nextSeasonTbc")}</p>
               </Link>
             );
           })}

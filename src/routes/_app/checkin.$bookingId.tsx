@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useLang } from "@/i18n";
 import { useAuth } from "@/lib/auth-context";
@@ -29,6 +29,7 @@ function CheckInPage() {
   const navigate = useNavigate();
   const [res, setRes] = useState<CheckInResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const calledFor = useRef<string | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -37,8 +38,12 @@ function CheckInPage() {
       navigate({ to: "/login", search: { redirect: back } });
       return;
     }
+    // Call check_in_booking exactly once per booking on this mount.
+    const key = `${bookingId}:${c ?? ""}`;
+    if (calledFor.current === key) return;
+    calledFor.current = key;
     checkIn({ bookingId, code: c }).then(setRes);
-  }, [user, loading, bookingId, c, navigate]);
+  }, [user?.id, loading, bookingId, c, navigate]);
 
   async function undo() {
     setBusy(true);
