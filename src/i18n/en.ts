@@ -22,7 +22,7 @@ export const en = {
   "common.language": "Language",
 
   // splash
-  "splash.tagline": "Track days & drift events across the Baltics. Book your spot.",
+  "splash.tagline": "Find your legal track time.",
   "splash.browse": "Browse events without signing up →",
   "splash.majorkaRiga": "Majorka Riga",
   "splash.shop": "Shop",
@@ -83,7 +83,7 @@ export const en = {
   "nav.profile": "Profile",
 
   // home
-  "home.tagline": "Find your next session",
+  "home.tagline": "Find your legal track time",
   "home.search": "Search events",
   "home.featured": "Featured",
   "home.recent": "Recently added",
