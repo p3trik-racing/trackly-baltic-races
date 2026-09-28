@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
+import { useLang } from "@/i18n";
+import { formatDate } from "@/lib/format";
+import { cancelCopy } from "@/lib/cancel-copy";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -25,6 +27,7 @@ interface BookingRow {
   id: string;
   ticket_count: number;
   total_price: number;
+  platform_fee: number;
   status: string;
   events: {
     id: string;
@@ -34,13 +37,16 @@ interface BookingRow {
     city: string | null;
     category: string;
     cover_image_url: string | null;
+    price: number;
+    deposit: number | null;
   };
 }
 
 function BookingsPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { t: tr } = useLang();
+  const { t: tr, lang } = useLang();
+  const copyFor = (b: BookingRow) => cancelCopy(tr, { title: b.events.title, date: b.events.date, time: b.events.time, price: Number(b.events.price ?? 0), deposit: b.events.deposit, totalPaid: Number(b.total_price ?? 0), platformFee: Number(b.platform_fee ?? 0) });
   const [tab, setTab] = useState<"upcoming" | "past" | "cancelled">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
@@ -53,7 +59,7 @@ function BookingsPage() {
     if (!user) return;
     supabase
       .from("bookings")
-      .select("id,ticket_count,total_price,status,events(id,title,date,time,city,category,cover_image_url)")
+      .select("id,ticket_count,total_price,platform_fee,status,events(id,title,date,time,city,category,cover_image_url,price,deposit)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => setBookings((data as any) ?? []));
@@ -70,7 +76,7 @@ function BookingsPage() {
     fireAndForget((accessToken) => emailBookingCancelled({ data: { accessToken, bookingId: b.id } }));
     setBookings((bs) => bs.map((x) => x.id === b.id ? { ...x, status: "cancelled" } : x));
     setConfirmingCancel(null);
-    toast.success(tr("booking.cancelledToast"));
+    toast.success(copyFor(b).toast);
   }
 
   const today = new Date().toISOString().slice(0, 10);
@@ -141,7 +147,7 @@ function BookingsPage() {
                       </span>
                     </div>
                     <div className="text-xs text-muted-foreground mt-1 flex items-center gap-3">
-                      <span className="flex items-center gap-1"><Calendar size={12} />{new Date(b.events.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>
+                      <span className="flex items-center gap-1"><Calendar size={12} />{formatDate(b.events.date, lang, "short")}</span>
                       {b.events.city && <span className="flex items-center gap-1"><MapPin size={12} />{b.events.city}</span>}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">{tr("common.ref", { ref: b.id.slice(0, 8).toUpperCase() })}</div>
@@ -160,7 +166,7 @@ function BookingsPage() {
                 {canCancel && confirmingCancel === b.id && (
                   <div className="mx-3 mb-3 bg-card border border-border rounded-2xl p-4 space-y-3">
                     <p className="text-sm">
-                      {tr("booking.cancelPrompt", { title: b.events.title })}
+                      {copyFor(b).prompt}
                     </p>
                     <div className="flex gap-2">
                       <button
