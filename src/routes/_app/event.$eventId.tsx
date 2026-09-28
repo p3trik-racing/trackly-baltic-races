@@ -221,7 +221,11 @@ function EventDetail() {
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground">{t("event.capacity")}</p>
-            <p className="text-sm font-medium">{t("event.spots", { count: event.capacity })}</p>
+            <p className="text-sm font-medium">
+              {event.category === "majorka_special"
+                ? t("event.limitedTo", { count: event.capacity })
+                : t("event.spots", { count: event.capacity })}
+            </p>
           </div>
         </div>
       </div>
