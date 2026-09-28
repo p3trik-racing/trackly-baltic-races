@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Check } from "lucide-react";
 import { toast } from "sonner";
 import { QrPass } from "@/components/QrPass";
+import { emailBookingCancelled } from "@/lib/app-email.functions";
+import { fireAndForget } from "@/lib/access-token";
 
 export const Route = createFileRoute("/_app/booking/$bookingId")({
   head: () => ({ meta: [
@@ -55,6 +57,7 @@ function ConfirmationPage() {
       toast.error(data?.error || error?.message || t("booking.cancelFailed"));
       return;
     }
+    fireAndForget((accessToken) => emailBookingCancelled({ data: { accessToken, bookingId: booking.id } }));
     setBooking({ ...booking, status: "cancelled" });
     setConfirmingCancel(false);
     toast.success(t("booking.cancelledToast"));

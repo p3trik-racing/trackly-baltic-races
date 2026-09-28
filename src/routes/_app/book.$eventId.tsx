@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { ArrowLeft, Minus, Plus, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { emailBookingCreated } from "@/lib/app-email.functions";
+import { fireAndForget } from "@/lib/access-token";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -120,22 +122,7 @@ function BookPage() {
       if (error || data?.error || !data?.id) {
         throw new Error(data?.error || error?.message || t("book.createFailed"));
       }
-
-      supabase.functions.invoke("send-booking-email", {
-        body: {
-          booking_id: data.id,
-          attendee_email: form.email,
-          attendee_name: form.name,
-          event_title: event.title,
-          event_date: new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
-          event_time: event.time ?? "",
-          event_location: [event.location_name, event.city].filter(Boolean).join(", "),
-          ticket_count: tickets,
-          total_price: 0,
-          booking_reference: data.id.slice(0, 8).toUpperCase(),
-          lang,
-        },
-      }).catch(() => {});
+      fireAndForget((accessToken) => emailBookingCreated({ data: { accessToken, bookingId: data.id } }));
 
       navigate({ to: "/booking/$bookingId", params: { bookingId: data.id } });
     } catch (e: any) {
@@ -191,23 +178,7 @@ function BookPage() {
       if (error || data?.error || !data?.id) {
         throw new Error(data?.error || error?.message || t("book.createFailed"));
       }
-
-      // Fire-and-forget booking confirmation email
-      supabase.functions.invoke("send-booking-email", {
-        body: {
-          booking_id: data.id,
-          attendee_email: form.email,
-          attendee_name: form.name,
-          event_title: event.title,
-          event_date: new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
-          event_time: event.time ?? "",
-          event_location: [event.location_name, event.city].filter(Boolean).join(", "),
-          ticket_count: tickets,
-          total_price: total,
-          booking_reference: data.id.slice(0, 8).toUpperCase(),
-          lang,
-        },
-      }).catch(() => {});
+      fireAndForget((accessToken) => emailBookingCreated({ data: { accessToken, bookingId: data.id } }));
 
       navigate({ to: "/booking/$bookingId", params: { bookingId: data.id } });
     } catch (e: any) {

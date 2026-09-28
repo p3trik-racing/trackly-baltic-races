@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useRoles } from "@/lib/roles";
-import { sendOrganiserEmail } from "@/lib/organiser-email.functions";
+import { emailOrganiserApplication } from "@/lib/app-email.functions";
 import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
 
 export const Route = createFileRoute("/_app/admin")({
@@ -79,7 +79,7 @@ function Applications() {
     const { error } = await supabase.rpc("review_organiser_application", { _id: id, _approve: approve, _note: notes[id] || undefined });
     if (error) return toast.error(error.message);
     toast.success(approve ? "Approved" : "Rejected");
-    try { await sendOrganiserEmail({ data: { type: approve ? "approved" : "rejected", application_id: id, accessToken: await token() } }); } catch { /* silent */ }
+    token().then((accessToken) => accessToken && emailOrganiserApplication({ data: { type: approve ? "approved" : "rejected", applicationId: id, accessToken } })).catch(() => {});
     load();
   }
 

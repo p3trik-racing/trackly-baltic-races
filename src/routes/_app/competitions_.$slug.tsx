@@ -5,6 +5,8 @@ import { ArrowLeft, Share2 } from "lucide-react";
 import { ShareSheet } from "@/components/ShareSheet";
 import { getCompetitionOg } from "@/lib/og.functions";
 import { SITE_URL } from "@/lib/site";
+import { emailCompetitionEntry } from "@/lib/app-email.functions";
+import { fireAndForget } from "@/lib/access-token";
 
 const GENERIC_COMP_META = [
   { title: "Competition — Majorka Racing" },
@@ -88,12 +90,13 @@ function CompetitionPage() {
     if (!user || !c) return;
     if (!f.full_name.trim() || !f.email.trim() || !f.phone.trim() || !f.car.trim()) return toast.error(t("compete.required"));
     setSaving(true);
-    const { error } = await supabase.from("competition_entries").insert({
+    const { data: ins, error } = await supabase.from("competition_entries").insert({
       competition_id: c.id, user_id: user.id, full_name: f.full_name.trim(), email: f.email.trim(), phone: f.phone.trim(),
       car: f.car.trim(), class: f.class || null, has_licence: f.has_licence, needs_help: f.needs_help, message: f.message || null,
-    });
+    }).select("id").single();
     setSaving(false);
     if (error) return toast.error(error.message);
+    if (ins?.id) fireAndForget((accessToken) => emailCompetitionEntry({ data: { accessToken, entryId: ins.id } }));
     setDone(true);
     setEntry({ status: "new" });
   }

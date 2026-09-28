@@ -37,6 +37,8 @@ import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as ApiPublicQrBookingIdRouteImport } from './routes/api/public/qr.$bookingId'
+import { Route as ApiPublicCronRemindersRouteImport } from './routes/api/public/cron/reminders'
 import { Route as AppOrganiserEventsEventIdCheckinRouteImport } from './routes/_app/organiser_.events.$eventId.checkin'
 import { Route as AppOrganiserEventsEventIdBookingsRouteImport } from './routes/_app/organiser_.events.$eventId.bookings'
 
@@ -180,6 +182,16 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicQrBookingIdRoute = ApiPublicQrBookingIdRouteImport.update({
+  id: '/api/public/qr/$bookingId',
+  path: '/api/public/qr/$bookingId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCronRemindersRoute = ApiPublicCronRemindersRouteImport.update({
+  id: '/api/public/cron/reminders',
+  path: '/api/public/cron/reminders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppOrganiserEventsEventIdCheckinRoute =
   AppOrganiserEventsEventIdCheckinRouteImport.update({
     id: '/organiser_/events/$eventId/checkin',
@@ -218,6 +230,8 @@ export interface FileRoutesByFullPath {
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
+  '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
+  '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -249,6 +263,8 @@ export interface FileRoutesByTo {
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
+  '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
+  '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -282,6 +298,8 @@ export interface FileRoutesById {
   '/_app/event/$eventId': typeof AppEventEventIdRoute
   '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
   '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
+  '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
+  '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -315,6 +333,8 @@ export interface FileRouteTypes {
     | '/event/$eventId'
     | '/organiser/apply'
     | '/organiser/post-event'
+    | '/api/public/cron/reminders'
+    | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -346,6 +366,8 @@ export interface FileRouteTypes {
     | '/event/$eventId'
     | '/organiser/apply'
     | '/organiser/post-event'
+    | '/api/public/cron/reminders'
+    | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -378,6 +400,8 @@ export interface FileRouteTypes {
     | '/_app/event/$eventId'
     | '/_app/organiser_/apply'
     | '/_app/organiser_/post-event'
+    | '/api/public/cron/reminders'
+    | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -394,6 +418,8 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
+  ApiPublicCronRemindersRoute: typeof ApiPublicCronRemindersRoute
+  ApiPublicQrBookingIdRoute: typeof ApiPublicQrBookingIdRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -597,6 +623,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/qr/$bookingId': {
+      id: '/api/public/qr/$bookingId'
+      path: '/api/public/qr/$bookingId'
+      fullPath: '/api/public/qr/$bookingId'
+      preLoaderRoute: typeof ApiPublicQrBookingIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cron/reminders': {
+      id: '/api/public/cron/reminders'
+      path: '/api/public/cron/reminders'
+      fullPath: '/api/public/cron/reminders'
+      preLoaderRoute: typeof ApiPublicCronRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/organiser_/events/$eventId/checkin': {
       id: '/_app/organiser_/events/$eventId/checkin'
       path: '/organiser/events/$eventId/checkin'
@@ -670,6 +710,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
+  ApiPublicCronRemindersRoute: ApiPublicCronRemindersRoute,
+  ApiPublicQrBookingIdRoute: ApiPublicQrBookingIdRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

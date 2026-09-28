@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES } from "@/lib/categories";
 import { COUNTRIES } from "@/lib/countries";
-import { sendOrganiserEmail } from "@/lib/organiser-email.functions";
+import { emailOrganiserApplication } from "@/lib/app-email.functions";
 
 export const Route = createFileRoute("/_app/organiser_/apply")({
   head: () => ({ meta: [
@@ -63,7 +63,7 @@ function ApplyPage() {
     try {
       const { data: s } = await supabase.auth.getSession();
       const token = s.session?.access_token;
-      if (token) await sendOrganiserEmail({ data: { type: "new_application", application_id: data.id, accessToken: token } });
+      if (token) void emailOrganiserApplication({ data: { type: "new_application", applicationId: data.id, accessToken: token } }).catch(() => {});
     } catch { /* silent */ }
     setSubmitting(false);
     setDone(true);
