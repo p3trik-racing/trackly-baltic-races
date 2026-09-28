@@ -163,9 +163,7 @@ function CheckInDesk() {
           {overlay.already && <p className="font-semibold">{t("checkin.already", { time: hhmm(overlay.checked_in_at) })}</p>}
           <p className="text-xl font-semibold">{t("checkin.ok", { name: overlay.name ?? "" })}</p>
           <p>{t("checkin.spots", { count: overlay.spots ?? 1 })}</p>
-          {overlay.booking_id && (
-            <button onClick={() => undo(overlay.booking_id!)} className="text-sm underline">{t("checkin.undo")}</button>
-          )}
+          <button type="button" onClick={() => undo(overlay.booking_id)} className="text-sm underline">{t("checkin.undo")}</button>
         </div>
       )}
 
@@ -240,7 +238,7 @@ function CheckInDesk() {
             <button onClick={() => setConfirmRow(null)} className="flex-1 h-11 rounded-xl border border-border text-sm">{t("common.cancel")}</button>
             <button onClick={async () => {
               const r = confirmRow; setConfirmRow(null);
-              showResult(await checkIn({ bookingId: r.id, code: r.check_in_code }));
+              showResult(await checkIn({ bookingId: r.id, code: r.check_in_code }), r.id);
             }} className="flex-1 h-11 rounded-xl text-sm font-medium text-accent-foreground" style={{ backgroundColor: "var(--accent)" }}>
               {t("checkin.submitCode")}
             </button>
