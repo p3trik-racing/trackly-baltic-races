@@ -116,7 +116,7 @@ function CompetitionPage() {
       <div className="flex items-center justify-between">
         <Link to="/competitions" className="inline-flex items-center gap-2 text-muted-foreground"><ArrowLeft size={18} /> {t("common.back")}</Link>
         <button onClick={() => setShareOpen(true)} aria-label={t("share.title")}
-          aria-label={t("aria.share")} className="w-10 h-10 rounded-full border border-border flex items-center justify-center"><Share2 size={16} /></button>
+          className="w-10 h-10 rounded-full border border-border flex items-center justify-center"><Share2 size={16} /></button>
       </div>
       <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={c.name}
         url={`${SITE_URL}/competitions/${c.slug}`}
