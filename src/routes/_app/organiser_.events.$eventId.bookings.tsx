@@ -3,6 +3,7 @@ import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Download } from "lucide-react";
+import { useOrganiserGuard } from "@/lib/roles";
 
 export const Route = createFileRoute("/_app/organiser_/events/$eventId/bookings")({
   head: () => ({ meta: [
@@ -31,6 +32,7 @@ function EventBookingsPage() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
   const { t } = useLang();
+  useOrganiserGuard(t("organiser.notAllowed"));
   const [event, setEvent] = useState<any>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
 
