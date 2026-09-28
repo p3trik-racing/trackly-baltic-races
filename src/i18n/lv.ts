@@ -112,6 +112,7 @@ export const lv: Partial<Record<keyof typeof en, string>> = {
   "event.from": "No",
   "event.capacity": "Vietu skaits",
   "event.spots": "{count} vietas",
+  "event.limitedTo": "Tikai {count} mašīnas",
   "event.cancelled": "Pasākums atcelts",
   "event.loginToBook": "Ienāc, lai rezervētu",
   "event.attending": "Tu piedalies",

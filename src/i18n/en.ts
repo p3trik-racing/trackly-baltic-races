@@ -126,6 +126,7 @@ export const en = {
   "event.from": "From",
   "event.capacity": "Capacity",
   "event.spots": "{count} spots",
+  "event.limitedTo": "Limited to {count} cars",
   "event.cancelled": "Event Cancelled",
   "event.loginToBook": "Log in to book",
   "event.attending": "You're attending",

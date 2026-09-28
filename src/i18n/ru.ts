@@ -112,6 +112,7 @@ export const ru: Partial<Record<keyof typeof en, string>> = {
   "event.from": "От",
   "event.capacity": "Вместимость",
   "event.spots": "{count} мест",
+  "event.limitedTo": "Только {count} машин",
   "event.cancelled": "Событие отменено",
   "event.loginToBook": "Войди, чтобы забронировать",
   "event.attending": "Ты участвуешь",
