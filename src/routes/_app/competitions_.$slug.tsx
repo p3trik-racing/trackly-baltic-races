@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { formatRoundDate } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Share2 } from "lucide-react";
@@ -57,7 +58,7 @@ export const Route = createFileRoute("/_app/competitions_/$slug")({
 
 function CompetitionPage() {
   const { slug } = Route.useParams();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [c, setC] = useState<any | null | undefined>(undefined);
@@ -115,7 +116,7 @@ function CompetitionPage() {
       <div className="flex items-center justify-between">
         <Link to="/competitions" className="inline-flex items-center gap-2 text-muted-foreground"><ArrowLeft size={18} /> {t("common.back")}</Link>
         <button onClick={() => setShareOpen(true)} aria-label={t("share.title")}
-          className="w-10 h-10 rounded-full border border-border flex items-center justify-center"><Share2 size={16} /></button>
+          aria-label={t("aria.share")} className="w-10 h-10 rounded-full border border-border flex items-center justify-center"><Share2 size={16} /></button>
       </div>
       <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={c.name}
         url={`${SITE_URL}/competitions/${c.slug}`}
@@ -136,8 +137,12 @@ function CompetitionPage() {
         <section className="bg-card border border-border rounded-2xl p-4 space-y-2">
           <h2 className="font-medium text-sm">{t("compete.rounds")}</h2>
           {rounds.map((r, i) => (
-            <div key={i} className="flex justify-between gap-3 text-sm">
-              <span>{r.date}</span><span className="text-muted-foreground text-right">{r.venue}</span>
+            <div key={i} className={`flex justify-between gap-3 text-sm ${isRoundPast(r) ? "opacity-50" : ""}`}>
+              <span className="flex items-center gap-2">
+                {formatRoundDate(r.date, lang)}
+                {isRoundPast(r) && <span className="text-[10px] px-1.5 py-0.5 rounded-full border border-border text-muted-foreground">{t("compete.done")}</span>}
+              </span>
+              <span className="text-muted-foreground text-right">{r.venue}</span>
             </div>
           ))}
         </section>
