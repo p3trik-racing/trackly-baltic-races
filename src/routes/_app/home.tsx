@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
-import { CATEGORIES } from "@/lib/categories";
+import { SPECIAL, orderCategories, sortWithSpecial } from "@/lib/categories";
 import { Loader2, Search } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
 import { ViewToggle } from "@/components/ViewToggle";
@@ -68,20 +68,11 @@ function HomePage() {
       .then(({ data }) => setFavourites((data?.favourite_categories ?? []) as string[]));
   }, [user]);
 
-  const orderedCategories = useMemo(() => {
-    if (!favourites.length) return CATEGORIES;
-    const fav = CATEGORIES.filter((c) => favourites.includes(c.value));
-    const rest = CATEGORIES.filter((c) => !favourites.includes(c.value));
-    return [...fav, ...rest];
-  }, [favourites]);
+  const orderedCategories = useMemo(() => orderCategories(favourites), [favourites]);
 
-  const filtered = events.filter(
-    (e) =>
-      (category === "all" || e.category === category) &&
-      (!query || e.title.toLowerCase().includes(query.toLowerCase())),
-  );
-  const featured = filtered.filter((e: any) => e.featured).slice(0, 4);
-  const recent = filtered;
+  const filtered = events.filter((e) => !query || e.title.toLowerCase().includes(query.toLowerCase()));
+  const featured = sortWithSpecial(filtered.filter((e: any) => e.featured), category).slice(0, 4);
+  const recent = sortWithSpecial(filtered, category);
 
   return (
     <main
@@ -122,6 +113,7 @@ function HomePage() {
           {[{ value: "all", label: t("common.all") }, ...orderedCategories.map((c) => ({ value: c.value, label: catLabel(t, c.value) }))].map((c) => {
             const active = category === c.value;
             const isFav = favourites.includes(c.value);
+            const isSpecial = c.value === SPECIAL;
             return (
               <button
                 key={c.value}
@@ -130,14 +122,16 @@ function HomePage() {
                 style={{
                   backgroundColor: active
                     ? "var(--accent)"
+                     : isSpecial
+                       ? "color-mix(in oklab, var(--accent) 22%, var(--card))"
                     : isFav
                       ? "color-mix(in oklab, var(--accent) 14%, var(--card))"
                       : "var(--card)",
                    color: active ? "var(--accent-foreground)" : "var(--foreground)",
-                  borderColor: active || isFav ? "var(--accent)" : "var(--border)",
+                  borderColor: active || isFav || isSpecial ? "var(--accent)" : "var(--border)",
                 }}
               >
-                {c.label}
+                {isSpecial ? `★ ${c.label}` : c.label}
               </button>
             );
           })}
@@ -180,7 +174,14 @@ function HomePage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {recent.map((e) => <EventCard key={e.id} event={e} />)}
+            {recent.map((e, index) => (
+              <div key={e.id} className="space-y-3">
+                {category !== "all" && category !== SPECIAL && e.category === SPECIAL && recent[index - 1]?.category !== SPECIAL && (
+                  <p className="text-xs text-muted-foreground pt-2">{t("home.alsoSpecial")}</p>
+                )}
+                <EventCard event={e} />
+              </div>
+            ))}
           </div>
         )}
       </section>
