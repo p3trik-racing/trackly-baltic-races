@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import { useTheme } from "@/lib/theme-context";
 import { useRoles } from "@/lib/roles";
+import { useInstallState } from "@/lib/pwa";
+import { Smartphone } from "lucide-react";
 
 export const Route = createFileRoute("/_app/profile")({
   head: () => ({ meta: [
@@ -32,6 +34,9 @@ interface Profile {
   favourite_categories: string[];
   event_reminders: boolean;
   booking_confirmations: boolean;
+  notify_followed: boolean;
+  notify_favourites: boolean;
+  notify_organiser_messages: boolean;
 }
 
 function ProfilePage() {
@@ -51,6 +56,8 @@ function ProfilePage() {
   const [showCode, setShowCode] = useState(false);
   const [code, setCode] = useState("");
   const [redeeming, setRedeeming] = useState(false);
+  const [followingList, setFollowingList] = useState<{ id: string; name: string }[]>([]);
+  const install = useInstallState();
 
   useEffect(() => {
     if (!loading && !user) { navigate({ to: "/login" }); return; }
@@ -60,7 +67,23 @@ function ProfilePage() {
     supabase.from("organiser_applications").select("status,admin_note").eq("user_id", user.id)
       .order("created_at", { ascending: false }).limit(1).maybeSingle()
       .then(({ data }) => setApplication(data));
+    (async () => {
+      const { data: fs } = await supabase.from("follows").select("organiser_id").eq("user_id", user.id);
+      const ids = (fs ?? []).map((f: any) => f.organiser_id as string);
+      if (!ids.length) { setFollowingList([]); return; }
+      const { data: evs } = await supabase.from("events").select("organiser_id,organiser_name").in("organiser_id", ids);
+      const names: Record<string, string> = {};
+      (evs ?? []).forEach((e: any) => { if (e.organiser_name && !names[e.organiser_id]) names[e.organiser_id] = e.organiser_name; });
+      setFollowingList(ids.map((id) => ({ id, name: names[id] ?? "—" })));
+    })();
   }, [user, loading, navigate]);
+
+  async function unfollow(id: string) {
+    if (!user) return;
+    const { error } = await supabase.from("follows").delete().eq("user_id", user.id).eq("organiser_id", id);
+    if (error) return toast.error(error.message);
+    setFollowingList((l) => l.filter((x) => x.id !== id));
+  }
 
   async function saveInfo() {
     if (!user || !profile) return;
@@ -95,13 +118,13 @@ function ProfilePage() {
     await supabase.from("profiles").update({ favourite_categories: next }).eq("id", user.id);
   }
 
-  async function setNotif(field: "event_reminders" | "booking_confirmations", value: boolean) {
+  async function setNotif(
+    field: "event_reminders" | "booking_confirmations" | "notify_followed" | "notify_favourites" | "notify_organiser_messages",
+    value: boolean,
+  ) {
     if (!user || !profile) return;
     setProfile({ ...profile, [field]: value });
-    const patch = field === "event_reminders"
-      ? { event_reminders: value }
-      : { booking_confirmations: value };
-    await supabase.from("profiles").update(patch).eq("id", user.id);
+    await supabase.from("profiles").update({ [field]: value } as any).eq("id", user.id);
   }
 
   function openFilePicker(onFile: (file: File) => void, accept: string) {
@@ -286,6 +309,25 @@ function ProfilePage() {
             onChange={(v) => setNotif("event_reminders", v)} />
           <ToggleRow label={t("profile.bookingConfirmations")} checked={profile.booking_confirmations}
             onChange={(v) => setNotif("booking_confirmations", v)} />
+          <ToggleRow label={t("profile.notifyFollowed")} checked={profile.notify_followed ?? true}
+            onChange={(v) => setNotif("notify_followed", v)} />
+          <ToggleRow label={t("profile.notifyFavourites")} checked={profile.notify_favourites ?? true}
+            onChange={(v) => setNotif("notify_favourites", v)} />
+          <ToggleRow label={t("profile.notifyOrganiserMessages")} checked={profile.notify_organiser_messages ?? true}
+            onChange={(v) => setNotif("notify_organiser_messages", v)} />
+          {followingList.length > 0 && (
+            <div className="pt-2 space-y-2">
+              <p className="text-xs text-muted-foreground">{t("profile.followingList", { count: followingList.length })}</p>
+              {followingList.map((f) => (
+                <div key={f.id} className="flex items-center justify-between">
+                  <span className="text-sm truncate">{f.name}</span>
+                  <button onClick={() => unfollow(f.id)} className="text-xs px-3 h-8 rounded-full border border-border text-muted-foreground">
+                    {t("profile.unfollow")}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="border-t border-border pt-4 space-y-2">
           <p className="text-xs text-muted-foreground">{t("profile.appearance")}</p>
@@ -382,6 +424,20 @@ function ProfilePage() {
           <Link to="/admin" className="block text-sm font-medium" style={{ color: "var(--accent)" }}>{t("profile.adminPanel")}</Link>
         )}
       </section>
+
+      {!install.standalone && (install.canPrompt || install.ios) && (
+        <section className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+          <Smartphone size={20} className="text-muted-foreground shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium">{t("profile.install")}</p>
+            <p className="text-xs text-muted-foreground">{install.ios && !install.canPrompt ? t("profile.installIos") : t("profile.installHelp")}</p>
+          </div>
+          {install.canPrompt && (
+            <button onClick={() => install.prompt()} className="px-4 h-9 rounded-xl text-sm font-medium text-accent-foreground"
+              style={{ backgroundColor: "var(--accent)" }}>{t("profile.installButton")}</button>
+          )}
+        </section>
+      )}
 
       {/* Majorka */}
       <section className="bg-card border border-border rounded-2xl p-2">

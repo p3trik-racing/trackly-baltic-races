@@ -1,21 +1,55 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Share2 } from "lucide-react";
+import { ShareSheet } from "@/components/ShareSheet";
+import { getCompetitionOg } from "@/lib/og.functions";
+import { SITE_URL } from "@/lib/site";
+
+const GENERIC_COMP_META = [
+  { title: "Competition — Majorka Racing" },
+  { name: "description", content: "Rounds, entry fee, licence and car requirements — and how to enter this series." },
+  { property: "og:title", content: "Competition — Majorka Racing" },
+  { property: "og:description", content: "Rounds, entry fee, licence and car requirements — and how to enter this series." },
+  { property: "og:type", content: "website" },
+  { name: "twitter:card", content: "summary_large_image" },
+];
 import { useLang, countryName } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { HELP_OPTIONS, type Round } from "@/lib/competitions";
 
 export const Route = createFileRoute("/_app/competitions_/$slug")({
-  head: () => ({ meta: [
-    { title: "Competition — Majorka Racing" },
-    { name: "description", content: "Rounds, entry fee, licence and car requirements — and how to enter this series." },
-    { property: "og:title", content: "Competition — Majorka Racing" },
-    { property: "og:description", content: "Rounds, entry fee, licence and car requirements — and how to enter this series." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-  ] }),
+  loader: async ({ params }) => {
+    try { return { og: await getCompetitionOg({ data: { slug: params.slug } }) }; } catch { return { og: null }; }
+  },
+  head: ({ loaderData }) => {
+    const c = loaderData?.og;
+    if (!c) return { meta: GENERIC_COMP_META };
+    const url = `${SITE_URL}/competitions/${c.slug}`;
+    const title = `${c.name} — Majorka Racing`;
+    const desc = [c.discipline, c.country, c.season ? `Season ${c.season}` : null].filter(Boolean).join(" · ");
+    const image = `${SITE_URL}/og.png`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { property: "og:site_name", content: "Majorka Racing" },
+        { property: "og:image", content: image },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: image },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
+  errorComponent: () => <div className="container-app py-10 text-muted-foreground">Something went wrong.</div>,
+  notFoundComponent: () => <div className="container-app py-10 text-muted-foreground">Competition not found.</div>,
   component: CompetitionPage,
 });
 
@@ -29,6 +63,7 @@ function CompetitionPage() {
   const [showForm, setShowForm] = useState(false);
   const [done, setDone] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [f, setF] = useState({ full_name: "", email: "", phone: "", car: "", class: "", has_licence: false, needs_help: [] as string[], message: "" });
   const set = (k: keyof typeof f, v: any) => setF((p) => ({ ...p, [k]: v }));
 
@@ -74,7 +109,14 @@ function CompetitionPage() {
 
   return (
     <main className="container-app py-6 space-y-5">
-      <Link to="/competitions" className="inline-flex items-center gap-2 text-muted-foreground"><ArrowLeft size={18} /> {t("common.back")}</Link>
+      <div className="flex items-center justify-between">
+        <Link to="/competitions" className="inline-flex items-center gap-2 text-muted-foreground"><ArrowLeft size={18} /> {t("common.back")}</Link>
+        <button onClick={() => setShareOpen(true)} aria-label={t("share.title")}
+          className="w-10 h-10 rounded-full border border-border flex items-center justify-center"><Share2 size={16} /></button>
+      </div>
+      <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={c.name}
+        url={`${SITE_URL}/competitions/${c.slug}`}
+        text={[t("share.competitionText", { title: c.name }), c.season].filter(Boolean).join(" · ")} />
       <div className="space-y-2">
         <h1 className="text-[22px] font-semibold">{c.name}</h1>
         <div className="flex gap-2 flex-wrap items-center text-xs">
