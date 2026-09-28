@@ -31,6 +31,7 @@ import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organis
 import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
 import { Route as AppCompetitionsSlugRouteImport } from './routes/_app/competitions_.$slug'
+import { Route as AppCheckinBookingIdRouteImport } from './routes/_app/checkin.$bookingId'
 import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
 import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -146,6 +147,11 @@ const AppCompetitionsSlugRoute = AppCompetitionsSlugRouteImport.update({
   path: '/competitions/$slug',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCheckinBookingIdRoute = AppCheckinBookingIdRouteImport.update({
+  id: '/checkin/$bookingId',
+  path: '/checkin/$bookingId',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppBookingBookingIdRoute = AppBookingBookingIdRouteImport.update({
   id: '/booking/$bookingId',
   path: '/booking/$bookingId',
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/competitions/$slug': typeof AppCompetitionsSlugRoute
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
@@ -221,6 +228,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/competitions/$slug': typeof AppCompetitionsSlugRoute
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/book/$eventId': typeof AppBookEventIdRoute
   '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/_app/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/_app/competitions_/$slug': typeof AppCompetitionsSlugRoute
   '/_app/event/$eventId': typeof AppEventEventIdRoute
   '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
@@ -281,6 +290,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/book/$eventId'
     | '/booking/$bookingId'
+    | '/checkin/$bookingId'
     | '/competitions/$slug'
     | '/event/$eventId'
     | '/organiser/apply'
@@ -309,6 +319,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/book/$eventId'
     | '/booking/$bookingId'
+    | '/checkin/$bookingId'
     | '/competitions/$slug'
     | '/event/$eventId'
     | '/organiser/apply'
@@ -338,6 +349,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/book/$eventId'
     | '/_app/booking/$bookingId'
+    | '/_app/checkin/$bookingId'
     | '/_app/competitions_/$slug'
     | '/_app/event/$eventId'
     | '/_app/organiser_/apply'
@@ -516,6 +528,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCompetitionsSlugRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/checkin/$bookingId': {
+      id: '/_app/checkin/$bookingId'
+      path: '/checkin/$bookingId'
+      fullPath: '/checkin/$bookingId'
+      preLoaderRoute: typeof AppCheckinBookingIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/booking/$bookingId': {
       id: '/_app/booking/$bookingId'
       path: '/booking/$bookingId'
@@ -567,6 +586,7 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppBookEventIdRoute: typeof AppBookEventIdRoute
   AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
+  AppCheckinBookingIdRoute: typeof AppCheckinBookingIdRoute
   AppCompetitionsSlugRoute: typeof AppCompetitionsSlugRoute
   AppEventEventIdRoute: typeof AppEventEventIdRoute
   AppOrganiserApplyRoute: typeof AppOrganiserApplyRoute
@@ -587,6 +607,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppBookEventIdRoute: AppBookEventIdRoute,
   AppBookingBookingIdRoute: AppBookingBookingIdRoute,
+  AppCheckinBookingIdRoute: AppCheckinBookingIdRoute,
   AppCompetitionsSlugRoute: AppCompetitionsSlugRoute,
   AppEventEventIdRoute: AppEventEventIdRoute,
   AppOrganiserApplyRoute: AppOrganiserApplyRoute,
