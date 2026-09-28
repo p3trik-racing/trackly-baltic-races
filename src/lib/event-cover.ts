@@ -7,6 +7,7 @@ import festival from "@/assets/event-festival.jpg";
 
 const map: Record<string, string> = {
   track_days: trackday,
+  majorka_special: trackday,
   drift: drift,
   races: race,
   car_meets: meet,
