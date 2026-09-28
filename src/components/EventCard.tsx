@@ -52,7 +52,12 @@ export function EventCard({ event, large = false }: { event: EventCardData; larg
       </div>
       <div className="p-3 space-y-2">
         <div className="flex items-center justify-between">
-          <span className="category-pill">{catLabel(t, event.category)}</span>
+          <span
+            className="category-pill"
+            style={event.category === "majorka_special" ? { background: "var(--accent)", color: "var(--accent-foreground)" } : undefined}
+          >
+            {catLabel(t, event.category)}
+          </span>
           {soldOut ? (
             <span
               className="text-[11px] px-2 py-0.5 rounded-full font-semibold"

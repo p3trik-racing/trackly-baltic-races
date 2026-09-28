@@ -113,7 +113,12 @@ function EventDetail() {
 
       <div className="container-app py-5 space-y-5">
         <div className="space-y-2">
-          <span className="category-pill">{catLabel(t, event.category)}</span>
+          <span
+            className="category-pill"
+            style={event.category === "majorka_special" ? { background: "var(--accent)", color: "var(--accent-foreground)" } : undefined}
+          >
+            {catLabel(t, event.category)}
+          </span>
           <h1 className="text-[24px] font-semibold leading-tight">{event.title}</h1>
         </div>
 
