@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_app/admin")({
   component: AdminPage,
 });
 
-const TABS = ["Applications", "Codes", "Users", "Events", "Bookings"] as const;
+const TABS = ["Applications", "Codes", "Users", "Events", "Bookings", "Competitions"] as const;
 type Tab = typeof TABS[number];
 
 async function token() {
@@ -56,6 +56,7 @@ function AdminPage() {
       {tab === "Users" && <Users />}
       {tab === "Events" && <Events />}
       {tab === "Bookings" && <Bookings />}
+      {tab === "Competitions" && <Competitions />}
     </main>
   );
 }

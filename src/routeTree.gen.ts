@@ -22,12 +22,14 @@ import { Route as AppMapRouteImport } from './routes/_app/map'
 import { Route as AppInboxRouteImport } from './routes/_app/inbox'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
+import { Route as AppCompetitionsRouteImport } from './routes/_app/competitions'
 import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
 import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
 import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
+import { Route as AppCompetitionsSlugRouteImport } from './routes/_app/competitions_.$slug'
 import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
 import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
 import { Route as AppOrganiserEventsEventIdBookingsRouteImport } from './routes/_app/organiser_.events.$eventId.bookings'
@@ -96,6 +98,11 @@ const AppExploreRoute = AppExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCompetitionsRoute = AppCompetitionsRouteImport.update({
+  id: '/competitions',
+  path: '/competitions',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCalendarRoute = AppCalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
@@ -126,6 +133,11 @@ const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
   path: '/event/$eventId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCompetitionsSlugRoute = AppCompetitionsSlugRouteImport.update({
+  id: '/competitions_/$slug',
+  path: '/competitions/$slug',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppBookingBookingIdRoute = AppBookingBookingIdRouteImport.update({
   id: '/booking/$bookingId',
   path: '/booking/$bookingId',
@@ -153,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AppAdminRoute
   '/bookings': typeof AppBookingsRoute
   '/calendar': typeof AppCalendarRoute
+  '/competitions': typeof AppCompetitionsRoute
   '/explore': typeof AppExploreRoute
   '/home': typeof AppHomeRoute
   '/inbox': typeof AppInboxRoute
@@ -161,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/competitions/$slug': typeof AppCompetitionsSlugRoute
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
@@ -176,6 +190,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AppAdminRoute
   '/bookings': typeof AppBookingsRoute
   '/calendar': typeof AppCalendarRoute
+  '/competitions': typeof AppCompetitionsRoute
   '/explore': typeof AppExploreRoute
   '/home': typeof AppHomeRoute
   '/inbox': typeof AppInboxRoute
@@ -184,6 +199,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/competitions/$slug': typeof AppCompetitionsSlugRoute
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
@@ -201,6 +217,7 @@ export interface FileRoutesById {
   '/_app/admin': typeof AppAdminRoute
   '/_app/bookings': typeof AppBookingsRoute
   '/_app/calendar': typeof AppCalendarRoute
+  '/_app/competitions': typeof AppCompetitionsRoute
   '/_app/explore': typeof AppExploreRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/inbox': typeof AppInboxRoute
@@ -209,6 +226,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/book/$eventId': typeof AppBookEventIdRoute
   '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
+  '/_app/competitions_/$slug': typeof AppCompetitionsSlugRoute
   '/_app/event/$eventId': typeof AppEventEventIdRoute
   '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
   '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
@@ -226,6 +244,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/bookings'
     | '/calendar'
+    | '/competitions'
     | '/explore'
     | '/home'
     | '/inbox'
@@ -234,6 +253,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/book/$eventId'
     | '/booking/$bookingId'
+    | '/competitions/$slug'
     | '/event/$eventId'
     | '/organiser/apply'
     | '/organiser/post-event'
@@ -249,6 +269,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/bookings'
     | '/calendar'
+    | '/competitions'
     | '/explore'
     | '/home'
     | '/inbox'
@@ -257,6 +278,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/book/$eventId'
     | '/booking/$bookingId'
+    | '/competitions/$slug'
     | '/event/$eventId'
     | '/organiser/apply'
     | '/organiser/post-event'
@@ -273,6 +295,7 @@ export interface FileRouteTypes {
     | '/_app/admin'
     | '/_app/bookings'
     | '/_app/calendar'
+    | '/_app/competitions'
     | '/_app/explore'
     | '/_app/home'
     | '/_app/inbox'
@@ -281,6 +304,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/book/$eventId'
     | '/_app/booking/$bookingId'
+    | '/_app/competitions_/$slug'
     | '/_app/event/$eventId'
     | '/_app/organiser_/apply'
     | '/_app/organiser_/post-event'
@@ -390,6 +414,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppExploreRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/competitions': {
+      id: '/_app/competitions'
+      path: '/competitions'
+      fullPath: '/competitions'
+      preLoaderRoute: typeof AppCompetitionsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/calendar': {
       id: '/_app/calendar'
       path: '/calendar'
@@ -432,6 +463,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventEventIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/competitions_/$slug': {
+      id: '/_app/competitions_/$slug'
+      path: '/competitions/$slug'
+      fullPath: '/competitions/$slug'
+      preLoaderRoute: typeof AppCompetitionsSlugRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/booking/$bookingId': {
       id: '/_app/booking/$bookingId'
       path: '/booking/$bookingId'
@@ -460,6 +498,7 @@ interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
   AppBookingsRoute: typeof AppBookingsRoute
   AppCalendarRoute: typeof AppCalendarRoute
+  AppCompetitionsRoute: typeof AppCompetitionsRoute
   AppExploreRoute: typeof AppExploreRoute
   AppHomeRoute: typeof AppHomeRoute
   AppInboxRoute: typeof AppInboxRoute
@@ -468,6 +507,7 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppBookEventIdRoute: typeof AppBookEventIdRoute
   AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
+  AppCompetitionsSlugRoute: typeof AppCompetitionsSlugRoute
   AppEventEventIdRoute: typeof AppEventEventIdRoute
   AppOrganiserApplyRoute: typeof AppOrganiserApplyRoute
   AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
@@ -478,6 +518,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
   AppBookingsRoute: AppBookingsRoute,
   AppCalendarRoute: AppCalendarRoute,
+  AppCompetitionsRoute: AppCompetitionsRoute,
   AppExploreRoute: AppExploreRoute,
   AppHomeRoute: AppHomeRoute,
   AppInboxRoute: AppInboxRoute,
@@ -486,6 +527,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppBookEventIdRoute: AppBookEventIdRoute,
   AppBookingBookingIdRoute: AppBookingBookingIdRoute,
+  AppCompetitionsSlugRoute: AppCompetitionsSlugRoute,
   AppEventEventIdRoute: AppEventEventIdRoute,
   AppOrganiserApplyRoute: AppOrganiserApplyRoute,
   AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
