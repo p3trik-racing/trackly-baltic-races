@@ -60,6 +60,10 @@ export const cancelEventWithNotifications = createServerFn({ method: "POST" })
           message: `Your booking for ${ev.title} has been cancelled as the event was cancelled by the organiser.`,
         }));
         await supabaseAdmin.from("notifications").insert(notifs);
+        try {
+          const { sendEventCancelled } = await import("./app-email.server");
+          await sendEventCancelled(ev.id, confirmed.map((b: any) => b.id));
+        } catch (e) { console.error("[email] event cancelled", e); }
       }
       return { ok: true as const, count: confirmed?.length ?? 0, error: null };
     } catch (e: any) {

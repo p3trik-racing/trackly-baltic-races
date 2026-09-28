@@ -6,6 +6,8 @@ import { useAuth } from "@/lib/auth-context";
 import { eventCover } from "@/lib/event-cover";
 import { Calendar, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { emailBookingCancelled } from "@/lib/app-email.functions";
+import { fireAndForget } from "@/lib/access-token";
 
 export const Route = createFileRoute("/_app/bookings")({
   head: () => ({ meta: [
@@ -65,6 +67,7 @@ function BookingsPage() {
       toast.error(data?.error || error?.message || tr("booking.cancelFailed"));
       return;
     }
+    fireAndForget((accessToken) => emailBookingCancelled({ data: { accessToken, bookingId: b.id } }));
     setBookings((bs) => bs.map((x) => x.id === b.id ? { ...x, status: "cancelled" } : x));
     setConfirmingCancel(null);
     toast.success(tr("booking.cancelledToast"));
