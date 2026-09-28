@@ -25,6 +25,7 @@ import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
 import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
 import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
+import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
 import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
 import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
@@ -109,6 +110,11 @@ const AppOrganiserPostEventRoute = AppOrganiserPostEventRouteImport.update({
   path: '/organiser/post-event',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOrganiserApplyRoute = AppOrganiserApplyRouteImport.update({
+  id: '/organiser_/apply',
+  path: '/organiser/apply',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
   id: '/event/$eventId',
   path: '/event/$eventId',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/event/$eventId': typeof AppEventEventIdRoute
+  '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
   '/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
 }
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/event/$eventId': typeof AppEventEventIdRoute
+  '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
   '/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
 }
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   '/_app/book/$eventId': typeof AppBookEventIdRoute
   '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/_app/event/$eventId': typeof AppEventEventIdRoute
+  '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
   '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
   '/_app/organiser_/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
 }
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/book/$eventId'
     | '/booking/$bookingId'
     | '/event/$eventId'
+    | '/organiser/apply'
     | '/organiser/post-event'
     | '/organiser/events/$eventId/bookings'
   fileRoutesByTo: FileRoutesByTo
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/book/$eventId'
     | '/booking/$bookingId'
     | '/event/$eventId'
+    | '/organiser/apply'
     | '/organiser/post-event'
     | '/organiser/events/$eventId/bookings'
   id:
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/_app/book/$eventId'
     | '/_app/booking/$bookingId'
     | '/_app/event/$eventId'
+    | '/_app/organiser_/apply'
     | '/_app/organiser_/post-event'
     | '/_app/organiser_/events/$eventId/bookings'
   fileRoutesById: FileRoutesById
@@ -387,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOrganiserPostEventRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/organiser_/apply': {
+      id: '/_app/organiser_/apply'
+      path: '/organiser/apply'
+      fullPath: '/organiser/apply'
+      preLoaderRoute: typeof AppOrganiserApplyRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/event/$eventId': {
       id: '/_app/event/$eventId'
       path: '/event/$eventId'
@@ -430,6 +449,7 @@ interface AppRouteChildren {
   AppBookEventIdRoute: typeof AppBookEventIdRoute
   AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
   AppEventEventIdRoute: typeof AppEventEventIdRoute
+  AppOrganiserApplyRoute: typeof AppOrganiserApplyRoute
   AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
   AppOrganiserEventsEventIdBookingsRoute: typeof AppOrganiserEventsEventIdBookingsRoute
 }
@@ -446,6 +466,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppBookEventIdRoute: AppBookEventIdRoute,
   AppBookingBookingIdRoute: AppBookingBookingIdRoute,
   AppEventEventIdRoute: AppEventEventIdRoute,
+  AppOrganiserApplyRoute: AppOrganiserApplyRoute,
   AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
   AppOrganiserEventsEventIdBookingsRoute:
     AppOrganiserEventsEventIdBookingsRoute,
