@@ -83,6 +83,134 @@ export type Database = {
           },
         ]
       }
+      competition_entries: {
+        Row: {
+          car: string | null
+          class: string | null
+          competition_id: string
+          created_at: string
+          email: string
+          full_name: string
+          has_licence: boolean
+          id: string
+          message: string | null
+          needs_help: string[]
+          phone: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          car?: string | null
+          class?: string | null
+          competition_id: string
+          created_at?: string
+          email: string
+          full_name: string
+          has_licence?: boolean
+          id?: string
+          message?: string | null
+          needs_help?: string[]
+          phone?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          car?: string | null
+          class?: string | null
+          competition_id?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          has_licence?: boolean
+          id?: string
+          message?: string | null
+          needs_help?: string[]
+          phone?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_entries_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitions: {
+        Row: {
+          beginner_friendly: boolean
+          car_requirements: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          country: string
+          created_at: string
+          description: string | null
+          discipline: string
+          entry_fee: string | null
+          how_to_enter: string | null
+          id: string
+          licence: string | null
+          name: string
+          organiser: string | null
+          regulations_url: string | null
+          rounds: Json
+          season: string | null
+          slug: string
+          sort: number
+          status: string
+          website: string | null
+        }
+        Insert: {
+          beginner_friendly?: boolean
+          car_requirements?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          country: string
+          created_at?: string
+          description?: string | null
+          discipline: string
+          entry_fee?: string | null
+          how_to_enter?: string | null
+          id?: string
+          licence?: string | null
+          name: string
+          organiser?: string | null
+          regulations_url?: string | null
+          rounds?: Json
+          season?: string | null
+          slug: string
+          sort?: number
+          status?: string
+          website?: string | null
+        }
+        Update: {
+          beginner_friendly?: boolean
+          car_requirements?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          country?: string
+          created_at?: string
+          description?: string | null
+          discipline?: string
+          entry_fee?: string | null
+          how_to_enter?: string | null
+          id?: string
+          licence?: string | null
+          name?: string
+          organiser?: string | null
+          regulations_url?: string | null
+          rounds?: Json
+          season?: string | null
+          slug?: string
+          sort?: number
+          status?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           capacity: number

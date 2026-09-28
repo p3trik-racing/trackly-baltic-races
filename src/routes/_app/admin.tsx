@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_app/admin")({
   component: AdminPage,
 });
 
-const TABS = ["Applications", "Codes", "Users", "Events", "Bookings"] as const;
+const TABS = ["Applications", "Codes", "Users", "Events", "Bookings", "Competitions"] as const;
 type Tab = typeof TABS[number];
 
 async function token() {
@@ -56,6 +56,7 @@ function AdminPage() {
       {tab === "Users" && <Users />}
       {tab === "Events" && <Events />}
       {tab === "Bookings" && <Bookings />}
+      {tab === "Competitions" && <Competitions />}
     </main>
   );
 }
@@ -292,6 +293,64 @@ function Bookings() {
           <p className="font-medium text-sm">{b.events?.title ?? "—"}</p>
           <p className="text-xs text-muted-foreground">{b.attendee_name} · {b.attendee_email}</p>
           <p className="text-xs">{b.ticket_count} × · €{Number(b.total_price).toFixed(2)} · {b.status} · {new Date(b.created_at).toLocaleDateString()}</p>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function Competitions() {
+  const [entries, setEntries] = useState<any[]>([]);
+  const [comps, setComps] = useState<any[]>([]);
+  const load = useCallback(async () => {
+    const [{ data: e }, { data: c }] = await Promise.all([
+      supabase.from("competition_entries").select("*").order("created_at", { ascending: false }),
+      supabase.from("competitions").select("id,name,status,sort").order("sort"),
+    ]);
+    setEntries(e ?? []);
+    setComps(c ?? []);
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  const nameOf = (id: string) => comps.find((c) => c.id === id)?.name ?? "—";
+
+  async function setStatus(id: string, status: string) {
+    const { error } = await supabase.from("competition_entries").update({ status }).eq("id", id);
+    if (error) return toast.error(error.message);
+    load();
+  }
+  async function toggleLive(id: string, status: string) {
+    const { error } = await supabase.from("competitions").update({ status: status === "live" ? "draft" : "live" }).eq("id", id);
+    if (error) return toast.error(error.message);
+    load();
+  }
+
+  return (
+    <div className="space-y-4">
+      <h2 className="font-medium text-sm">Entries</h2>
+      {entries.length === 0 && <p className="text-sm text-muted-foreground">No entries.</p>}
+      {entries.map((e) => (
+        <Card key={e.id}>
+          <div className="flex justify-between gap-2">
+            <p className="font-medium text-sm">{nameOf(e.competition_id)}</p>
+            <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleDateString()}</span>
+          </div>
+          <p className="text-sm">{e.full_name}</p>
+          <p className="text-xs text-muted-foreground">{e.email} · {e.phone}</p>
+          <p className="text-xs">Car: {e.car}{e.class ? ` · Class: ${e.class}` : ""} · Licence: {e.has_licence ? "yes" : "no"}</p>
+          {e.needs_help?.length > 0 && <p className="text-xs">Needs help: {e.needs_help.join(", ")}</p>}
+          {e.message && <p className="text-xs whitespace-pre-wrap">{e.message}</p>}
+          <select className="input-field" value={e.status} onChange={(ev) => setStatus(e.id, ev.target.value)}>
+            {["new", "contacted", "entered", "dropped"].map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </Card>
+      ))}
+      <h2 className="font-medium text-sm pt-2">Competitions</h2>
+      {comps.map((c) => (
+        <Card key={c.id}>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm">{c.name}</p>
+            <button className={btn} onClick={() => toggleLive(c.id, c.status)}>{c.status === "live" ? "Live → Draft" : "Draft → Live"}</button>
+          </div>
         </Card>
       ))}
     </div>

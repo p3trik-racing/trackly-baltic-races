@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { CompeteBanner } from "@/components/CompeteBanner";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -172,6 +173,8 @@ function ExplorePage() {
           </div>
         </div>
       )}
+
+      <CompeteBanner />
 
       {filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
