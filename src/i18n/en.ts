@@ -349,11 +349,12 @@ export const en = {
   "viewToggle.calendar": "Calendar",
 
   // categories
-  "categories.track_days": "Track Days",
+  "categories.track_days": "Track Day",
   "categories.drift": "Drift",
   "categories.races": "Races",
   "categories.car_meets": "Car Meets",
-  "categories.snow_drift": "Snow Drift",
+  "categories.snow_drift": "Ice Drifting",
+  "categories.majorka_special": "Majorka Special",
   "categories.festivals": "Festivals",
 
   // countries
