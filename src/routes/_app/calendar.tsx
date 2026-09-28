@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
@@ -55,7 +56,7 @@ function CalendarPage() {
   const grouped = useMemo(() => {
     const g: { label: string; items: UpcomingEvent[] }[] = [];
     filtered.forEach((e) => {
-      const label = format(parseISO(e.date), "MMMM yyyy");
+      const label = formatDate(e.date.slice(0, 10), lang, "monthYear");
       const last = g[g.length - 1];
       if (last?.label === label) last.items.push(e); else g.push({ label, items: [e] });
     });

@@ -1,4 +1,5 @@
 import { createFileRoute, ClientOnly, Link } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { fetchUpcomingEvents, type UpcomingEvent } from "@/lib/upcoming-events";
@@ -63,7 +64,7 @@ function MapPage() {
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <h3 className="font-semibold text-sm leading-tight line-clamp-2">{e.title}</h3>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(e.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
+                      {formatDate(e.date, lang, "weekdayShort")}
                       {e.time && ` · ${String(e.time).slice(0, 5)}`}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, hasTranslationKey, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,7 +64,7 @@ function EventDetail() {
   const { eventId } = Route.useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [event, setEvent] = useState<any>(null);
   const [bookedCount, setBookedCount] = useState(0);
   const [myBooking, setMyBooking] = useState<{ id: string } | null>(null);
@@ -175,7 +176,7 @@ function EventDetail() {
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-3 text-foreground">
             <Calendar size={16} className="text-muted-foreground" />
-            {new Date(event.date).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
+            {formatDate(event.date, lang, "weekday")}
             {event.time && <> · {String(event.time).slice(0, 5)}</>}
           </div>
           {event.duration && (
@@ -324,7 +325,7 @@ function EventDetail() {
       <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={event.title}
         url={`${SITE_URL}/event/${event.id}`}
         text={[t("event.shareText", { title: event.title }),
-          new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "long" }), event.city].filter(Boolean).join(" · ")} />
+          formatDate(event.date, lang, "long"), event.city].filter(Boolean).join(" · ")} />
     </main>
   );
 }

@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { MessageAttendees } from "@/components/MessageAttendees";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
@@ -126,7 +127,7 @@ function EventBookingsPage() {
               <p className="text-xs text-muted-foreground">{b.attendee_email}</p>
               {b.attendee_phone && <p className="text-xs text-muted-foreground">{b.attendee_phone}</p>}
               <p className="text-[11px] text-muted-foreground pt-1">
-                {t("common.ref", { ref: b.id.slice(0, 8).toUpperCase() })} · {new Date(b.created_at).toLocaleDateString("en-GB")}
+                {t("common.ref", { ref: b.id.slice(0, 8).toUpperCase() })} · {formatDate(b.created_at, lang, "medium")}
               </p>
             </div>
           ))}

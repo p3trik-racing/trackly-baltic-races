@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -189,7 +190,7 @@ function OrganiserDashboard() {
                       {statusBadge(e)}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(e.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                      {formatDate(e.date, lang, "medium")}
                       {e.city ? ` · ${e.city}` : ""}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">

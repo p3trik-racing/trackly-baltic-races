@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { MapPin, Calendar } from "lucide-react";
 import { eventCover } from "@/lib/event-cover";
@@ -19,11 +20,8 @@ export interface EventCardData {
 
 export function EventCard({ event, large = false }: { event: EventCardData; large?: boolean }) {
   const cover = eventCover(event.category, event.cover_image_url);
-  const { t } = useLang();
-  const dateStr = new Date(event.date).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-  });
+  const { t, lang } = useLang();
+  const dateStr = formatDate(event.date, lang, "short");
   const soldOut =
     typeof event.capacity === "number" &&
     event.capacity > 0 &&

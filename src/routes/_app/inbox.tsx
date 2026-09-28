@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { formatDate } from "@/lib/format";
 import { ExternalLink } from "lucide-react";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
@@ -90,7 +91,7 @@ function InboxPage() {
                   </a>
                 )}
                 <p className="text-xs text-muted-foreground mt-1">
-                  {new Date(n.created_at).toLocaleDateString()}
+                  {formatDate(n.created_at, lang, "dateTime")}
                 </p>
               </div>
             </div>
