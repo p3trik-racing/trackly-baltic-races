@@ -53,6 +53,10 @@ Deno.serve(async (req) => {
 
     const admin = createClient(supabaseUrl, serviceKey);
 
+    const { data: prof } = await admin.from("profiles").select("blocked").eq("id", userId).maybeSingle();
+    if (prof?.blocked) return json({ error: "Account blocked" }, 403);
+
+
     // Fetch event server-side to get authoritative price
     const { data: event, error: evErr } = await admin
       .from("events")

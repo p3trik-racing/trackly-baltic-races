@@ -8,6 +8,7 @@ import { LogOut, User, Upload, ChevronRight, KeyRound, Globe, ShoppingBag } from
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import { useTheme } from "@/lib/theme-context";
+import { useRoles } from "@/lib/roles";
 
 export const Route = createFileRoute("/_app/profile")({
   head: () => ({ meta: [
@@ -45,13 +46,20 @@ function ProfilePage() {
   const { theme, toggleTheme } = useTheme();
   const { t, lang, setLang } = useLang();
   const tr = t;
-  
+  const roles = useRoles();
+  const [application, setApplication] = useState<{ status: string; admin_note: string | null } | null>(null);
+  const [showCode, setShowCode] = useState(false);
+  const [code, setCode] = useState("");
+  const [redeeming, setRedeeming] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) { navigate({ to: "/login" }); return; }
     if (!user) return;
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
       .then(({ data }) => setProfile(data as any));
+    supabase.from("organiser_applications").select("status,admin_note").eq("user_id", user.id)
+      .order("created_at", { ascending: false }).limit(1).maybeSingle()
+      .then(({ data }) => setApplication(data));
   }, [user, loading, navigate]);
 
   async function saveInfo() {
@@ -65,13 +73,16 @@ function ProfilePage() {
     toast.success(t("profile.infoSaved"));
   }
 
-  async function toggleOrganiser() {
-    if (!user || !profile) return;
-    const next = !profile.is_organiser;
-    const { error } = await supabase.from("profiles").update({ is_organiser: next }).eq("id", user.id);
+  async function redeemCode() {
+    setRedeeming(true);
+    const { data, error } = await supabase.rpc("redeem_organiser_code", { _code: code.trim() });
+    setRedeeming(false);
     if (error) return toast.error(error.message);
-    setProfile({ ...profile, is_organiser: next });
-    toast.success(next ? t("profile.organiserOn") : t("profile.organiserOff"));
+    if (data) {
+      toast.success(t("profile.codeSuccess"));
+      setCode(""); setShowCode(false);
+      roles.refresh();
+    } else toast.error(t("profile.codeInvalid"));
   }
 
   async function toggleCategory(value: string) {
@@ -328,24 +339,47 @@ function ProfilePage() {
             {t("profile.organiserHelp")}
           </p>
         </div>
-        {profile.is_organiser ? (
-          <>
-            <Link to="/organiser" className="cta-button">{t("profile.goToOrganiser")}</Link>
-            <button
-              onClick={toggleOrganiser}
-              className="w-full h-11 rounded-xl text-sm font-medium border border-border text-muted-foreground"
-            >
-              {t("profile.switchOffOrganiser")}
-            </button>
-          </>
+        {roles.blocked ? (
+          <p className="text-sm rounded-xl p-3 border" style={{ color: "var(--destructive)", borderColor: "var(--destructive)" }}>
+            {t("profile.blockedNotice")}
+          </p>
+        ) : roles.isOrganiser ? (
+          <Link to="/organiser" className="cta-button">{t("profile.goToOrganiser")}</Link>
         ) : (
-          <button
-            onClick={toggleOrganiser}
-            className="w-full h-11 rounded-xl text-sm font-medium border"
-            style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-          >
-            {t("profile.switchToOrganiser")}
-          </button>
+          <>
+            {application?.status === "pending" ? (
+              <p className="text-sm text-muted-foreground border border-border rounded-xl p-3">{t("profile.appPending")}</p>
+            ) : (
+              <>
+                {application?.status === "rejected" && (
+                  <div className="text-sm border border-border rounded-xl p-3">
+                    <p>{t("profile.appRejected")}</p>
+                    {application.admin_note && <p className="text-xs text-muted-foreground mt-1">{application.admin_note}</p>}
+                  </div>
+                )}
+                <Link to="/organiser/apply" className="w-full h-11 rounded-xl text-sm font-medium border inline-flex items-center justify-center"
+                  style={{ borderColor: "var(--accent)", color: "var(--accent)" }}>
+                  {t("profile.applyOrganiser")}
+                </Link>
+              </>
+            )}
+            {!showCode ? (
+              <button onClick={() => setShowCode(true)} className="w-full text-xs text-muted-foreground underline">
+                {t("profile.haveCode")}
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <input className="input-field" value={code} placeholder={t("profile.codePlaceholder")}
+                  onChange={(e) => setCode(e.target.value.toUpperCase())} />
+                <button onClick={redeemCode} disabled={!code.trim() || redeeming}
+                  className="px-4 h-12 rounded-xl text-sm font-medium text-accent-foreground disabled:opacity-50"
+                  style={{ backgroundColor: "var(--accent)" }}>{t("profile.unlock")}</button>
+              </div>
+            )}
+          </>
+        )}
+        {roles.isAdmin && (
+          <Link to="/admin" className="block text-sm font-medium" style={{ color: "var(--accent)" }}>{t("profile.adminPanel")}</Link>
         )}
       </section>
 

@@ -207,9 +207,116 @@ export type Database = {
           },
         ]
       }
+      organiser_applications: {
+        Row: {
+          admin_note: string | null
+          city: string | null
+          company: string | null
+          country: string | null
+          created_at: string
+          email: string
+          event_types: string[]
+          events_per_year: string | null
+          experience: string | null
+          full_name: string
+          id: string
+          message: string | null
+          organiser_type: string
+          phone: string
+          registration_no: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          socials: string | null
+          status: string
+          user_id: string
+          venues: string | null
+          website: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          city?: string | null
+          company?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          event_types?: string[]
+          events_per_year?: string | null
+          experience?: string | null
+          full_name: string
+          id?: string
+          message?: string | null
+          organiser_type?: string
+          phone: string
+          registration_no?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          socials?: string | null
+          status?: string
+          user_id: string
+          venues?: string | null
+          website?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          city?: string | null
+          company?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          event_types?: string[]
+          events_per_year?: string | null
+          experience?: string | null
+          full_name?: string
+          id?: string
+          message?: string | null
+          organiser_type?: string
+          phone?: string
+          registration_no?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          socials?: string | null
+          status?: string
+          user_id?: string
+          venues?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      organiser_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          note: string | null
+          revoked: boolean
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          note?: string | null
+          revoked?: boolean
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          note?: string | null
+          revoked?: boolean
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          blocked: boolean
+          blocked_reason: string | null
           booking_confirmations: boolean
           created_at: string
           email: string | null
@@ -224,6 +331,8 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          blocked?: boolean
+          blocked_reason?: string | null
           booking_confirmations?: boolean
           created_at?: string
           email?: string | null
@@ -238,6 +347,8 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          blocked?: boolean
+          blocked_reason?: string | null
           booking_confirmations?: boolean
           created_at?: string
           email?: string | null
@@ -252,14 +363,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_blocked: { Args: { _user_id: string }; Returns: boolean }
       is_username_available: { Args: { _username: string }; Returns: boolean }
+      redeem_organiser_code: { Args: { _code: string }; Returns: boolean }
+      review_organiser_application: {
+        Args: { _approve: boolean; _id: string; _note?: string }
+        Returns: undefined
+      }
+      set_organiser_role: {
+        Args: { _on: boolean; _user_id: string }
+        Returns: undefined
+      }
+      set_user_blocked: {
+        Args: { _blocked: boolean; _reason?: string; _user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
+      app_role: "admin" | "organiser"
       booking_status: "pending" | "confirmed" | "cancelled"
       event_category:
         | "track_days"
@@ -398,6 +549,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "organiser"],
       booking_status: ["pending", "confirmed", "cancelled"],
       event_category: [
         "track_days",

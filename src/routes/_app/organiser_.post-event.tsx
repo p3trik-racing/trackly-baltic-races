@@ -10,6 +10,7 @@ import { ArrowLeft, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import type { TranslationKey } from "@/i18n/en";
+import { useOrganiserGuard } from "@/lib/roles";
 
 const searchSchema = z.object({ edit: z.string().optional() });
 
@@ -37,6 +38,7 @@ function PostEventPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useLang();
+  const { isAdmin } = useOrganiserGuard(t("organiser.notAllowed"));
   const { edit: editId } = Route.useSearch();
   const [submitting, setSubmitting] = useState(false);
   const [waiver, setWaiver] = useState(false);
@@ -177,12 +179,16 @@ function PostEventPage() {
     navigate({ to: "/organiser" });
   }
 
+  const specialReadOnly = !!editId && !isAdmin && form.category === "majorka_special";
   return (
     <main className="container-app py-6 space-y-5 pb-32">
       <button onClick={() => navigate({ to: "/organiser" })} className="inline-flex items-center gap-2 text-muted-foreground">
         <ArrowLeft size={18} /> {t("common.back")}
       </button>
       <h1 className="text-[22px] font-semibold">{editId ? t("organiser.post.editTitle") : t("organiser.post.newTitle")}</h1>
+      {specialReadOnly && (
+        <p className="text-sm border border-border rounded-xl p-3 text-muted-foreground">{t("organiser.post.specialReadOnly")}</p>
+      )}
 
       <div className="space-y-3">
         <Field label={t("organiser.post.eventTitle")}>
@@ -191,7 +197,8 @@ function PostEventPage() {
 
         <Field label={t("organiser.post.category")}>
           <select className="input-field" value={form.category} onChange={(e) => setField("category", e.target.value)}>
-            {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{catLabel(t, c.value)}</option>)}
+            {CATEGORIES.filter((c) => c.value !== "majorka_special" || isAdmin || form.category === "majorka_special")
+              .map((c) => <option key={c.value} value={c.value}>{catLabel(t, c.value)}</option>)}
           </select>
         </Field>
 
@@ -302,7 +309,7 @@ function PostEventPage() {
         </label>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 pt-2">
+      {!specialReadOnly && <div className="grid grid-cols-2 gap-3 pt-2">
         <button onClick={() => submit("draft")} disabled={submitting}
           className="h-14 rounded-xl border text-sm font-medium"
           style={{ borderColor: "var(--accent)", color: "var(--accent)" }}>
@@ -313,7 +320,7 @@ function PostEventPage() {
           style={{ backgroundColor: "var(--accent)" }}>
           {submitting ? t("common.saving") : editId ? t("organiser.post.saveChanges") : t("organiser.post.publish")}
         </button>
-      </div>
+      </div>}
       {cropSrc && (
         <ImageCropModal
           imageSrc={cropSrc}

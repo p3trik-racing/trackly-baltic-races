@@ -24,7 +24,9 @@ import { Route as AppHomeRouteImport } from './routes/_app/home'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
 import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
+import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
 import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
 import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
@@ -104,9 +106,19 @@ const AppBookingsRoute = AppBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppOrganiserPostEventRoute = AppOrganiserPostEventRouteImport.update({
   id: '/organiser_/post-event',
   path: '/organiser/post-event',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOrganiserApplyRoute = AppOrganiserApplyRouteImport.update({
+  id: '/organiser_/apply',
+  path: '/organiser/apply',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
@@ -138,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/admin': typeof AppAdminRoute
   '/bookings': typeof AppBookingsRoute
   '/calendar': typeof AppCalendarRoute
   '/explore': typeof AppExploreRoute
@@ -149,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/event/$eventId': typeof AppEventEventIdRoute
+  '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
   '/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
 }
@@ -159,6 +173,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/admin': typeof AppAdminRoute
   '/bookings': typeof AppBookingsRoute
   '/calendar': typeof AppCalendarRoute
   '/explore': typeof AppExploreRoute
@@ -170,6 +185,7 @@ export interface FileRoutesByTo {
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/event/$eventId': typeof AppEventEventIdRoute
+  '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
   '/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
 }
@@ -182,6 +198,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/_app/admin': typeof AppAdminRoute
   '/_app/bookings': typeof AppBookingsRoute
   '/_app/calendar': typeof AppCalendarRoute
   '/_app/explore': typeof AppExploreRoute
@@ -193,6 +210,7 @@ export interface FileRoutesById {
   '/_app/book/$eventId': typeof AppBookEventIdRoute
   '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/_app/event/$eventId': typeof AppEventEventIdRoute
+  '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
   '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
   '/_app/organiser_/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
 }
@@ -205,6 +223,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/terms'
+    | '/admin'
     | '/bookings'
     | '/calendar'
     | '/explore'
@@ -216,6 +235,7 @@ export interface FileRouteTypes {
     | '/book/$eventId'
     | '/booking/$bookingId'
     | '/event/$eventId'
+    | '/organiser/apply'
     | '/organiser/post-event'
     | '/organiser/events/$eventId/bookings'
   fileRoutesByTo: FileRoutesByTo
@@ -226,6 +246,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/terms'
+    | '/admin'
     | '/bookings'
     | '/calendar'
     | '/explore'
@@ -237,6 +258,7 @@ export interface FileRouteTypes {
     | '/book/$eventId'
     | '/booking/$bookingId'
     | '/event/$eventId'
+    | '/organiser/apply'
     | '/organiser/post-event'
     | '/organiser/events/$eventId/bookings'
   id:
@@ -248,6 +270,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/terms'
+    | '/_app/admin'
     | '/_app/bookings'
     | '/_app/calendar'
     | '/_app/explore'
@@ -259,6 +282,7 @@ export interface FileRouteTypes {
     | '/_app/book/$eventId'
     | '/_app/booking/$bookingId'
     | '/_app/event/$eventId'
+    | '/_app/organiser_/apply'
     | '/_app/organiser_/post-event'
     | '/_app/organiser_/events/$eventId/bookings'
   fileRoutesById: FileRoutesById
@@ -380,11 +404,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBookingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/organiser_/post-event': {
       id: '/_app/organiser_/post-event'
       path: '/organiser/post-event'
       fullPath: '/organiser/post-event'
       preLoaderRoute: typeof AppOrganiserPostEventRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/organiser_/apply': {
+      id: '/_app/organiser_/apply'
+      path: '/organiser/apply'
+      fullPath: '/organiser/apply'
+      preLoaderRoute: typeof AppOrganiserApplyRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/event/$eventId': {
@@ -419,6 +457,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRoute
   AppBookingsRoute: typeof AppBookingsRoute
   AppCalendarRoute: typeof AppCalendarRoute
   AppExploreRoute: typeof AppExploreRoute
@@ -430,11 +469,13 @@ interface AppRouteChildren {
   AppBookEventIdRoute: typeof AppBookEventIdRoute
   AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
   AppEventEventIdRoute: typeof AppEventEventIdRoute
+  AppOrganiserApplyRoute: typeof AppOrganiserApplyRoute
   AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
   AppOrganiserEventsEventIdBookingsRoute: typeof AppOrganiserEventsEventIdBookingsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRoute,
   AppBookingsRoute: AppBookingsRoute,
   AppCalendarRoute: AppCalendarRoute,
   AppExploreRoute: AppExploreRoute,
@@ -446,6 +487,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppBookEventIdRoute: AppBookEventIdRoute,
   AppBookingBookingIdRoute: AppBookingBookingIdRoute,
   AppEventEventIdRoute: AppEventEventIdRoute,
+  AppOrganiserApplyRoute: AppOrganiserApplyRoute,
   AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
   AppOrganiserEventsEventIdBookingsRoute:
     AppOrganiserEventsEventIdBookingsRoute,

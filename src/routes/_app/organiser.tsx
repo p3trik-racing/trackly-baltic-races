@@ -7,6 +7,7 @@ import { eventCover } from "@/lib/event-cover";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
+import { useOrganiserGuard } from "@/lib/roles";
 
 export const Route = createFileRoute("/_app/organiser")({
   head: () => ({ meta: [
@@ -41,6 +42,7 @@ interface BookingAgg {
 function OrganiserDashboard() {
   const { user } = useAuth();
   const { t } = useLang();
+  useOrganiserGuard(t("organiser.notAllowed"));
   const tr = t;
   
   const [events, setEvents] = useState<OrgEvent[]>([]);
