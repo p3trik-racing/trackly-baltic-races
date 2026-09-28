@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -46,6 +46,8 @@ function PostEventPage() {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [existingCover, setExistingCover] = useState<string | null>(null);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [customRequirement, setCustomRequirement] = useState("");
+  const [addingRequirement, setAddingRequirement] = useState(false);
   const [form, setForm] = useState({
     title: "",
     category: CATEGORIES[0].value as string,
@@ -278,7 +280,33 @@ function PostEventPage() {
                 {t(`req.${key}`)}
               </label>
             ))}
+            {form.requirements.filter((requirement) => !REQUIREMENTS.includes(requirement as (typeof REQUIREMENTS)[number])).map((requirement) => (
+              <button key={requirement} type="button" onClick={() => setField("requirements", form.requirements.filter((value) => value !== requirement))}
+                className="rounded-full border border-accent bg-accent px-3 py-2 text-xs text-accent-foreground">
+                {requirement} ×
+              </button>
+            ))}
           </div>
+          {addingRequirement ? (
+            <div className="mt-2 flex gap-2">
+              <input className="input-field" value={customRequirement} placeholder={t("organiser.post.customRequirementPlaceholder")}
+                onChange={(e) => setCustomRequirement(e.target.value)} />
+              <button type="button" className="h-12 shrink-0 rounded-xl border border-border px-4 text-sm"
+                onClick={() => {
+                  const value = customRequirement.trim();
+                  if (!value || form.requirements.includes(value)) return;
+                  setField("requirements", [...form.requirements, value]);
+                  setCustomRequirement("");
+                  setAddingRequirement(false);
+                }}>
+                {t("organiser.post.add")}
+              </button>
+            </div>
+          ) : (
+            <button type="button" className="mt-2 text-sm text-accent" onClick={() => setAddingRequirement(true)}>
+              {t("organiser.post.addRequirement")}
+            </button>
+          )}
         </div>
 
         <Field label={t("organiser.post.cover")}>
@@ -304,7 +332,10 @@ function PostEventPage() {
           <input type="checkbox" checked={waiver} onChange={(e) => setWaiver(e.target.checked)}
             className="mt-1 accent-[var(--accent)] flex-shrink-0" />
           <span>
-             {t("organiser.post.waiver")}
+            {t("organiser.post.waiverPrefix")} {" "}
+            <Link to="/terms" target="_blank" className="text-accent underline">{t("splash.terms")}</Link>
+            {" "}{t("splash.and")}{" "}
+            <Link to="/event-terms" target="_blank" className="text-accent underline">{t("eventTerms.title")}</Link>
           </span>
         </label>
       </div>

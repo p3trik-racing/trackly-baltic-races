@@ -14,6 +14,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as EventTermsRouteImport } from './routes/event-terms'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
@@ -57,6 +58,11 @@ const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventTermsRoute = EventTermsRouteImport.update({
+  id: '/event-terms',
+  path: '/event-terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -157,6 +163,7 @@ const AppOrganiserEventsEventIdBookingsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/event-terms': typeof EventTermsRoute
   '/login': typeof LoginRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/event-terms': typeof EventTermsRoute
   '/login': typeof LoginRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/event-terms': typeof EventTermsRoute
   '/login': typeof LoginRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/event-terms'
     | '/login'
     | '/privacy-policy'
     | '/reset-password'
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/event-terms'
     | '/login'
     | '/privacy-policy'
     | '/reset-password'
@@ -287,6 +298,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/event-terms'
     | '/login'
     | '/privacy-policy'
     | '/reset-password'
@@ -314,6 +326,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  EventTermsRoute: typeof EventTermsRoute
   LoginRoute: typeof LoginRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -356,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/event-terms': {
+      id: '/event-terms'
+      path: '/event-terms'
+      fullPath: '/event-terms'
+      preLoaderRoute: typeof EventTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -540,6 +560,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  EventTermsRoute: EventTermsRoute,
   LoginRoute: LoginRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ResetPasswordRoute: ResetPasswordRoute,

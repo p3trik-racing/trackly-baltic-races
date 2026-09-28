@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -399,7 +399,10 @@ function BookPage() {
           <input type="checkbox" checked={waiver} onChange={(e) => setWaiver(e.target.checked)}
             className="mt-1 accent-[var(--accent)] flex-shrink-0" />
           <span>
-             {t("book.waiver")}
+            {t("book.waiverPrefix")} {" "}
+            <Link to="/event-terms" target="_blank" className="text-accent underline">
+              {t("book.waiverLink")}
+            </Link>
           </span>
         </label>
 

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
+import { useLang, catLabel, countryName, hasTranslationKey, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { eventCover } from "@/lib/event-cover";
@@ -204,7 +204,10 @@ function EventDetail() {
             <div>
               <h2 className="font-semibold mb-2">{t("event.requirements")}</h2>
               <div className="flex flex-wrap gap-2">
-                {event.requirements.map((key: string) => <span key={key} className="rounded-full border border-border bg-card px-3 py-1 text-xs">{t(`req.${key}` as import("@/i18n/en").TranslationKey)}</span>)}
+                {event.requirements.map((key: string) => {
+                  const translationKey = `req.${key}`;
+                  return <span key={key} className="rounded-full border border-border bg-card px-3 py-1 text-xs">{hasTranslationKey(translationKey) ? t(translationKey) : key}</span>;
+                })}
               </div>
             </div>
           )}

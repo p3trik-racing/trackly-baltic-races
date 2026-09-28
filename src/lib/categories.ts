@@ -22,16 +22,12 @@ export function orderCategories(favs: string[]) {
   return [...special, ...favourites, ...rest];
 }
 
-export function sortWithSpecial<T extends { category: string }>(list: T[], selected: string): T[] {
-  if (selected === SPECIAL) return list.filter((item) => item.category === SPECIAL);
-  if (selected === "all") {
-    return [
-      ...list.filter((item) => item.category === SPECIAL),
-      ...list.filter((item) => item.category !== SPECIAL),
-    ];
-  }
+export function orderEvents<T extends { category: string }>(list: T[], selected: string, favs: string[]): T[] {
+  if (selected !== "all") return list.filter((item) => item.category === selected);
+  const favouriteSet = new Set(favs.filter((category) => category !== SPECIAL));
   return [
-    ...list.filter((item) => item.category === selected),
+    ...list.filter((item) => favouriteSet.has(item.category)),
     ...list.filter((item) => item.category === SPECIAL),
+    ...list.filter((item) => item.category !== SPECIAL && !favouriteSet.has(item.category)),
   ];
 }

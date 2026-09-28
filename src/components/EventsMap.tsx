@@ -33,6 +33,7 @@ export default function EventsMap({ events, selected, onSelect }: {
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [styleRevision, setStyleRevision] = useState(0);
   const markersRef = useRef<maplibregl.Marker[]>([]);
+  const userMarkerRef = useRef<maplibregl.Marker | null>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
   const currentStyleRef = useRef(styleUrl(theme));
@@ -43,19 +44,35 @@ export default function EventsMap({ events, selected, onSelect }: {
     const instance = new maplibregl.Map({
       container: containerRef.current,
       style: currentStyleRef.current,
-      center: [24.11, 56.95],
-      zoom: 6.5,
+      center: [24.1052, 56.9496],
+      zoom: 7,
       attributionControl: { compact: true },
       dragRotate: false,
       touchPitch: false,
     });
     instance.touchZoomRotate.disableRotation();
     instance.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+    instance.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: false }), "bottom-right");
     instance.on("style.load", () => setStyleRevision((n) => n + 1));
+    navigator.geolocation?.getCurrentPosition(
+      ({ coords }) => {
+        const el = document.createElement("span");
+        el.className = "mr-user-location";
+        userMarkerRef.current?.remove();
+        userMarkerRef.current = new maplibregl.Marker({ element: el, anchor: "center" })
+          .setLngLat([coords.longitude, coords.latitude])
+          .addTo(instance);
+        instance.flyTo({ center: [coords.longitude, coords.latitude], zoom: 8 });
+      },
+      () => {},
+      { timeout: 5000 },
+    );
     setMap(instance);
     return () => {
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
+      userMarkerRef.current?.remove();
+      userMarkerRef.current = null;
       instance.remove();
     };
   }, []);
@@ -70,14 +87,6 @@ export default function EventsMap({ events, selected, onSelect }: {
     markersRef.current = [];
     map.setStyle(nextStyle);
   }, [map, theme]);
-
-  useEffect(() => {
-    if (!map || !clusters.length) return;
-    const bounds = new maplibregl.LngLatBounds();
-    clusters.forEach(({ lng, lat }) => bounds.extend([lng, lat]));
-    map.resize();
-    map.fitBounds(bounds, { padding: 48, maxZoom: 11, duration: 0 });
-  }, [map, clusters]);
 
   useEffect(() => {
     if (!map) return;

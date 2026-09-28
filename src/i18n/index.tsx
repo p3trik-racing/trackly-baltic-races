@@ -94,6 +94,10 @@ export function catLabel(t: TFn, v: string) {
   return k in en ? t(k) : v;
 }
 
+export function hasTranslationKey(key: string): key is TranslationKey {
+  return key in en;
+}
+
 const FLAGS: Record<string, string> = { Latvia: "🇱🇻", Estonia: "🇪🇪", Lithuania: "🇱🇹" };
 /** Translated country label with flag; unknown values pass through. */
 export function countryName(t: TFn, v?: string | null) {
