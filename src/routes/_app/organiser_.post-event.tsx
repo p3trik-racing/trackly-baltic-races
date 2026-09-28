@@ -1,16 +1,21 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate, ClientOnly } from "@tanstack/react-router";
+import { useLang, catLabel, countryName } from "@/i18n";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { CATEGORIES } from "@/lib/categories";
+import { CATEGORIES, SPECIAL } from "@/lib/categories";
 import { COUNTRIES } from "@/lib/countries";
 import { ArrowLeft, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import type { TranslationKey } from "@/i18n/en";
 import { useOrganiserGuard } from "@/lib/roles";
+
+const LocationPickerMap = lazy(() => import("@/components/LocationPickerMap"));
+
+interface Place { name: string; street: string; city: string; country: string; countrycode: string; lat: number; lng: number }
+const COUNTRY_BY_CODE: Record<string, string> = { LV: "Latvia", EE: "Estonia", LT: "Lithuania" };
 
 const searchSchema = z.object({ edit: z.string().optional() });
 
@@ -48,9 +53,14 @@ function PostEventPage() {
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [customRequirement, setCustomRequirement] = useState("");
   const [addingRequirement, setAddingRequirement] = useState(false);
+  const [placeQuery, setPlaceQuery] = useState("");
+  const [placeResults, setPlaceResults] = useState<Place[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const pickedLabel = useRef("");
   const [form, setForm] = useState({
     title: "",
-    category: CATEGORIES[0].value as string,
+    category: (CATEGORIES.find((c) => c.value !== SPECIAL) ?? CATEGORIES[0]).value as string,
     description: "",
     date: "",
     time: "",
@@ -89,10 +99,53 @@ function PostEventPage() {
         format: data.format ?? "",
         requirements: data.requirements ?? [],
       });
+      setPlaceQuery(data.location_name ?? "");
       setExistingCover(data.cover_image_url);
       if (data.status === "live") setWaiver(true);
     });
   }, [editId]);
+
+  // Address search (Photon, Baltics bbox), debounced 400 ms, min 3 chars.
+  useEffect(() => {
+    const q = placeQuery.trim();
+    if (q.length < 3 || q === pickedLabel.current) { setPlaceResults([]); return; }
+    const ctrl = new AbortController();
+    const timer = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5&lang=en&bbox=20.9,53.8,28.3,59.8`, { signal: ctrl.signal });
+        const json = await res.json();
+        setPlaceResults((json.features ?? []).map((f: any) => ({
+          name: f.properties?.name ?? [f.properties?.street, f.properties?.housenumber].filter(Boolean).join(" "),
+          street: [f.properties?.street, f.properties?.housenumber].filter(Boolean).join(" "),
+          city: f.properties?.city ?? f.properties?.town ?? f.properties?.village ?? f.properties?.county ?? "",
+          country: f.properties?.country ?? "",
+          countrycode: (f.properties?.countrycode ?? "").toUpperCase(),
+          lat: f.geometry?.coordinates?.[1],
+          lng: f.geometry?.coordinates?.[0],
+        })).filter((p: Place) => typeof p.lat === "number" && typeof p.lng === "number"));
+      } catch { /* aborted or offline */ }
+      setSearching(false);
+    }, 400);
+    return () => { clearTimeout(timer); ctrl.abort(); };
+  }, [placeQuery]);
+
+  function pickPlace(p: Place) {
+    const country = COUNTRY_BY_CODE[p.countrycode];
+    const label = p.name || p.street;
+    pickedLabel.current = label;
+    setPlaceQuery(label);
+    setShowResults(false);
+    setPlaceResults([]);
+    setForm((f) => ({
+      ...f,
+      location_name: label,
+      city: p.city || f.city,
+      country: country ?? f.country,
+      location_lat: String(p.lat),
+      location_lng: String(p.lng),
+    }));
+  }
 
   function setField<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -140,6 +193,7 @@ function PostEventPage() {
   async function submit(status: "draft" | "live") {
     if (!user) return;
     if (!form.title || !form.date) return toast.error(t("organiser.post.required"));
+    if (status === "live" && (!form.location_lat || !form.location_lng)) return toast.error(t("organiser.post.pinRequired"));
     if (status === "live" && !waiver) return toast.error(t("organiser.post.acceptWaiver"));
     setSubmitting(true);
 
@@ -240,19 +294,41 @@ function PostEventPage() {
           <input className="input-field" value={form.city} onChange={(e) => setField("city", e.target.value)} />
         </Field>
 
-        <div>
+        <div className="space-y-2">
           <label className="text-xs text-muted-foreground">{t("organiser.post.mapLocation")}</label>
-          <input
-            className="input-field mt-1"
-            placeholder={t("organiser.post.mapPlaceholder")}
-            value={form.location_name}
-            onChange={(e) => setField("location_name", e.target.value)}
-          />
-          <p className="text-[11px] text-muted-foreground mt-1">
-            {t("organiser.post.mapHelp")}
-          </p>
-          <input type="hidden" value={form.location_lat} onChange={(e) => setField("location_lat", e.target.value)} />
-          <input type="hidden" value={form.location_lng} onChange={(e) => setField("location_lng", e.target.value)} />
+          <div className="relative">
+            <input
+              className="input-field"
+              placeholder={t("organiser.post.mapPlaceholder")}
+              value={placeQuery}
+              onChange={(e) => { setPlaceQuery(e.target.value); setField("location_name", e.target.value); setShowResults(true); }}
+              onFocus={() => setShowResults(true)}
+              onBlur={() => setTimeout(() => setShowResults(false), 200)}
+            />
+            {showResults && placeQuery.trim().length >= 3 && (placeResults.length > 0 || !searching) && (
+              <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+                {placeResults.length === 0 ? (
+                  <p className="px-3 py-2 text-xs text-muted-foreground">{t("organiser.post.noResults")}</p>
+                ) : placeResults.map((p, i) => (
+                  <button key={i} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => pickPlace(p)}
+                    className="block w-full text-left px-3 py-2 border-b border-border last:border-0">
+                    <p className="text-sm font-medium truncate">{p.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{[p.street, p.city, p.country].filter(Boolean).join(", ")}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <ClientOnly fallback={<div className="h-56 rounded-xl border border-border" />}>
+            <Suspense fallback={<div className="h-56 rounded-xl border border-border" />}>
+              <LocationPickerMap
+                lat={form.location_lat ? Number(form.location_lat) : null}
+                lng={form.location_lng ? Number(form.location_lng) : null}
+                onChange={(lat, lng) => setForm((f) => ({ ...f, location_lat: String(lat), location_lng: String(lng) }))}
+              />
+            </Suspense>
+          </ClientOnly>
+          <p className="text-[11px] text-muted-foreground">{t("organiser.post.pinHelp")}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
