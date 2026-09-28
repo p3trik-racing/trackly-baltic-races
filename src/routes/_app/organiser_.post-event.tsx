@@ -179,6 +179,7 @@ function PostEventPage() {
     navigate({ to: "/organiser" });
   }
 
+  const specialReadOnly = !!editId && !isAdmin && form.category === "majorka_special";
   return (
     <main className="container-app py-6 space-y-5 pb-32">
       <button onClick={() => navigate({ to: "/organiser" })} className="inline-flex items-center gap-2 text-muted-foreground">
