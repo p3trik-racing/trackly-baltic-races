@@ -90,6 +90,7 @@ export const en = {
   "home.noMatch": "No events match your filters.",
   "home.clearSearch": "Clear search",
   "home.guestBanner": "Join Majorka Racing to book events",
+  "home.alsoSpecial": "Also on: Majorka Special",
 
   // explore
   "explore.title": "Explore",
@@ -351,11 +352,12 @@ export const en = {
 
   // categories
   "categories.track_days": "Track Day",
-  "categories.drift": "Drift",
-  "categories.races": "Races",
+  "categories.drift": "Drift Event",
+  "categories.races": "Races & Competitions",
   "categories.car_meets": "Car Meets",
   "categories.snow_drift": "Ice Drifting",
   "categories.majorka_special": "Majorka Special",
+  "categories.karting": "Karting",
   "categories.festivals": "Festivals",
 
   // countries

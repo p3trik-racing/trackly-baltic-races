@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
-import { CATEGORIES } from "@/lib/categories";
+import { orderCategories, sortWithSpecial } from "@/lib/categories";
+import { COUNTRIES } from "@/lib/countries";
 import { ViewToggle } from "@/components/ViewToggle";
 import { Loader2, Search, SlidersHorizontal } from "lucide-react";
 
@@ -90,29 +91,21 @@ function ExplorePage() {
       });
   }, [user]);
 
-  const countries = useMemo(
-    () => Array.from(new Set(events.map((e) => e.country).filter(Boolean))) as string[],
-    [events],
-  );
-
-  const orderedCategories = useMemo(() => {
-    if (!favourites.length) return CATEGORIES;
-    const fav = CATEGORIES.filter((c) => favourites.includes(c.value));
-    const rest = CATEGORIES.filter((c) => !favourites.includes(c.value));
-    return [...fav, ...rest];
-  }, [favourites]);
+  const orderedCategories = useMemo(() => orderCategories(favourites), [favourites]);
 
   const filtered = useMemo(() => {
     let list = events.filter(
       (e) =>
-        (category === "all" || e.category === category) &&
         (country === "all" || e.country === country) &&
         (!query || e.title.toLowerCase().includes(query.toLowerCase())),
     );
-    if (sort === "soonest") list = list.sort((a, b) => a.date.localeCompare(b.date));
-    else if (sort === "price_asc") list = list.sort((a, b) => a.price - b.price);
-    else if (sort === "price_desc") list = list.sort((a, b) => b.price - a.price);
-    else list = list.sort((a: any, b: any) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
+    if (sort === "soonest") list = sortWithSpecial(list.sort((a, b) => a.date.localeCompare(b.date)), category);
+    else {
+      list = list.filter((e) => category === "all" || e.category === category);
+      if (sort === "price_asc") list = list.sort((a, b) => a.price - b.price);
+      else if (sort === "price_desc") list = list.sort((a, b) => b.price - a.price);
+      else list = list.sort((a: any, b: any) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
+    }
     return list.map((e) => ({ ...e, bookings_count: bookingCounts[e.id] ?? 0 }));
   }, [events, category, country, query, sort, bookingCounts]);
 
@@ -174,7 +167,7 @@ function ExplorePage() {
             <label className="text-xs text-muted-foreground">{t("explore.country")}</label>
             <select className="input-field mt-1" value={country} onChange={(e) => setCountry(e.target.value)}>
               <option value="all">{t("common.all")}</option>
-              {countries.map((c) => <option key={c} value={c}>{countryName(t, c)}</option>)}
+              {COUNTRIES.map((c) => <option key={c.value} value={c.value}>{countryName(t, c.value)}</option>)}
             </select>
           </div>
         </div>

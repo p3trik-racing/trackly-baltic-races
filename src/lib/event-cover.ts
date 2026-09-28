@@ -9,6 +9,7 @@ const map: Record<string, string> = {
   track_days: trackday,
   majorka_special: trackday,
   drift: drift,
+  karting: race,
   races: race,
   car_meets: meet,
   snow_drift: snow,
