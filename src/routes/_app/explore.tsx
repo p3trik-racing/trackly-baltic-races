@@ -173,6 +173,8 @@ function ExplorePage() {
         </div>
       )}
 
+      <CompeteBanner />
+
       {filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
           {t("home.noMatch")}

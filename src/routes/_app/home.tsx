@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { CompeteBanner } from "@/components/CompeteBanner";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -138,6 +139,8 @@ function HomePage() {
         </div>
       </div>
 
+      {category !== "races" && <CompeteBanner />}
+
       {featured.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-base font-semibold">{t("home.featured")}</h2>
@@ -174,6 +177,7 @@ function HomePage() {
           </div>
         ) : (
           <div className="space-y-3">
+            {category === "races" && <CompeteBanner />}
             {recent.map((e, index) => (
               <div key={e.id} className="space-y-3">
                 {category !== "all" && category !== SPECIAL && e.category === SPECIAL && recent[index - 1]?.category !== SPECIAL && (
