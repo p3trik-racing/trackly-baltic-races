@@ -34,6 +34,7 @@ import { Route as AppCompetitionsSlugRouteImport } from './routes/_app/competiti
 import { Route as AppCheckinBookingIdRouteImport } from './routes/_app/checkin.$bookingId'
 import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
 import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as AppOrganiserEventsEventIdCheckinRouteImport } from './routes/_app/organiser_.events.$eventId.checkin'
@@ -163,6 +164,12 @@ const AppBookEventIdRoute = AppBookEventIdRouteImport.update({
   path: '/book/$eventId',
   getParentRoute: () => AppRoute,
 } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
   id: '/lovable/email/auth/webhook',
   path: '/lovable/email/auth/webhook',
@@ -213,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
   '/organiser/events/$eventId/checkin': typeof AppOrganiserEventsEventIdCheckinRoute
 }
@@ -243,6 +251,7 @@ export interface FileRoutesByTo {
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/organiser/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
   '/organiser/events/$eventId/checkin': typeof AppOrganiserEventsEventIdCheckinRoute
 }
@@ -275,6 +284,7 @@ export interface FileRoutesById {
   '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/_app/organiser_/events/$eventId/bookings': typeof AppOrganiserEventsEventIdBookingsRoute
   '/_app/organiser_/events/$eventId/checkin': typeof AppOrganiserEventsEventIdCheckinRoute
 }
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/organiser/post-event'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
     | '/organiser/events/$eventId/bookings'
     | '/organiser/events/$eventId/checkin'
   fileRoutesByTo: FileRoutesByTo
@@ -337,6 +348,7 @@ export interface FileRouteTypes {
     | '/organiser/post-event'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
     | '/organiser/events/$eventId/bookings'
     | '/organiser/events/$eventId/checkin'
   id:
@@ -368,6 +380,7 @@ export interface FileRouteTypes {
     | '/_app/organiser_/post-event'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
     | '/_app/organiser_/events/$eventId/bookings'
     | '/_app/organiser_/events/$eventId/checkin'
   fileRoutesById: FileRoutesById
@@ -383,6 +396,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -562,6 +576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBookEventIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/auth/webhook': {
       id: '/lovable/email/auth/webhook'
       path: '/lovable/email/auth/webhook'
@@ -651,6 +672,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
