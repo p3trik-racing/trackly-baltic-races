@@ -69,6 +69,8 @@ function Splash() {
           {t("splash.agreePrefix")}{" "}
           <Link to="/terms" style={{ color: "var(--accent)" }}>{t("splash.terms")}</Link>
           {" "}{t("splash.and")}{" "}
+          <Link to="/event-terms" style={{ color: "var(--accent)" }}>{t("eventTerms.title")}</Link>
+          {", "}
           <Link to="/privacy-policy" style={{ color: "var(--accent)" }}>{t("splash.privacy")}</Link>
         </p>
       </div>

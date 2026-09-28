@@ -204,7 +204,11 @@ function EventDetail() {
             <div>
               <h2 className="font-semibold mb-2">{t("event.requirements")}</h2>
               <div className="flex flex-wrap gap-2">
-                {event.requirements.map((key: string) => <span key={key} className="rounded-full border border-border bg-card px-3 py-1 text-xs">{t(`req.${key}` as import("@/i18n/en").TranslationKey)}</span>)}
+                {event.requirements.map((key: string) => {
+                  const translationKey = `req.${key}` as import("@/i18n/en").TranslationKey;
+                  const known = ["helmet", "tech_ok", "sound_limit", "driver_only", "studded_tyres", "rwd_only"].includes(key);
+                  return <span key={key} className="rounded-full border border-border bg-card px-3 py-1 text-xs">{known ? t(translationKey) : key}</span>;
+                })}
               </div>
             </div>
           )}
