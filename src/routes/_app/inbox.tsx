@@ -32,7 +32,7 @@ interface Notif {
 function InboxPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [items, setItems] = useState<Notif[]>([]);
 
   useEffect(() => {

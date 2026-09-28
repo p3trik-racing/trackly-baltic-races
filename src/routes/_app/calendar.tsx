@@ -27,7 +27,7 @@ const dayKey = (d: Date) => format(d, "yyyy-MM-dd");
 function CalendarPage() {
   const [events, setEvents] = useState<UpcomingEvent[]>([]);
   const [category, setCategory] = useState("all");
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [mode, setMode] = useState<"month" | "upcoming">("month");
   const [selected, setSelected] = useState<Date | undefined>();
   const [month, setMonth] = useState<Date>(new Date());
@@ -157,7 +157,7 @@ function CalendarPage() {
           </div>
           <section className="space-y-3">
             <h2 className="text-base font-semibold">
-              {selected ? format(selected, "EEEE, d MMMM") : t("calendar.selectDay")}
+              {selected ? formatDate(selected, lang, "weekday") : t("calendar.selectDay")}
             </h2>
             {dayEvents.length === 0
               ? <p className="text-sm text-muted-foreground py-4">{t("calendar.noEventsDay")}</p>

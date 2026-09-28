@@ -28,7 +28,7 @@ function MapPage() {
   const [events, setEvents] = useState<UpcomingEvent[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [dirEvent, setDirEvent] = useState<UpcomingEvent | null>(null);
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useEffect(() => { fetchUpcomingEvents().then(setEvents); }, []);
 

@@ -44,7 +44,7 @@ interface BookingAgg {
 
 function OrganiserDashboard() {
   const { user } = useAuth();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   useOrganiserGuard(t("organiser.notAllowed"));
   const tr = t;
   

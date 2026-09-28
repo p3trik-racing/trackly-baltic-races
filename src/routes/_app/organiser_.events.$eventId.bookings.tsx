@@ -35,7 +35,7 @@ interface Booking {
 function EventBookingsPage() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   useOrganiserGuard(t("organiser.notAllowed"));
   const [event, setEvent] = useState<any>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
