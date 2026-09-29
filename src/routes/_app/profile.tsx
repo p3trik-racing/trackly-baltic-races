@@ -3,7 +3,7 @@ import { useLang, catLabel, LANGS } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { CATEGORIES } from "@/lib/categories";
+import { CATEGORIES, SPECIAL } from "@/lib/categories";
 import { LogOut, User, Upload, ChevronRight, KeyRound, Globe, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
@@ -112,8 +112,8 @@ function ProfilePage() {
     if (!user || !profile) return;
     const has = profile.favourite_categories.includes(value);
     const next = has
-      ? profile.favourite_categories.filter((c) => c !== value)
-      : [...profile.favourite_categories, value];
+      ? profile.favourite_categories.filter((c) => c !== value && c !== SPECIAL)
+      : [...profile.favourite_categories.filter((c) => c !== SPECIAL), value];
     setProfile({ ...profile, favourite_categories: next });
     await supabase.from("profiles").update({ favourite_categories: next }).eq("id", user.id);
   }
@@ -281,13 +281,15 @@ function ProfilePage() {
         </button>
       </section>
 
+      <MyCompetitions userId={user?.id} />
+
       {/* Preferences */}
       <section className="bg-card border border-border rounded-2xl p-5 space-y-4">
         <h2 className="font-medium">{t("profile.preferences")}</h2>
         <div>
           <p className="text-xs text-muted-foreground mb-2">{t("profile.favouriteCategories")}</p>
           <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map((c) => {
+            {CATEGORIES.filter((c) => c.value !== SPECIAL).map((c) => {
               const active = profile.favourite_categories.includes(c.value);
               return (
                 <button key={c.value} onClick={() => toggleCategory(c.value)}
@@ -496,5 +498,31 @@ function ToggleRow({ label, checked, onChange }: { label: string; checked: boole
           style={{ transform: checked ? "translateX(20px)" : "translateX(0)" }} />
       </button>
     </div>
+  );
+}
+
+function MyCompetitions({ userId }: { userId?: string }) {
+  const { t } = useLang();
+  const [rows, setRows] = useState<any[]>([]);
+  useEffect(() => {
+    if (!userId) return;
+    supabase.from("competition_entries").select("id,status,created_at,competitions(name,slug)")
+      .eq("user_id", userId).order("created_at", { ascending: false })
+      .then(({ data }) => setRows(data ?? []));
+  }, [userId]);
+  if (!rows.length) return null;
+  return (
+    <section className="bg-card border border-border rounded-2xl p-5 space-y-3">
+      <h2 className="font-medium">{t("profile.myCompetitions")}</h2>
+      {rows.map((r) => (
+        <Link key={r.id} to="/competitions/$slug" params={{ slug: r.competitions?.slug ?? "" }}
+          className="flex items-center justify-between gap-3 text-sm">
+          <span className="truncate">{r.competitions?.name ?? "—"}</span>
+          <span className="shrink-0 text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
+            {t(`compete.status.${r.status}` as any)}
+          </span>
+        </Link>
+      ))}
+    </section>
   );
 }

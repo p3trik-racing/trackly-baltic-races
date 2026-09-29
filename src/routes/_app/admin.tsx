@@ -35,7 +35,16 @@ const accent = { backgroundColor: "var(--accent)", color: "var(--accent-foregrou
 function AdminPage() {
   const roles = useRoles();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<Tab>("Applications");
+  const [tab, setTab] = useState<Tab>(() => {
+    const q = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("tab") : null;
+    return (TABS as readonly string[]).includes(q ?? "") ? (q as Tab) : "Applications";
+  });
+  const [newEntries, setNewEntries] = useState(0);
+  useEffect(() => {
+    if (!roles.isAdmin) return;
+    supabase.from("competition_entries").select("id", { count: "exact", head: true }).eq("status", "new")
+      .then(({ count }) => setNewEntries(count ?? 0));
+  }, [roles.isAdmin, tab]);
 
   useEffect(() => {
     if (!roles.loading && !roles.isAdmin) navigate({ to: "/home" });
@@ -49,7 +58,10 @@ function AdminPage() {
       <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1 -mx-4 px-4">
         {TABS.map((t) => (
           <button key={t} onClick={() => setTab(t)} className="px-3 h-9 rounded-full text-xs border whitespace-nowrap"
-            style={tab === t ? { ...accent, borderColor: "var(--accent)" } : { borderColor: "var(--border)" }}>{t}</button>
+            style={tab === t ? { ...accent, borderColor: "var(--accent)" } : { borderColor: "var(--border)" }}>{t}
+            {t === "Competitions" && newEntries > 0 && (
+              <span className="ml-1.5 inline-flex min-w-4 h-4 px-1 items-center justify-center rounded-full text-[10px] font-semibold bg-destructive text-destructive-foreground">{newEntries}</span>
+            )}</button>
         ))}
       </div>
       {tab === "Applications" && <Applications />}

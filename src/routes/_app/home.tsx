@@ -8,6 +8,7 @@ import { EventCard, type EventCardData } from "@/components/EventCard";
 import { SPECIAL, orderCategories, orderEvents } from "@/lib/categories";
 import { Loader2, Search } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
+import { useRoles } from "@/lib/roles";
 import { ViewToggle } from "@/components/ViewToggle";
 
 export const Route = createFileRoute("/_app/home")({
@@ -27,6 +28,7 @@ function HomePage() {
   const { t } = useLang();
   const [events, setEvents] = useState<EventCardData[]>([]);
   const [favourites, setFavourites] = useState<string[]>([]);
+  const roles = useRoles();
   const [category, setCategory] = useState<string>("all");
   const [query, setQuery] = useState("");
   const [pullDist, setPullDist] = useState(0);
@@ -66,7 +68,7 @@ function HomePage() {
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("favourite_categories").eq("id", user.id).maybeSingle()
-      .then(({ data }) => setFavourites((data?.favourite_categories ?? []) as string[]));
+      .then(({ data }) => setFavourites(((data?.favourite_categories ?? []) as string[]).filter((c) => c !== SPECIAL)));
   }, [user]);
 
   const orderedCategories = useMemo(() => orderCategories(favourites), [favourites]);
@@ -89,8 +91,14 @@ function HomePage() {
         </div>
       )}
       <header className="flex items-center gap-2">
-        <LogoMark className="h-7 w-auto text-foreground" />
-        <p className="text-sm text-muted-foreground">{t("home.tagline")}</p>
+        <LogoMark className="h-7 w-auto text-foreground shrink-0" />
+        <p className="text-sm text-muted-foreground truncate min-w-0 flex-1">{t("home.tagline")}</p>
+        {roles.isAdmin ? (
+          <Link to="/admin" className="shrink-0 px-2.5 h-6 inline-flex items-center rounded-full text-[11px] font-medium"
+            style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}>{t("role.admin")}</Link>
+        ) : roles.isOrganiser ? (
+          <Link to="/organiser" className="shrink-0 px-2.5 h-6 inline-flex items-center rounded-full text-[11px] font-medium border border-foreground/40 text-foreground">{t("role.organiser")}</Link>
+        ) : null}
       </header>
 
       <ViewToggle />

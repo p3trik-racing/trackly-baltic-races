@@ -4,12 +4,12 @@ import { Btn, Layout, Row, SITE } from './_layout'
 
 const ADMIN = 'admin@majorkariga.com'
 
-interface FieldsProps { heading?: string; fields?: [string, string][] }
+interface FieldsProps { heading?: string; fields?: [string, string][]; link?: string }
 
-const Fields = ({ heading, fields = [] }: FieldsProps) => (
+const Fields = ({ heading, fields = [], link }: FieldsProps) => (
   <Layout lang="en" preview={heading ?? 'Admin notice'} title={heading ?? 'Admin notice'}>
     {fields.map(([k, v]) => <Row key={k} label={k} value={v} />)}
-    <Btn href={`${SITE}/admin`}>Open admin panel</Btn>
+    <Btn href={link ?? `${SITE}/admin`}>Open admin panel</Btn>
   </Layout>
 )
 

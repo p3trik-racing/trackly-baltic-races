@@ -19,7 +19,7 @@ export function orderCategories(favs: string[]) {
   const special = CATEGORIES.filter((c) => c.value === SPECIAL);
   const favourites = CATEGORIES.filter((c) => c.value !== SPECIAL && favs.includes(c.value));
   const rest = CATEGORIES.filter((c) => c.value !== SPECIAL && !favs.includes(c.value));
-  return [...special, ...favourites, ...rest];
+  return [...favourites, ...special, ...rest];
 }
 
 export function orderEvents<T extends { category: string }>(list: T[], selected: string, favs: string[]): T[] {
