@@ -256,15 +256,21 @@ function Users() {
       {rows.map((r) => {
         const rs = roleMap[r.id] ?? [];
         const isOrg = rs.includes("organiser");
+        const isAdm = rs.includes("admin");
+        const name = r.full_name || r.username || r.email || "user";
+        const tag = "ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium border border-border";
         return (
           <Card key={r.id}>
-            <p className="font-medium text-sm">{r.full_name || "—"} {r.username && <span className="text-muted-foreground">@{r.username}</span>}</p>
+            <p className="font-medium text-sm">{r.full_name || "—"} {r.username && <span className="text-muted-foreground">@{r.username}</span>}
+              {isAdm && <span className={tag} style={accent}>Admin</span>}
+              {isOrg && <span className={tag}>Organiser</span>}</p>
             <p className="text-xs text-muted-foreground">{r.email}</p>
             <p className="text-xs">Roles: {rs.length ? rs.join(", ") : "user"}{r.blocked && <span style={{ color: "var(--destructive)" }}> · Blocked{r.blocked_reason ? ` (${r.blocked_reason})` : ""}</span>}</p>
-            {r.id !== user?.id && !rs.includes("admin") && (
+            {r.id !== user?.id && (!isAdm || isOwner) && (
               <div className="flex gap-2 flex-wrap">
                 <button className={btn} onClick={() => setOrg(r.id, !isOrg)}>{isOrg ? "Remove organiser" : "Make organiser"}</button>
                 <button className={btn} onClick={() => setBlocked(r.id, !r.blocked)}>{r.blocked ? "Unblock" : "Block"}</button>
+                {isOwner && <button className={btn} onClick={() => setAdmin(r.id, !isAdm, name)}>{isAdm ? "Remove admin" : "Make admin"}</button>}
               </div>
             )}
           </Card>
