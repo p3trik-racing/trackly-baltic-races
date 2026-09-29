@@ -212,6 +212,19 @@ function Users() {
     }
   }, [q]);
   useEffect(() => { search(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [isOwner, setIsOwner] = useState(false);
+  useEffect(() => {
+    supabase.rpc("is_owner").then(({ data }) => setIsOwner(data === true));
+  }, []);
+
+  async function setAdmin(id: string, on: boolean, name: string) {
+    if (!confirm(on ? `Give ${name} full admin access?` : `Remove admin access from ${name}?`)) return;
+    const { error } = await supabase.rpc("set_admin_role", { _user_id: id, _on: on });
+    if (error) return toast.error(error.message);
+    toast.success("Done");
+    search();
+  }
+
 
   async function setOrg(id: string, on: boolean) {
     const { error } = await supabase.rpc("set_organiser_role", { _user_id: id, _on: on });
