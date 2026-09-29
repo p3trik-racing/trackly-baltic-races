@@ -628,6 +628,7 @@ export type Database = {
         Returns: boolean
       }
       is_blocked: { Args: { _user_id: string }; Returns: boolean }
+      is_owner: { Args: never; Returns: boolean }
       is_username_available: { Args: { _username: string }; Returns: boolean }
       redeem_organiser_code: { Args: { _code: string }; Returns: boolean }
       review_organiser_application: {
@@ -637,6 +638,10 @@ export type Database = {
       send_attendee_message: {
         Args: { _event_id: string; _message: string }
         Returns: Json
+      }
+      set_admin_role: {
+        Args: { _on: boolean; _user_id: string }
+        Returns: undefined
       }
       set_organiser_role: {
         Args: { _on: boolean; _user_id: string }
