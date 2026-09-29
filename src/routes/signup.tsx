@@ -7,6 +7,10 @@ import { ArrowLeft, Eye, EyeOff, Check, X } from "lucide-react";
 import { LogoFull } from "@/components/Logo";
 
 export const Route = createFileRoute("/signup")({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => {
+    const r = s.redirect;
+    return typeof r === "string" && r.startsWith("/") && !r.startsWith("//") ? { redirect: r } : {};
+  },
   head: () => ({ meta: [
     { title: "Sign up — Majorka Racing" },
     { name: "description", content: "Join Majorka Racing and book track days and motorsport events in the Baltics." },
@@ -24,6 +28,7 @@ function SignupPage() {
   const [form, setForm] = useState({ fullName: "", username: "", phone: "", email: "", password: "", confirmPassword: "" });
   const [showPw, setShowPw] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const { redirect } = Route.useSearch();
   const [loading, setLoading] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
 
@@ -52,14 +57,15 @@ function SignupPage() {
       email: form.email,
       password: form.password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: window.location.origin + (redirect ?? ""),
         data: { full_name: form.fullName, phone: form.phone, username: form.username.toLowerCase() },
       },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success(t("auth.signup.welcome"));
-    navigate({ to: "/home" });
+    if (redirect) window.location.assign(redirect);
+    else navigate({ to: "/home" });
   }
 
   return (

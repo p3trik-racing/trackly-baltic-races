@@ -20,7 +20,8 @@ const GENERIC_COMP_META = [
 import { useLang, countryName } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { HELP_OPTIONS, isRoundPast, type Round } from "@/lib/competitions";
+import { HELP_OPTIONS, isRoundPast, ctext, type Round } from "@/lib/competitions";
+import { RaceTickets } from "@/components/RaceTickets";
 
 export const Route = createFileRoute("/_app/competitions_/$slug")({
   loader: async ({ params }) => {
@@ -106,7 +107,7 @@ function CompetitionPage() {
   if (!c) return <div className="container-app py-10 text-muted-foreground">{t("compete.notFound")}</div>;
 
   const rounds = (Array.isArray(c.rounds) ? c.rounds : []) as Round[];
-  const steps = (c.how_to_enter ?? "").split(/\n+/).map((s: string) => s.trim()).filter(Boolean);
+  const steps = (ctext(c, "how_to_enter", lang) ?? "").split(/\n+/).map((s: string) => s.trim()).filter(Boolean);
   const Info = ({ label, value }: { label: string; value?: string | null }) => value ? (
     <div><p className="text-xs text-muted-foreground">{label}</p><p className="text-sm whitespace-pre-wrap">{value}</p></div>
   ) : null;
@@ -131,7 +132,7 @@ function CompetitionPage() {
         </div>
         {c.organiser && <p className="text-xs text-muted-foreground">{t("compete.organiser")}: {c.organiser}</p>}
       </div>
-      {c.description && <p className="text-sm whitespace-pre-wrap">{c.description}</p>}
+      {ctext(c, "description", lang) && <p className="text-sm whitespace-pre-wrap">{ctext(c, "description", lang)}</p>}
 
       {rounds.length > 0 && (
         <section className="bg-card border border-border rounded-2xl p-4 space-y-2">
@@ -149,9 +150,9 @@ function CompetitionPage() {
       )}
 
       <section className="bg-card border border-border rounded-2xl p-4 space-y-3">
-        <Info label={t("compete.entryFee")} value={c.entry_fee} />
-        <Info label={t("compete.licence")} value={c.licence} />
-        <Info label={t("compete.carReq")} value={c.car_requirements} />
+        <Info label={t("compete.entryFee")} value={ctext(c, "entry_fee", lang)} />
+        <Info label={t("compete.licence")} value={ctext(c, "licence", lang)} />
+        <Info label={t("compete.carReq")} value={ctext(c, "car_requirements", lang)} />
       </section>
 
       {steps.length > 0 && (
@@ -170,12 +171,14 @@ function CompetitionPage() {
         </section>
       )}
 
+      <RaceTickets competitionId={c.id} competitionName={c.name} />
+
       {done ? (
         <p className="text-sm border rounded-xl p-4" style={{ borderColor: "var(--accent)" }}>{t("compete.success")}</p>
       ) : entry ? (
         <p className="text-sm border border-border rounded-xl p-4">{t("compete.alreadyApplied")} · {t(`compete.status.${entry.status}` as any)}</p>
       ) : !showForm ? (
-        <button onClick={onCompete} className="cta-button">{t("compete.cta")}</button>
+        <button onClick={onCompete} className="w-full text-sm py-2 underline" style={{ color: "var(--accent)" }}>{t("tickets.askHelp")}</button>
       ) : (
         <section className="bg-card border border-border rounded-2xl p-4 space-y-3">
           <Field label={t("apply.fullName") + " *"}><input className="input-field" value={f.full_name} onChange={(e) => set("full_name", e.target.value)} /></Field>

@@ -166,6 +166,7 @@ export type Database = {
           discipline: string
           entry_fee: string | null
           how_to_enter: string | null
+          i18n: Json
           id: string
           licence: string | null
           name: string
@@ -189,6 +190,7 @@ export type Database = {
           discipline: string
           entry_fee?: string | null
           how_to_enter?: string | null
+          i18n?: Json
           id?: string
           licence?: string | null
           name: string
@@ -212,6 +214,7 @@ export type Database = {
           discipline?: string
           entry_fee?: string | null
           how_to_enter?: string | null
+          i18n?: Json
           id?: string
           licence?: string | null
           name?: string

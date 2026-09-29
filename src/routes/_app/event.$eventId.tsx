@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { DirectionsDrawer, CalendarDrawer } from "@/components/EventDrawers";
 import { ShareSheet } from "@/components/ShareSheet";
+import { FriendsGoing } from "@/components/FriendsGoing";
 import { getEventOg } from "@/lib/og.functions";
 import { SITE_URL, absoluteAsset } from "@/lib/site";
 
@@ -293,6 +294,8 @@ function EventDetail() {
         </div>
       </div>
 
+      <FriendsGoing eventId={eventId} />
+
       <div
         className="fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border"
         style={{ paddingBottom: "calc(80px + env(safe-area-inset-bottom))" }}
@@ -325,7 +328,8 @@ function EventDetail() {
       <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={event.title}
         url={`${SITE_URL}/event/${event.id}`}
         text={[t("event.shareText", { title: event.title }),
-          formatDate(event.date, lang, "long"), event.city].filter(Boolean).join(" · ")} />
+          formatDate(event.date, lang, "long"), event.city].filter(Boolean).join(" · ")}
+        inviteText={t("friends.eventInvite", { title: event.title })} />
     </main>
   );
 }

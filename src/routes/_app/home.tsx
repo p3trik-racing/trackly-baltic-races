@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { EventCard, type EventCardData } from "@/components/EventCard";
 import { SPECIAL, orderCategories, orderEvents } from "@/lib/categories";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, Users } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
 import { useRoles } from "@/lib/roles";
 import { ViewToggle } from "@/components/ViewToggle";
@@ -102,6 +102,11 @@ function HomePage() {
         ) : roles.isOrganiser ? (
           <Link to="/organiser" className="shrink-0 px-2.5 h-6 inline-flex items-center rounded-full text-[11px] font-medium border border-foreground/40 text-foreground">{t("role.organiser")}</Link>
         ) : null}
+        {user && (
+          <Link to="/friends" aria-label={t("friends.title")} className="shrink-0 w-8 h-8 rounded-full border border-border inline-flex items-center justify-center">
+            <Users size={15} />
+          </Link>
+        )}
       </header>
 
       <ViewToggle />

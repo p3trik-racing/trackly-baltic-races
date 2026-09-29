@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES, SPECIAL } from "@/lib/categories";
-import { LogOut, User, Upload, ChevronRight, KeyRound, Globe, ShoppingBag } from "lucide-react";
+import { LogOut, User, Upload, ChevronRight, KeyRound, Globe, ShoppingBag, Users } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import { useTheme } from "@/lib/theme-context";
@@ -467,6 +467,19 @@ function ProfilePage() {
           </div>
         </div>
       )}
+
+      {/* Friends & privacy */}
+      <section className="bg-card border border-border rounded-2xl p-2">
+        <Link to="/friends" className="w-full flex items-center justify-between px-3 h-12 text-sm">
+          <span className="inline-flex items-center gap-2"><Users size={16} /> {t("friends.title")}</span>
+          <ChevronRight size={16} className="text-muted-foreground" />
+        </Link>
+        <div className="px-3 pb-3 pt-1 space-y-2">
+          <p className="text-xs text-muted-foreground">{t("profile.privacy")}</p>
+          <ToggleRow label={t("profile.showAttendance")} checked={(profile as any).show_attendance ?? true}
+            onChange={async (v) => { if (!user) return; setProfile({ ...profile, show_attendance: v } as any); await supabase.from("profiles").update({ show_attendance: v }).eq("id", user.id); }} />
+        </div>
+      </section>
 
       {/* Majorka */}
       <section className="bg-card border border-border rounded-2xl p-2">

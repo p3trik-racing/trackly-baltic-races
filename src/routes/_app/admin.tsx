@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { formatDate } from "@/lib/format";
 import { categoryLabel } from "@/lib/categories";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { codeFromScan } from "@/lib/tracks";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -363,6 +364,7 @@ function Competitions() {
   }, []);
   useEffect(() => { load(); }, [load]);
   const nameOf = (id: string) => comps.find((c) => c.id === id)?.name ?? "—";
+  const [openComp, setOpenComp] = useState<string | null>(null);
 
   async function setStatus(id: string, status: string) {
     const { error } = await supabase.from("competition_entries").update({ status }).eq("id", id);
@@ -400,10 +402,170 @@ function Competitions() {
         <Card key={c.id}>
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm">{c.name}</p>
-            <button className={btn} onClick={() => toggleLive(c.id, c.status)}>{c.status === "live" ? "Live → Draft" : "Draft → Live"}</button>
+            <div className="flex gap-2">
+              <button className={btn} onClick={() => setOpenComp(openComp === c.id ? null : c.id)}>{openComp === c.id ? "Hide tickets" : "Tickets"}</button>
+              <button className={btn} onClick={() => toggleLive(c.id, c.status)}>{c.status === "live" ? "Live → Draft" : "Draft → Live"}</button>
+            </div>
           </div>
+          {openComp === c.id && <RaceAdmin competitionId={c.id} competitionName={c.name} />}
         </Card>
       ))}
+    </div>
+  );
+}
+
+const EMPTY_TT = { id: "", round_label: "", round_date: "", kind: "spectator", name: "", price: "0", capacity: "", sales_open: true };
+
+function RaceAdmin({ competitionId, competitionName }: { competitionId: string; competitionName: string }) {
+  const [types, setTypes] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [form, setForm] = useState<any | null>(null);
+  const [desk, setDesk] = useState<string | null>(null);
+  const load = useCallback(async () => {
+    const { data: tt } = await supabase.from("race_ticket_types").select("*").eq("competition_id", competitionId).order("round_date", { nullsFirst: false });
+    setTypes(tt ?? []);
+    const ids = (tt ?? []).map((x: any) => x.id);
+    if (!ids.length) return setTickets([]);
+    const { data: rt } = await supabase.from("race_tickets").select("*").in("ticket_type_id", ids).order("created_at", { ascending: false });
+    setTickets(rt ?? []);
+  }, [competitionId]);
+  useEffect(() => { load(); }, [load]);
+
+  async function save() {
+    if (!form.round_label.trim() || !form.name.trim()) return toast.error("Round label and name are required");
+    const row = { competition_id: competitionId, round_label: form.round_label.trim(), round_date: form.round_date || null, kind: form.kind, name: form.name.trim(),
+      price: Number(form.price) || 0, capacity: form.capacity === "" ? null : Number(form.capacity), sales_open: form.sales_open };
+    const { error } = form.id ? await supabase.from("race_ticket_types").update(row).eq("id", form.id) : await supabase.from("race_ticket_types").insert(row);
+    if (error) return toast.error(error.message);
+    setForm(null); load();
+  }
+  async function setTicket(id: string, status: string) {
+    const { error } = await supabase.from("race_tickets").update({ status }).eq("id", id);
+    if (error) return toast.error(error.message);
+    load();
+  }
+  function csv(type: any) {
+    const rows = tickets.filter((x) => x.ticket_type_id === type.id);
+    const head = ["name", "email", "phone", "car", "class", "licence_no", "quantity", "status", "payment_status", "check_in_code", "checked_in_at"];
+    const esc = (v: any) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const body = [head.join(","), ...rows.map((r) => head.map((h) => esc(r[h])).join(","))].join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([body], { type: "text/csv" }));
+    a.download = `${competitionName}-${type.round_label}-${type.name}.csv`.replace(/[^\w.-]+/g, "_");
+    a.click();
+  }
+  const f = (k: string, label: string, type = "text") => (
+    <label className="block text-xs text-muted-foreground">{label}<input className="input-field mt-1" type={type} value={form[k] ?? ""} onChange={(e) => setForm({ ...form, [k]: e.target.value })} /></label>
+  );
+  const rounds = Array.from(new Set(types.map((x) => x.round_label)));
+
+  return (
+    <div className="mt-3 space-y-3 border-t border-border pt-3">
+      {form ? (
+        <div className="space-y-2">
+          {f("round_label", "Round label")}
+          {f("round_date", "Round date", "date")}
+          <label className="block text-xs text-muted-foreground">Kind
+            <select className="input-field mt-1" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })}>
+              <option value="spectator">Spectator</option><option value="racer">Racer</option>
+            </select>
+          </label>
+          {f("name", "Name")}
+          {f("price", "Price (EUR)", "number")}
+          {f("capacity", "Capacity (empty = unlimited)", "number")}
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.sales_open} onChange={(e) => setForm({ ...form, sales_open: e.target.checked })} /> Sales open</label>
+          <div className="flex gap-2"><button className={btnAccent} style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }} onClick={save}>Save</button><button className={btn} onClick={() => setForm(null)}>Cancel</button></div>
+        </div>
+      ) : <button className={btn} onClick={() => setForm({ ...EMPTY_TT })}>+ Add ticket type</button>}
+
+      {rounds.length > 0 && (
+        <div className="flex gap-2 flex-wrap">
+          {rounds.map((r) => <button key={r} className={btn} onClick={() => setDesk(desk === r ? null : r)}>{desk === r ? "Close desk" : `Check-in: ${r}`}</button>)}
+        </div>
+      )}
+      {desk && <RaceCheckInDesk tickets={tickets.filter((x) => types.find((tt) => tt.id === x.ticket_type_id)?.round_label === desk)} onChange={load} />}
+
+      {types.map((tt) => {
+        const list = tickets.filter((x) => x.ticket_type_id === tt.id);
+        return (
+          <div key={tt.id} className="rounded-xl border border-border p-3 space-y-2">
+            <div className="flex justify-between gap-2 items-start">
+              <div>
+                <p className="text-sm font-medium">{tt.round_label}{tt.round_date ? ` · ${formatDate(tt.round_date, "en")}` : ""}</p>
+                <p className="text-xs text-muted-foreground">{tt.kind} · {tt.name} · €{Number(tt.price).toFixed(2)} · {tt.capacity ?? "∞"} cap · {tt.sales_open ? "on sale" : "closed"}</p>
+              </div>
+              <div className="flex gap-1">
+                <button className={btn} onClick={() => setForm({ ...tt, round_date: tt.round_date ?? "", price: String(tt.price), capacity: tt.capacity == null ? "" : String(tt.capacity) })}>Edit</button>
+                <button className={btn} onClick={() => csv(tt)}>CSV</button>
+              </div>
+            </div>
+            {list.length === 0 && <p className="text-xs text-muted-foreground">No tickets yet.</p>}
+            {list.map((r) => (
+              <div key={r.id} className="text-xs border-t border-border pt-2 space-y-1">
+                <p className="font-medium">{r.holder_name} · ×{r.quantity} · {r.status} · payment {r.payment_status}{r.checked_in_at ? " · checked in" : ""}</p>
+                <p className="text-muted-foreground">{r.email}{r.phone ? ` · ${r.phone}` : ""}</p>
+                {(r.car || r.class || r.licence_no) && <p>Car: {r.car || "—"} · Class: {r.class || "—"} · Licence: {r.licence_no || "—"}</p>}
+                {tt.kind === "racer" && r.status !== "cancelled" && (
+                  <div className="flex gap-2">
+                    {r.status !== "confirmed" && <button className={btn} onClick={() => setTicket(r.id, "confirmed")}>Confirm</button>}
+                    <button className={btn} onClick={() => confirm("Cancel this entry?") && setTicket(r.id, "cancelled")}>Cancel</button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function RaceCheckInDesk({ tickets, onChange }: { tickets: any[]; onChange: () => void }) {
+  const [code, setCode] = useState("");
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [scanning, setScanning] = useState(false);
+  const scanRef = useRef<any>(null);
+  const busy = useRef(false);
+
+  async function check(raw: string) {
+    if (busy.current) return;
+    busy.current = true;
+    const c = codeFromScan(raw);
+    const tk = tickets.find((x) => x.check_in_code?.toUpperCase() === c);
+    if (!tk) setMsg({ ok: false, text: `No ticket for code ${c}` });
+    else if (tk.status !== "confirmed") setMsg({ ok: false, text: `${tk.holder_name}: ticket is ${tk.status}` });
+    else if (tk.checked_in_at) setMsg({ ok: false, text: `${tk.holder_name} already checked in` });
+    else {
+      const { error } = await supabase.from("race_tickets").update({ checked_in_at: new Date().toISOString() }).eq("id", tk.id);
+      setMsg(error ? { ok: false, text: error.message } : { ok: true, text: `${tk.holder_name} ×${tk.quantity} checked in` });
+      onChange();
+    }
+    setCode("");
+    setTimeout(() => { busy.current = false; }, 1500);
+  }
+  async function stop() { const s = scanRef.current; scanRef.current = null; setScanning(false); if (s) await s.stop().catch(() => {}); }
+  async function start() {
+    setScanning(true);
+    const { Html5Qrcode } = await import("html5-qrcode");
+    const s = new Html5Qrcode("mr-race-scanner");
+    scanRef.current = s;
+    await s.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } }, (txt: string) => check(txt), () => {})
+      .catch((e: any) => { toast.error(String(e?.message ?? e)); setScanning(false); });
+  }
+  useEffect(() => () => { scanRef.current?.stop().catch(() => {}); }, []);
+  const inCount = tickets.filter((x) => x.checked_in_at).reduce((n, x) => n + x.quantity, 0);
+  const total = tickets.filter((x) => x.status === "confirmed").reduce((n, x) => n + x.quantity, 0);
+
+  return (
+    <div className="rounded-xl border border-border p-3 space-y-2">
+      <p className="text-xs text-muted-foreground">Checked in {inCount} / {total}</p>
+      <div id="mr-race-scanner" className={scanning ? "rounded-xl overflow-hidden" : "hidden"} />
+      <button className={btn} onClick={scanning ? stop : start}>{scanning ? "Stop camera" : "Scan QR"}</button>
+      <div className="flex gap-2">
+        <input className="input-field" placeholder="Code" value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={(e) => e.key === "Enter" && code && check(code)} />
+        <button className={btn} onClick={() => code && check(code)}>Check in</button>
+      </div>
+      {msg && <p className="text-sm font-medium" style={{ color: msg.ok ? "var(--success)" : "var(--accent)" }}>{msg.text}</p>}
     </div>
   );
 }
