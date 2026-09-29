@@ -25,6 +25,7 @@ import { template as newBooking } from './new-booking'
 import { approvedTemplate, rejectedTemplate } from './organiser-decision'
 import { applicationNewTemplate, competitionEntryAdminTemplate } from './admin-notices'
 import { template as competitionEntry } from './competition-entry'
+import { grantedTemplate, revokedTemplate } from './organiser-role'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'booking-confirmed': bookingConfirmed,
@@ -37,4 +38,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'organiser-application-new': applicationNewTemplate,
   'competition-entry': competitionEntry,
   'competition-entry-admin': competitionEntryAdminTemplate,
+  'organiser-role-granted': grantedTemplate,
+  'organiser-role-revoked': revokedTemplate,
 }

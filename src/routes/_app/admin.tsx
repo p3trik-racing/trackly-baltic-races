@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useRoles } from "@/lib/roles";
-import { emailOrganiserApplication } from "@/lib/app-email.functions";
+import { emailOrganiserApplication, emailOrganiserRole } from "@/lib/app-email.functions";
 import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
 
 export const Route = createFileRoute("/_app/admin")({
