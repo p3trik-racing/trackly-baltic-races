@@ -1,6 +1,6 @@
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 import { useLang } from "@/i18n";
-import { ChevronRight, Copy, MessageCircle, Send, Share2 } from "lucide-react";
+import { ChevronRight, Copy, MessageCircle, Send, Share2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState, type ReactNode } from "react";
 
@@ -36,8 +36,8 @@ async function copyText(text: string) {
   }
 }
 
-export function ShareSheet({ open, onOpenChange, url, text, title }: {
-  open: boolean; onOpenChange: (o: boolean) => void; url: string; text: string; title: string;
+export function ShareSheet({ open, onOpenChange, url, text, title, inviteText }: {
+  open: boolean; onOpenChange: (o: boolean) => void; url: string; text: string; title: string; inviteText?: string;
 }) {
   const { t } = useLang();
   const [canNative, setCanNative] = useState(false);
@@ -53,6 +53,14 @@ export function ShareSheet({ open, onOpenChange, url, text, title }: {
           <DrawerDescription className="truncate">{title}</DrawerDescription>
         </DrawerHeader>
         <div className="px-4 pb-8 space-y-2">
+          {inviteText && (
+            <Row icon={<UserPlus size={18} />} label={t("friends.inviteFriend")}
+              onClick={async () => {
+                if (canNative) { try { await navigator.share({ title, text: inviteText, url }); } catch {} }
+                else openWin(`https://wa.me/?text=${encodeURIComponent(`${inviteText} ${url}`)}`);
+                onOpenChange(false);
+              }} />
+          )}
           <Row icon={<MessageCircle size={18} />} label={t("share.whatsapp")}
             onClick={() => openWin(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`)} />
           <Row icon={<Send size={18} />} label={t("share.telegram")}

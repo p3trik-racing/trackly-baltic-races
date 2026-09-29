@@ -7,6 +7,10 @@ import { ArrowLeft, Eye, EyeOff, Check, X } from "lucide-react";
 import { LogoFull } from "@/components/Logo";
 
 export const Route = createFileRoute("/signup")({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => {
+    const r = s.redirect;
+    return typeof r === "string" && r.startsWith("/") && !r.startsWith("//") ? { redirect: r } : {};
+  },
   head: () => ({ meta: [
     { title: "Sign up — Majorka Racing" },
     { name: "description", content: "Join Majorka Racing and book track days and motorsport events in the Baltics." },
