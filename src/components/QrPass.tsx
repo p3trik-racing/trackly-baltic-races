@@ -3,10 +3,10 @@ import QRCode from "qrcode";
 import { useLang } from "@/i18n";
 import { SITE_URL } from "@/lib/site";
 
-export function QrPass({ bookingId, code, checkedInAt }: { bookingId: string; code: string; checkedInAt?: string | null }) {
+export function QrPass({ bookingId, code, checkedInAt, url: customUrl }: { bookingId: string; code: string; checkedInAt?: string | null; url?: string }) {
   const { t } = useLang();
   const [src, setSrc] = useState<string | null>(null);
-  const url = `${SITE_URL}/checkin/${bookingId}?c=${code}`;
+  const url = customUrl ?? `${SITE_URL}/checkin/${bookingId}?c=${code}`;
 
   useEffect(() => {
     QRCode.toDataURL(url, { errorCorrectionLevel: "M", margin: 2, width: 480, color: { dark: "#000000", light: "#FFFFFF" } })

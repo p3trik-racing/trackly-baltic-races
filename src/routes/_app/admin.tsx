@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_app/admin")({
   component: AdminPage,
 });
 
-const TABS = ["Applications", "Codes", "Users", "Events", "Bookings", "Competitions"] as const;
+const TABS = ["Applications", "Codes", "Users", "Events", "Bookings", "Competitions", "Tracks"] as const;
 type Tab = typeof TABS[number];
 
 async function token() {
@@ -71,6 +71,7 @@ function AdminPage() {
       {tab === "Events" && <Events />}
       {tab === "Bookings" && <Bookings />}
       {tab === "Competitions" && <Competitions />}
+      {tab === "Tracks" && <Tracks />}
     </main>
   );
 }
@@ -400,6 +401,42 @@ function Competitions() {
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm">{c.name}</p>
             <button className={btn} onClick={() => toggleLive(c.id, c.status)}>{c.status === "live" ? "Live → Draft" : "Draft → Live"}</button>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function Tracks() {
+  const [rows, setRows] = useState<any[]>([]);
+  const load = () => supabase.from("venues").select("id,name,slug,city,country,status,owner_id,profiles:owner_id(full_name,email)" as any).order("created_at", { ascending: false })
+    .then(({ data, error }) => {
+      if (error) supabase.from("venues").select("id,name,slug,city,country,status,owner_id").order("created_at", { ascending: false }).then(({ data }) => setRows(data ?? []));
+      else setRows((data as any) ?? []);
+    });
+  useEffect(() => { load(); }, []);
+  async function toggle(v: any) {
+    const { error } = await supabase.from("venues").update({ status: v.status === "live" ? "draft" : "live" }).eq("id", v.id);
+    if (error) return toast.error(error.message);
+    toast.success("Done"); load();
+  }
+  if (!rows.length) return <p className="text-sm text-muted-foreground">No tracks yet.</p>;
+  return (
+    <div className="space-y-2">
+      {rows.map((v) => (
+        <Card key={v.id}>
+          <div className="flex justify-between gap-2">
+            <div className="min-w-0">
+              <p className="font-medium truncate">{v.name}</p>
+              <p className="text-xs text-muted-foreground">{[v.city, v.country].filter(Boolean).join(" · ")} · Owner: {v.profiles?.full_name || v.profiles?.email || v.owner_id?.slice(0, 8) || "—"}</p>
+            </div>
+            <span className="text-[11px] px-2 py-0.5 h-fit rounded-full bg-input">{v.status}</span>
+          </div>
+          <div className="flex gap-2 text-xs">
+            <button onClick={() => toggle(v)} className="px-3 h-8 rounded-full border border-border">{v.status === "live" ? "Set draft" : "Set live"}</button>
+            <a href={`/tracks/${v.slug}`} className="px-3 h-8 inline-flex items-center rounded-full border border-border">Open</a>
+            {v.profiles?.email && <a href={`mailto:${v.profiles.email}`} className="px-3 h-8 inline-flex items-center rounded-full border border-border">Email owner</a>}
           </div>
         </Card>
       ))}

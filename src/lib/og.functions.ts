@@ -30,3 +30,14 @@ export const getCompetitionOg = createServerFn({ method: "GET" })
       return c ?? null;
     } catch { return null; }
   });
+
+export const getSlotOg = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    try {
+      const { data: s } = await anon().from("venue_slots")
+        .select("id,date,start_time,end_time,price_total,max_cars,per_spot_price,status,venues(name,city,cover_image_url)")
+        .eq("id", data.id).maybeSingle();
+      return (s as any) ?? null;
+    } catch { return null; }
+  });

@@ -136,11 +136,14 @@ function OrganiserDashboard() {
           <h1 className="text-[22px] font-semibold">{t("organiser.title")}</h1>
           <p className="text-xs text-muted-foreground">{t("organiser.followers", { count: followers })}</p>
         </div>
+        <div className="flex gap-2">
+        <Link to="/organiser/tracks" className="inline-flex items-center px-3 h-10 rounded-xl text-sm font-medium border border-border">{t("mytracks.title")}</Link>
         <Link to="/organiser/post-event"
           className="inline-flex items-center gap-1 px-3 h-10 rounded-xl text-sm font-medium text-accent-foreground"
           style={{ backgroundColor: "var(--accent)" }}>
           <Plus size={16} /> {t("organiser.postNew")}
         </Link>
+        </div>
       </div>
 
       <div className="flex gap-2 bg-card p-1 rounded-xl border border-border">

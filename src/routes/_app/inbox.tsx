@@ -19,6 +19,8 @@ export const Route = createFileRoute("/_app/inbox")({
   component: InboxPage,
 });
 
+const SLOT_TYPES = ["slot_booked", "split_joined", "split_confirmed", "split_failed", "split_cancelled"];
+
 interface Notif {
   id: string;
   type: string;
@@ -81,6 +83,9 @@ function InboxPage() {
                 )}
                 {n.type === "new_event" && (
                   <p className="text-[11px] uppercase tracking-wide mb-0.5" style={{ color: "var(--accent)" }}>{t("inbox.newEvent")}</p>
+                )}
+                {SLOT_TYPES.includes(n.type) && (
+                  <p className="text-[11px] uppercase tracking-wide mb-0.5" style={{ color: "var(--accent)" }}>{t(`inbox.${n.type}` as any)}</p>
                 )}
                 {n.title && <p className="text-sm font-semibold">{n.title}</p>}
                 <p className="text-sm whitespace-pre-wrap">{n.message}</p>

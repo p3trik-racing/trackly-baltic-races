@@ -17,6 +17,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as EventTermsRouteImport } from './routes/event-terms'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppTracksRouteImport } from './routes/_app/tracks'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppOrganiserRouteImport } from './routes/_app/organiser'
 import { Route as AppMapRouteImport } from './routes/_app/map'
@@ -27,6 +28,9 @@ import { Route as AppCompetitionsRouteImport } from './routes/_app/competitions'
 import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
 import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
+import { Route as AppTracksSlugRouteImport } from './routes/_app/tracks_.$slug'
+import { Route as AppTrackSlotIdRouteImport } from './routes/_app/track-slot.$id'
+import { Route as AppOrganiserTracksRouteImport } from './routes/_app/organiser_.tracks'
 import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
 import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
@@ -81,6 +85,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppTracksRoute = AppTracksRouteImport.update({
+  id: '/tracks',
+  path: '/tracks',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProfileRoute = AppProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -129,6 +138,21 @@ const AppBookingsRoute = AppBookingsRouteImport.update({
 const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTracksSlugRoute = AppTracksSlugRouteImport.update({
+  id: '/tracks_/$slug',
+  path: '/tracks/$slug',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackSlotIdRoute = AppTrackSlotIdRouteImport.update({
+  id: '/track-slot/$id',
+  path: '/track-slot/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOrganiserTracksRoute = AppOrganiserTracksRouteImport.update({
+  id: '/organiser_/tracks',
+  path: '/organiser/tracks',
   getParentRoute: () => AppRoute,
 } as any)
 const AppOrganiserPostEventRoute = AppOrganiserPostEventRouteImport.update({
@@ -223,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof AppMapRoute
   '/organiser': typeof AppOrganiserRoute
   '/profile': typeof AppProfileRoute
+  '/tracks': typeof AppTracksRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
@@ -230,6 +255,9 @@ export interface FileRoutesByFullPath {
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
+  '/organiser/tracks': typeof AppOrganiserTracksRoute
+  '/track-slot/$id': typeof AppTrackSlotIdRoute
+  '/tracks/$slug': typeof AppTracksSlugRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -256,6 +284,7 @@ export interface FileRoutesByTo {
   '/map': typeof AppMapRoute
   '/organiser': typeof AppOrganiserRoute
   '/profile': typeof AppProfileRoute
+  '/tracks': typeof AppTracksRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
@@ -263,6 +292,9 @@ export interface FileRoutesByTo {
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
+  '/organiser/tracks': typeof AppOrganiserTracksRoute
+  '/track-slot/$id': typeof AppTrackSlotIdRoute
+  '/tracks/$slug': typeof AppTracksSlugRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -291,6 +323,7 @@ export interface FileRoutesById {
   '/_app/map': typeof AppMapRoute
   '/_app/organiser': typeof AppOrganiserRoute
   '/_app/profile': typeof AppProfileRoute
+  '/_app/tracks': typeof AppTracksRoute
   '/_app/book/$eventId': typeof AppBookEventIdRoute
   '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/_app/checkin/$bookingId': typeof AppCheckinBookingIdRoute
@@ -298,6 +331,9 @@ export interface FileRoutesById {
   '/_app/event/$eventId': typeof AppEventEventIdRoute
   '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
   '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
+  '/_app/organiser_/tracks': typeof AppOrganiserTracksRoute
+  '/_app/track-slot/$id': typeof AppTrackSlotIdRoute
+  '/_app/tracks_/$slug': typeof AppTracksSlugRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -326,6 +362,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/organiser'
     | '/profile'
+    | '/tracks'
     | '/book/$eventId'
     | '/booking/$bookingId'
     | '/checkin/$bookingId'
@@ -333,6 +370,9 @@ export interface FileRouteTypes {
     | '/event/$eventId'
     | '/organiser/apply'
     | '/organiser/post-event'
+    | '/organiser/tracks'
+    | '/track-slot/$id'
+    | '/tracks/$slug'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
@@ -359,6 +399,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/organiser'
     | '/profile'
+    | '/tracks'
     | '/book/$eventId'
     | '/booking/$bookingId'
     | '/checkin/$bookingId'
@@ -366,6 +407,9 @@ export interface FileRouteTypes {
     | '/event/$eventId'
     | '/organiser/apply'
     | '/organiser/post-event'
+    | '/organiser/tracks'
+    | '/track-slot/$id'
+    | '/tracks/$slug'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
@@ -393,6 +437,7 @@ export interface FileRouteTypes {
     | '/_app/map'
     | '/_app/organiser'
     | '/_app/profile'
+    | '/_app/tracks'
     | '/_app/book/$eventId'
     | '/_app/booking/$bookingId'
     | '/_app/checkin/$bookingId'
@@ -400,6 +445,9 @@ export interface FileRouteTypes {
     | '/_app/event/$eventId'
     | '/_app/organiser_/apply'
     | '/_app/organiser_/post-event'
+    | '/_app/organiser_/tracks'
+    | '/_app/track-slot/$id'
+    | '/_app/tracks_/$slug'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
@@ -483,6 +531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/tracks': {
+      id: '/_app/tracks'
+      path: '/tracks'
+      fullPath: '/tracks'
+      preLoaderRoute: typeof AppTracksRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/profile': {
       id: '/_app/profile'
       path: '/profile'
@@ -551,6 +606,27 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracks_/$slug': {
+      id: '/_app/tracks_/$slug'
+      path: '/tracks/$slug'
+      fullPath: '/tracks/$slug'
+      preLoaderRoute: typeof AppTracksSlugRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/track-slot/$id': {
+      id: '/_app/track-slot/$id'
+      path: '/track-slot/$id'
+      fullPath: '/track-slot/$id'
+      preLoaderRoute: typeof AppTrackSlotIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/organiser_/tracks': {
+      id: '/_app/organiser_/tracks'
+      path: '/organiser/tracks'
+      fullPath: '/organiser/tracks'
+      preLoaderRoute: typeof AppOrganiserTracksRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/organiser_/post-event': {
@@ -665,6 +741,7 @@ interface AppRouteChildren {
   AppMapRoute: typeof AppMapRoute
   AppOrganiserRoute: typeof AppOrganiserRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppTracksRoute: typeof AppTracksRoute
   AppBookEventIdRoute: typeof AppBookEventIdRoute
   AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
   AppCheckinBookingIdRoute: typeof AppCheckinBookingIdRoute
@@ -672,6 +749,9 @@ interface AppRouteChildren {
   AppEventEventIdRoute: typeof AppEventEventIdRoute
   AppOrganiserApplyRoute: typeof AppOrganiserApplyRoute
   AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
+  AppOrganiserTracksRoute: typeof AppOrganiserTracksRoute
+  AppTrackSlotIdRoute: typeof AppTrackSlotIdRoute
+  AppTracksSlugRoute: typeof AppTracksSlugRoute
   AppOrganiserEventsEventIdBookingsRoute: typeof AppOrganiserEventsEventIdBookingsRoute
   AppOrganiserEventsEventIdCheckinRoute: typeof AppOrganiserEventsEventIdCheckinRoute
 }
@@ -687,6 +767,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMapRoute: AppMapRoute,
   AppOrganiserRoute: AppOrganiserRoute,
   AppProfileRoute: AppProfileRoute,
+  AppTracksRoute: AppTracksRoute,
   AppBookEventIdRoute: AppBookEventIdRoute,
   AppBookingBookingIdRoute: AppBookingBookingIdRoute,
   AppCheckinBookingIdRoute: AppCheckinBookingIdRoute,
@@ -694,6 +775,9 @@ const AppRouteChildren: AppRouteChildren = {
   AppEventEventIdRoute: AppEventEventIdRoute,
   AppOrganiserApplyRoute: AppOrganiserApplyRoute,
   AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
+  AppOrganiserTracksRoute: AppOrganiserTracksRoute,
+  AppTrackSlotIdRoute: AppTrackSlotIdRoute,
+  AppTracksSlugRoute: AppTracksSlugRoute,
   AppOrganiserEventsEventIdBookingsRoute:
     AppOrganiserEventsEventIdBookingsRoute,
   AppOrganiserEventsEventIdCheckinRoute: AppOrganiserEventsEventIdCheckinRoute,
