@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { CompeteBanner } from "@/components/CompeteBanner";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -172,6 +172,10 @@ function ExplorePage() {
           </div>
         </div>
       )}
+
+      <div className="flex gap-2">
+        <Link to="/tracks" className="px-4 h-9 inline-flex items-center rounded-full text-sm font-medium border border-border bg-card">🏁 {t("tracks.chip")}</Link>
+      </div>
 
       <CompeteBanner />
 

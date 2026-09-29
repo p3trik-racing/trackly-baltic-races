@@ -10,6 +10,7 @@ import { Loader2, Search } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
 import { useRoles } from "@/lib/roles";
 import { ViewToggle } from "@/components/ViewToggle";
+import { loadVenueCards, VenueCardView, type VenueCard } from "@/components/VenueCard";
 
 export const Route = createFileRoute("/_app/home")({
   head: () => ({ meta: [
@@ -30,6 +31,8 @@ function HomePage() {
   const [favourites, setFavourites] = useState<string[]>([]);
   const roles = useRoles();
   const [category, setCategory] = useState<string>("all");
+  const [venues, setVenues] = useState<VenueCard[]>([]);
+  useEffect(() => { loadVenueCards(8).then(setVenues); }, []);
   const [query, setQuery] = useState("");
   const [pullDist, setPullDist] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -148,6 +151,18 @@ function HomePage() {
       </div>
 
       {category !== "races" && <CompeteBanner />}
+
+      {venues.length > 0 && (
+        <section className="space-y-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold">{t("tracks.homeRow")}</h2>
+            <Link to="/tracks" className="text-sm" style={{ color: "var(--accent)" }}>{t("tracks.seeAll")}</Link>
+          </div>
+          <div data-scroll-x className="-mx-5 px-5 overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: "none" }}>
+            <div className="flex gap-3 w-max pr-5">{venues.map((v) => <VenueCardView key={v.id} v={v} compact />)}</div>
+          </div>
+        </section>
+      )}
 
       {featured.length > 0 && (
         <section className="space-y-3">

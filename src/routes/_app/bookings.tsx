@@ -10,6 +10,7 @@ import { Calendar, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { emailBookingCancelled } from "@/lib/app-email.functions";
 import { fireAndForget } from "@/lib/access-token";
+import { eur, hhmm, payLabel } from "@/lib/tracks";
 
 export const Route = createFileRoute("/_app/bookings")({
   head: () => ({ meta: [
@@ -47,7 +48,7 @@ function BookingsPage() {
   const navigate = useNavigate();
   const { t: tr, lang } = useLang();
   const copyFor = (b: BookingRow) => cancelCopy(tr, { title: b.events.title, date: b.events.date, time: b.events.time, price: Number(b.events.price ?? 0), deposit: b.events.deposit, totalPaid: Number(b.total_price ?? 0), platformFee: Number(b.platform_fee ?? 0) });
-  const [tab, setTab] = useState<"upcoming" | "past" | "cancelled">("upcoming");
+  const [tab, setTab] = useState<"upcoming" | "past" | "cancelled" | "track">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
 
@@ -90,7 +91,7 @@ function BookingsPage() {
     <main className="container-app py-6 space-y-4">
       <h1 className="text-[22px] font-semibold">{tr("bookings.title")}</h1>
       <div className="flex gap-2 bg-card p-1 rounded-xl border border-border">
-        {(["upcoming", "past", "cancelled"] as const).map((t) => (
+        {(["upcoming", "past", "cancelled", "track"] as const).map((t) => (
           <button
             key={t}
             onClick={() => {
@@ -108,7 +109,7 @@ function BookingsPage() {
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {tab === "track" ? <TrackBookings /> : filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-12">
           {tr("bookings.empty", { tab: tr(`bookings.tab.${tab}`) })}
         </p>
@@ -191,5 +192,38 @@ function BookingsPage() {
         </div>
       )}
     </main>
+  );
+}
+
+function TrackBookings() {
+  const { user } = useAuth();
+  const { t, lang } = useLang();
+  const [rows, setRows] = useState<any[] | null>(null);
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("slot_bookings").select("id,slot_id,kind,is_host,spots,amount,status,payment_status,venue_slots(date,start_time,end_time,venues(name))")
+      .eq("user_id", user.id).order("created_at", { ascending: false }).then(({ data }) => setRows(data ?? []));
+  }, [user]);
+  if (rows === null) return <p className="text-sm text-muted-foreground text-center py-12">{t("common.loading")}</p>;
+  if (!rows.length) return (
+    <div className="text-center py-12 space-y-2">
+      <p className="text-sm text-muted-foreground">{t("tracks.noBookings")}</p>
+      <Link to="/tracks" className="text-sm font-medium" style={{ color: "var(--accent)" }}>{t("tracks.browse")}</Link>
+    </div>
+  );
+  return (
+    <div className="space-y-3">
+      {rows.map((b) => (
+        <Link key={b.id} to="/track-slot/$id" params={{ id: b.slot_id }} className="block bg-card border border-border rounded-2xl p-3 space-y-1">
+          <div className="flex justify-between gap-2">
+            <p className="font-medium text-sm truncate">{b.venue_slots?.venues?.name}</p>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-input">{t(`slot.bstatus.${b.status}` as any)}</span>
+          </div>
+          <p className="text-xs text-muted-foreground">{formatDate(b.venue_slots?.date, lang, "short")} · {hhmm(b.venue_slots?.start_time)}–{hhmm(b.venue_slots?.end_time)}</p>
+          <p className="text-xs">{t(`slot.kind.${b.kind}` as any)}{b.is_host ? ` · ${t("slot.host")}` : ""} · {t("slot.spotsN", { n: b.spots })} · {eur(b.amount)}</p>
+          {b.status !== "cancelled" && <p className="text-xs text-muted-foreground">{payLabel(t, b.payment_status)}</p>}
+        </Link>
+      ))}
+    </div>
   );
 }

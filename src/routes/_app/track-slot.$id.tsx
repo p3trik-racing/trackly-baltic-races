@@ -220,7 +220,7 @@ function BookSheet({ slot, mode, taken, onClose, onDone }: { slot: Slot; mode: M
 
   async function submit() {
     if (!f.name.trim() || !f.email.trim()) return toast.error(t("slot.fillIn"));
-    if (!terms) return toast.error(t("book.acceptWaiver"));
+    if (!terms) return toast.error(t("slot.acceptTerms"));
     const common = { _slot_id: slot.id, _name: f.name.trim(), _email: f.email.trim(), _phone: f.phone.trim() };
     let res;
     if (mode === "split") {
