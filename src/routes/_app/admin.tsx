@@ -109,7 +109,7 @@ function Applications() {
             <span className="text-xs text-muted-foreground">{a.status} · {formatDate(a.created_at, "en")}</span>
           </div>
           {fields.map(([l, k]) => a[k] ? <p key={k} className="text-xs"><span className="text-muted-foreground">{l}: </span><span className="whitespace-pre-wrap">{a[k]}</span></p> : null)}
-          {a.event_types?.length > 0 && <p className="text-xs"><span className="text-muted-foreground">Event types: </span>{a.event_types.join(", ")}</p>}
+          {a.event_types?.length > 0 && <p className="text-xs"><span className="text-muted-foreground">Event types: </span>{a.event_types.map((x: string) => categoryLabel(x)).join(", ")}</p>}
           {a.admin_note && <p className="text-xs"><span className="text-muted-foreground">Admin note: </span>{a.admin_note}</p>}
           {a.status === "pending" && (
             <div className="space-y-2 pt-1">
@@ -215,6 +215,13 @@ function Users() {
   async function setOrg(id: string, on: boolean) {
     const { error } = await supabase.rpc("set_organiser_role", { _user_id: id, _on: on });
     if (error) return toast.error(error.message);
+    const row = rows.find((r) => r.id === id);
+    const fallback = row?.full_name || row?.username || row?.email || "user";
+    try {
+      const accessToken = await token();
+      const res: any = accessToken ? await emailOrganiserRole({ data: { userId: id, on, accessToken } }) : null;
+      toast.success(`Done — ${res?.name || fallback} has been emailed`);
+    } catch { toast.success(`Done — ${fallback} has been emailed`); }
     search();
   }
   async function setBlocked(id: string, blocked: boolean) {
