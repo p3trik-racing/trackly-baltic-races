@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { emailBookingCancelled } from "@/lib/app-email.functions";
 import { fireAndForget } from "@/lib/access-token";
 import { eur, hhmm, payLabel } from "@/lib/tracks";
+import { QrPass } from "@/components/QrPass";
+import { KindBadge, raceTicketQrUrl } from "@/components/RaceTickets";
 
 export const Route = createFileRoute("/_app/bookings")({
   head: () => ({ meta: [
@@ -48,7 +50,7 @@ function BookingsPage() {
   const navigate = useNavigate();
   const { t: tr, lang } = useLang();
   const copyFor = (b: BookingRow) => cancelCopy(tr, { title: b.events.title, date: b.events.date, time: b.events.time, price: Number(b.events.price ?? 0), deposit: b.events.deposit, totalPaid: Number(b.total_price ?? 0), platformFee: Number(b.platform_fee ?? 0) });
-  const [tab, setTab] = useState<"upcoming" | "past" | "cancelled" | "track">("upcoming");
+  const [tab, setTab] = useState<"upcoming" | "past" | "cancelled" | "track" | "race">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
 
@@ -90,15 +92,15 @@ function BookingsPage() {
   return (
     <main className="container-app py-6 space-y-4">
       <h1 className="text-[22px] font-semibold">{tr("bookings.title")}</h1>
-      <div className="flex gap-2 bg-card p-1 rounded-xl border border-border">
-        {(["upcoming", "past", "cancelled", "track"] as const).map((t) => (
+      <div className="flex gap-1 bg-card p-1 rounded-xl border border-border overflow-x-auto">
+        {(["upcoming", "past", "cancelled", "track", "race"] as const).map((t) => (
           <button
             key={t}
             onClick={() => {
               setTab(t);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex-1 h-9 rounded-lg text-sm font-medium capitalize"
+            className="flex-1 h-9 px-2 rounded-lg text-sm font-medium capitalize whitespace-nowrap"
             style={{
               backgroundColor: tab === t ? "var(--accent)" : "transparent",
                color: tab === t ? "var(--accent-foreground)" : "var(--muted-foreground)",
@@ -109,7 +111,7 @@ function BookingsPage() {
         ))}
       </div>
 
-      {tab === "track" ? <TrackBookings /> : filtered.length === 0 ? (
+      {tab === "track" ? <TrackBookings /> : tab === "race" ? <RaceTicketsList /> : filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-12">
           {tr("bookings.empty", { tab: tr(`bookings.tab.${tab}`) })}
         </p>
@@ -227,3 +229,54 @@ function TrackBookings() {
     </div>
   );
 }
+
+function RaceTicketsList() {
+  const { user } = useAuth();
+  const { t, lang } = useLang();
+  const [rows, setRows] = useState<any[] | null>(null);
+  const [openQr, setOpenQr] = useState<string | null>(null);
+  const load = () => {
+    if (!user) return;
+    supabase.from("race_tickets").select("*, race_ticket_types(kind,name,price,round_label,round_date,competitions(name,slug))")
+      .eq("user_id", user.id).order("created_at", { ascending: false }).then(({ data }) => setRows(data ?? []));
+  };
+  useEffect(load, [user]);
+  async function cancel(id: string) {
+    if (!confirm(t("tickets.cancelPrompt"))) return;
+    const { error } = await supabase.rpc("cancel_race_ticket", { _ticket_id: id });
+    if (error) return toast.error(error.message);
+    toast.success(t("tickets.cancelled")); load();
+  }
+  if (rows === null) return <p className="text-sm text-muted-foreground text-center py-12">{t("common.loading")}</p>;
+  if (!rows.length) return (
+    <div className="text-center py-12 space-y-2">
+      <p className="text-sm text-muted-foreground">{t("tickets.none")}</p>
+      <Link to="/competitions" className="text-sm font-medium" style={{ color: "var(--accent)" }}>{t("tickets.browse")}</Link>
+    </div>
+  );
+  return (
+    <div className="space-y-3">
+      {rows.map((r) => {
+        const tt = r.race_ticket_types ?? {};
+        const showQr = tt.kind === "spectator" && r.status === "confirmed";
+        return (
+          <div key={r.id} className="bg-card border border-border rounded-2xl p-3 space-y-1.5">
+            <div className="flex justify-between gap-2">
+              {tt.competitions?.slug ? <Link to="/competitions/$slug" params={{ slug: tt.competitions.slug }} className="font-medium text-sm truncate">{tt.competitions?.name}</Link> : <p className="font-medium text-sm">{tt.competitions?.name}</p>}
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-input h-fit">{t(`tickets.status.${r.status}` as any)}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">{tt.round_label}{tt.round_date ? ` · ${formatDate(tt.round_date, lang, "short")}` : ""}</p>
+            <div className="flex items-center gap-2 text-xs"><KindBadge kind={tt.kind} /><span>{tt.name} · ×{r.quantity}</span></div>
+            {r.status !== "cancelled" && <p className="text-xs text-muted-foreground">{Number(tt.price) > 0 ? payLabel(tr(t), r.payment_status) : t("slot.free")}</p>}
+            {showQr && (openQr === r.id ? <QrPass bookingId={r.id} code={r.check_in_code} checkedInAt={r.checked_in_at} url={raceTicketQrUrl(r.check_in_code)} />
+              : <button onClick={() => setOpenQr(r.id)} className="text-xs font-medium" style={{ color: "var(--accent)" }}>{t("tickets.showQr")}</button>)}
+            {r.status !== "cancelled" && !r.checked_in_at && (
+              <button onClick={() => cancel(r.id)} className="w-full h-9 rounded-xl border border-border text-xs text-muted-foreground">{t("tickets.cancel")}</button>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+const tr = (t: any) => t;
