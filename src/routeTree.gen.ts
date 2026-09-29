@@ -23,6 +23,7 @@ import { Route as AppOrganiserRouteImport } from './routes/_app/organiser'
 import { Route as AppMapRouteImport } from './routes/_app/map'
 import { Route as AppInboxRouteImport } from './routes/_app/inbox'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
+import { Route as AppFriendsRouteImport } from './routes/_app/friends'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppCompetitionsRouteImport } from './routes/_app/competitions'
 import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
@@ -33,6 +34,7 @@ import { Route as AppTrackSlotIdRouteImport } from './routes/_app/track-slot.$id
 import { Route as AppOrganiserTracksRouteImport } from './routes/_app/organiser_.tracks'
 import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
 import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
+import { Route as AppInviteCodeRouteImport } from './routes/_app/invite.$code'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
 import { Route as AppCompetitionsSlugRouteImport } from './routes/_app/competitions_.$slug'
 import { Route as AppCheckinBookingIdRouteImport } from './routes/_app/checkin.$bookingId'
@@ -115,6 +117,11 @@ const AppHomeRoute = AppHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFriendsRoute = AppFriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppExploreRoute = AppExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -163,6 +170,11 @@ const AppOrganiserPostEventRoute = AppOrganiserPostEventRouteImport.update({
 const AppOrganiserApplyRoute = AppOrganiserApplyRouteImport.update({
   id: '/organiser_/apply',
   path: '/organiser/apply',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInviteCodeRoute = AppInviteCodeRouteImport.update({
+  id: '/invite/$code',
+  path: '/invite/$code',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
@@ -242,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/calendar': typeof AppCalendarRoute
   '/competitions': typeof AppCompetitionsRoute
   '/explore': typeof AppExploreRoute
+  '/friends': typeof AppFriendsRoute
   '/home': typeof AppHomeRoute
   '/inbox': typeof AppInboxRoute
   '/map': typeof AppMapRoute
@@ -253,6 +266,7 @@ export interface FileRoutesByFullPath {
   '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/competitions/$slug': typeof AppCompetitionsSlugRoute
   '/event/$eventId': typeof AppEventEventIdRoute
+  '/invite/$code': typeof AppInviteCodeRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
   '/organiser/tracks': typeof AppOrganiserTracksRoute
@@ -279,6 +293,7 @@ export interface FileRoutesByTo {
   '/calendar': typeof AppCalendarRoute
   '/competitions': typeof AppCompetitionsRoute
   '/explore': typeof AppExploreRoute
+  '/friends': typeof AppFriendsRoute
   '/home': typeof AppHomeRoute
   '/inbox': typeof AppInboxRoute
   '/map': typeof AppMapRoute
@@ -290,6 +305,7 @@ export interface FileRoutesByTo {
   '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/competitions/$slug': typeof AppCompetitionsSlugRoute
   '/event/$eventId': typeof AppEventEventIdRoute
+  '/invite/$code': typeof AppInviteCodeRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
   '/organiser/tracks': typeof AppOrganiserTracksRoute
@@ -318,6 +334,7 @@ export interface FileRoutesById {
   '/_app/calendar': typeof AppCalendarRoute
   '/_app/competitions': typeof AppCompetitionsRoute
   '/_app/explore': typeof AppExploreRoute
+  '/_app/friends': typeof AppFriendsRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/inbox': typeof AppInboxRoute
   '/_app/map': typeof AppMapRoute
@@ -329,6 +346,7 @@ export interface FileRoutesById {
   '/_app/checkin/$bookingId': typeof AppCheckinBookingIdRoute
   '/_app/competitions_/$slug': typeof AppCompetitionsSlugRoute
   '/_app/event/$eventId': typeof AppEventEventIdRoute
+  '/_app/invite/$code': typeof AppInviteCodeRoute
   '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
   '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
   '/_app/organiser_/tracks': typeof AppOrganiserTracksRoute
@@ -357,6 +375,7 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/competitions'
     | '/explore'
+    | '/friends'
     | '/home'
     | '/inbox'
     | '/map'
@@ -368,6 +387,7 @@ export interface FileRouteTypes {
     | '/checkin/$bookingId'
     | '/competitions/$slug'
     | '/event/$eventId'
+    | '/invite/$code'
     | '/organiser/apply'
     | '/organiser/post-event'
     | '/organiser/tracks'
@@ -394,6 +414,7 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/competitions'
     | '/explore'
+    | '/friends'
     | '/home'
     | '/inbox'
     | '/map'
@@ -405,6 +426,7 @@ export interface FileRouteTypes {
     | '/checkin/$bookingId'
     | '/competitions/$slug'
     | '/event/$eventId'
+    | '/invite/$code'
     | '/organiser/apply'
     | '/organiser/post-event'
     | '/organiser/tracks'
@@ -432,6 +454,7 @@ export interface FileRouteTypes {
     | '/_app/calendar'
     | '/_app/competitions'
     | '/_app/explore'
+    | '/_app/friends'
     | '/_app/home'
     | '/_app/inbox'
     | '/_app/map'
@@ -443,6 +466,7 @@ export interface FileRouteTypes {
     | '/_app/checkin/$bookingId'
     | '/_app/competitions_/$slug'
     | '/_app/event/$eventId'
+    | '/_app/invite/$code'
     | '/_app/organiser_/apply'
     | '/_app/organiser_/post-event'
     | '/_app/organiser_/tracks'
@@ -573,6 +597,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHomeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/friends': {
+      id: '/_app/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof AppFriendsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/explore': {
       id: '/_app/explore'
       path: '/explore'
@@ -641,6 +672,13 @@ declare module '@tanstack/react-router' {
       path: '/organiser/apply'
       fullPath: '/organiser/apply'
       preLoaderRoute: typeof AppOrganiserApplyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/invite/$code': {
+      id: '/_app/invite/$code'
+      path: '/invite/$code'
+      fullPath: '/invite/$code'
+      preLoaderRoute: typeof AppInviteCodeRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/event/$eventId': {
@@ -736,6 +774,7 @@ interface AppRouteChildren {
   AppCalendarRoute: typeof AppCalendarRoute
   AppCompetitionsRoute: typeof AppCompetitionsRoute
   AppExploreRoute: typeof AppExploreRoute
+  AppFriendsRoute: typeof AppFriendsRoute
   AppHomeRoute: typeof AppHomeRoute
   AppInboxRoute: typeof AppInboxRoute
   AppMapRoute: typeof AppMapRoute
@@ -747,6 +786,7 @@ interface AppRouteChildren {
   AppCheckinBookingIdRoute: typeof AppCheckinBookingIdRoute
   AppCompetitionsSlugRoute: typeof AppCompetitionsSlugRoute
   AppEventEventIdRoute: typeof AppEventEventIdRoute
+  AppInviteCodeRoute: typeof AppInviteCodeRoute
   AppOrganiserApplyRoute: typeof AppOrganiserApplyRoute
   AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
   AppOrganiserTracksRoute: typeof AppOrganiserTracksRoute
@@ -762,6 +802,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppCalendarRoute: AppCalendarRoute,
   AppCompetitionsRoute: AppCompetitionsRoute,
   AppExploreRoute: AppExploreRoute,
+  AppFriendsRoute: AppFriendsRoute,
   AppHomeRoute: AppHomeRoute,
   AppInboxRoute: AppInboxRoute,
   AppMapRoute: AppMapRoute,
@@ -773,6 +814,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppCheckinBookingIdRoute: AppCheckinBookingIdRoute,
   AppCompetitionsSlugRoute: AppCompetitionsSlugRoute,
   AppEventEventIdRoute: AppEventEventIdRoute,
+  AppInviteCodeRoute: AppInviteCodeRoute,
   AppOrganiserApplyRoute: AppOrganiserApplyRoute,
   AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
   AppOrganiserTracksRoute: AppOrganiserTracksRoute,
