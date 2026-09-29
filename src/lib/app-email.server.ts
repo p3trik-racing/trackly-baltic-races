@@ -198,6 +198,6 @@ export async function sendCompetitionEntry(entryId: string, callerId: string) {
     ["Message", e.message ?? ""],
   ].filter(([, v]) => v) as [string, string][];
   await safeSend("competition-entry-admin", "admin@majorkariga.com", {
-    heading: "New competition entry", competition: comp, fullName: e.full_name, fields,
+    heading: "New competition entry", competition: comp, fullName: e.full_name, fields, link: `${SITE_URL}/admin?tab=Competitions`,
   }, `competition-entry-admin-${e.id}`);
 }

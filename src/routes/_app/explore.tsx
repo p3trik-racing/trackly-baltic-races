@@ -86,7 +86,7 @@ function ExplorePage() {
     if (!user) return;
     supabase.from("profiles").select("favourite_categories").eq("id", user.id).maybeSingle()
       .then(({ data }) => {
-        const favs = (data?.favourite_categories ?? []) as string[];
+        const favs = ((data?.favourite_categories ?? []) as string[]).filter((c) => c !== "majorka_special");
         setFavourites(favs);
       });
   }, [user]);
