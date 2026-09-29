@@ -17,6 +17,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as EventTermsRouteImport } from './routes/event-terms'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppTracksRouteImport } from './routes/_app/tracks'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppOrganiserRouteImport } from './routes/_app/organiser'
 import { Route as AppMapRouteImport } from './routes/_app/map'
@@ -80,6 +81,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppTracksRoute = AppTracksRouteImport.update({
+  id: '/tracks',
+  path: '/tracks',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppProfileRoute = AppProfileRouteImport.update({
   id: '/profile',
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof AppMapRoute
   '/organiser': typeof AppOrganiserRoute
   '/profile': typeof AppProfileRoute
+  '/tracks': typeof AppTracksRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
@@ -256,6 +263,7 @@ export interface FileRoutesByTo {
   '/map': typeof AppMapRoute
   '/organiser': typeof AppOrganiserRoute
   '/profile': typeof AppProfileRoute
+  '/tracks': typeof AppTracksRoute
   '/book/$eventId': typeof AppBookEventIdRoute
   '/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/checkin/$bookingId': typeof AppCheckinBookingIdRoute
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   '/_app/map': typeof AppMapRoute
   '/_app/organiser': typeof AppOrganiserRoute
   '/_app/profile': typeof AppProfileRoute
+  '/_app/tracks': typeof AppTracksRoute
   '/_app/book/$eventId': typeof AppBookEventIdRoute
   '/_app/booking/$bookingId': typeof AppBookingBookingIdRoute
   '/_app/checkin/$bookingId': typeof AppCheckinBookingIdRoute
@@ -326,6 +335,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/organiser'
     | '/profile'
+    | '/tracks'
     | '/book/$eventId'
     | '/booking/$bookingId'
     | '/checkin/$bookingId'
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/organiser'
     | '/profile'
+    | '/tracks'
     | '/book/$eventId'
     | '/booking/$bookingId'
     | '/checkin/$bookingId'
@@ -393,6 +404,7 @@ export interface FileRouteTypes {
     | '/_app/map'
     | '/_app/organiser'
     | '/_app/profile'
+    | '/_app/tracks'
     | '/_app/book/$eventId'
     | '/_app/booking/$bookingId'
     | '/_app/checkin/$bookingId'
@@ -482,6 +494,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/tracks': {
+      id: '/_app/tracks'
+      path: '/tracks'
+      fullPath: '/tracks'
+      preLoaderRoute: typeof AppTracksRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/profile': {
       id: '/_app/profile'
@@ -665,6 +684,7 @@ interface AppRouteChildren {
   AppMapRoute: typeof AppMapRoute
   AppOrganiserRoute: typeof AppOrganiserRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppTracksRoute: typeof AppTracksRoute
   AppBookEventIdRoute: typeof AppBookEventIdRoute
   AppBookingBookingIdRoute: typeof AppBookingBookingIdRoute
   AppCheckinBookingIdRoute: typeof AppCheckinBookingIdRoute
@@ -687,6 +707,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMapRoute: AppMapRoute,
   AppOrganiserRoute: AppOrganiserRoute,
   AppProfileRoute: AppProfileRoute,
+  AppTracksRoute: AppTracksRoute,
   AppBookEventIdRoute: AppBookEventIdRoute,
   AppBookingBookingIdRoute: AppBookingBookingIdRoute,
   AppCheckinBookingIdRoute: AppCheckinBookingIdRoute,
