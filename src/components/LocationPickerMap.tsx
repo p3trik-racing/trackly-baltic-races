@@ -5,14 +5,16 @@ import { useEffect, useRef } from "react";
 import { useTheme } from "@/lib/theme-context";
 
 const RIGA: [number, number] = [24.1052, 56.9496];
-const styleUrl = (theme: "dark" | "light") =>
-  `https://tiles.openfreemap.org/styles/${theme === "dark" ? "dark" : "positron"}`;
+import { mapStyle, useMapKind } from "@/lib/map-style";
+import { MapStyleToggle } from "@/components/MapStyleToggle";
 
 /** Small map: tap to place the pin, drag it to fine-tune. */
 export default function LocationPickerMap({ lat, lng, onChange }: {
   lat: number | null; lng: number | null; onChange: (lat: number, lng: number) => void;
 }) {
   const { theme } = useTheme();
+  const [kind, setKind] = useMapKind();
+  const styleKeyRef = useRef(`${kind}:${theme}`);
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
@@ -39,7 +41,7 @@ export default function LocationPickerMap({ lat, lng, onChange }: {
     const has = lat != null && lng != null;
     const map = new maplibregl.Map({
       container: ref.current,
-      style: styleUrl(theme),
+      style: mapStyle(kind, theme),
       center: has ? [lng!, lat!] : RIGA,
       zoom: has ? 13 : 7,
       dragRotate: false,
@@ -57,6 +59,14 @@ export default function LocationPickerMap({ lat, lng, onChange }: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const map = mapRef.current;
+    const next = `${kind}:${theme}`;
+    if (!map || styleKeyRef.current === next) return;
+    styleKeyRef.current = next;
+    map.setStyle(mapStyle(kind, theme));
+  }, [kind, theme]);
+
   // External changes (search result selected) move the pin and the view.
   useEffect(() => {
     const map = mapRef.current;
@@ -67,5 +77,10 @@ export default function LocationPickerMap({ lat, lng, onChange }: {
     map.flyTo({ center: [lng, lat], zoom: 14 });
   }, [lat, lng]);
 
-  return <div ref={ref} className="w-full h-56 rounded-xl overflow-hidden border border-border" />;
+  return (
+    <div className="relative w-full h-56 rounded-xl overflow-hidden border border-border">
+      <div ref={ref} className="w-full h-full" />
+      <MapStyleToggle kind={kind} onChange={setKind} />
+    </div>
+  );
 }

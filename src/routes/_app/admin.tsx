@@ -233,9 +233,14 @@ function Users() {
     const fallback = row?.full_name || row?.username || row?.email || "user";
     try {
       const accessToken = await token();
-      const res: any = accessToken ? await emailOrganiserRole({ data: { userId: id, on, accessToken } }) : null;
-      toast.success(`Done — ${res?.name || fallback} has been emailed`);
-    } catch { toast.success(`Done — ${fallback} has been emailed`); }
+      const res: any = accessToken
+        ? await emailOrganiserRole({ data: { userId: id, on, accessToken } })
+        : { sent: false, reason: "not signed in" };
+      if (res?.sent) toast.success(`Done — ${res?.name || fallback} has been emailed`);
+      else toast.error(`Role changed, but the email didn't send (${res?.reason || "unknown error"})`);
+    } catch (e: any) {
+      toast.error(`Role changed, but the email didn't send (${e?.message || "unknown error"})`);
+    }
     search();
   }
   async function setBlocked(id: string, blocked: boolean) {

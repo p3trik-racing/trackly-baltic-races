@@ -20,8 +20,8 @@ export function clusterEvents(events: UpcomingEvent[]): Cluster[] {
   return [...map.values()];
 }
 
-const styleUrl = (theme: "dark" | "light") =>
-  `https://tiles.openfreemap.org/styles/${theme === "dark" ? "dark" : "positron"}`;
+import { mapStyle, useMapKind } from "@/lib/map-style";
+import { MapStyleToggle } from "@/components/MapStyleToggle";
 
 export default function EventsMap({ events, selected, onSelect }: {
   events: UpcomingEvent[]; selected: string | null; onSelect: (key: string | null) => void;
@@ -36,14 +36,15 @@ export default function EventsMap({ events, selected, onSelect }: {
   const userMarkerRef = useRef<maplibregl.Marker | null>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
-  const currentStyleRef = useRef(styleUrl(theme));
+  const [kind, setKind] = useMapKind();
+  const currentStyleRef = useRef(`${kind}:${theme}`);
 
   useEffect(() => {
     if (!containerRef.current) return;
     maplibregl.setWorkerUrl(workerUrl);
     const instance = new maplibregl.Map({
       container: containerRef.current,
-      style: currentStyleRef.current,
+      style: mapStyle(kind, theme),
       center: [24.1052, 56.9496],
       zoom: 7,
       attributionControl: { compact: true },
@@ -79,14 +80,14 @@ export default function EventsMap({ events, selected, onSelect }: {
 
   useEffect(() => {
     if (!map) return;
-    const nextStyle = styleUrl(theme);
-    if (currentStyleRef.current === nextStyle) return;
-    currentStyleRef.current = nextStyle;
+    const next = `${kind}:${theme}`;
+    if (currentStyleRef.current === next) return;
+    currentStyleRef.current = next;
     // Style changes clear map layers. Refresh the markers once the new style is ready.
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
-    map.setStyle(nextStyle);
-  }, [map, theme]);
+    map.setStyle(mapStyle(kind, theme));
+  }, [map, theme, kind]);
 
   useEffect(() => {
     if (!map) return;
@@ -113,5 +114,10 @@ export default function EventsMap({ events, selected, onSelect }: {
     };
   }, [map, clusters, selected, t, styleRevision]);
 
-  return <div ref={containerRef} className="h-full w-full" />;
+  return (
+    <div className="relative h-full w-full">
+      <div ref={containerRef} className="h-full w-full" />
+      <MapStyleToggle kind={kind} onChange={setKind} />
+    </div>
+  );
 }
