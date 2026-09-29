@@ -336,6 +336,33 @@ export type Database = {
         }
         Relationships: []
       }
+      friendships: {
+        Row: {
+          addressee_id: string
+          created_at: string
+          id: string
+          requester_id: string
+          responded_at: string | null
+          status: string
+        }
+        Insert: {
+          addressee_id: string
+          created_at?: string
+          id?: string
+          requester_id: string
+          responded_at?: string | null
+          status?: string
+        }
+        Update: {
+          addressee_id?: string
+          created_at?: string
+          id?: string
+          requester_id?: string
+          responded_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -539,6 +566,7 @@ export type Database = {
           favourite_categories: string[]
           full_name: string | null
           id: string
+          invite_code: string | null
           is_organiser: boolean
           lang: string
           notify_favourites: boolean
@@ -546,6 +574,7 @@ export type Database = {
           notify_organiser_messages: boolean
           phone: string | null
           saved_events: string[]
+          show_attendance: boolean
           username: string | null
         }
         Insert: {
@@ -559,6 +588,7 @@ export type Database = {
           favourite_categories?: string[]
           full_name?: string | null
           id: string
+          invite_code?: string | null
           is_organiser?: boolean
           lang?: string
           notify_favourites?: boolean
@@ -566,6 +596,7 @@ export type Database = {
           notify_organiser_messages?: boolean
           phone?: string | null
           saved_events?: string[]
+          show_attendance?: boolean
           username?: string | null
         }
         Update: {
@@ -579,6 +610,7 @@ export type Database = {
           favourite_categories?: string[]
           full_name?: string | null
           id?: string
+          invite_code?: string | null
           is_organiser?: boolean
           lang?: string
           notify_favourites?: boolean
@@ -586,9 +618,178 @@ export type Database = {
           notify_organiser_messages?: boolean
           phone?: string | null
           saved_events?: string[]
+          show_attendance?: boolean
           username?: string | null
         }
         Relationships: []
+      }
+      race_ticket_types: {
+        Row: {
+          capacity: number | null
+          competition_id: string
+          created_at: string
+          id: string
+          kind: string
+          name: string
+          price: number
+          round_date: string | null
+          round_label: string
+          sales_open: boolean
+        }
+        Insert: {
+          capacity?: number | null
+          competition_id: string
+          created_at?: string
+          id?: string
+          kind: string
+          name: string
+          price?: number
+          round_date?: string | null
+          round_label: string
+          sales_open?: boolean
+        }
+        Update: {
+          capacity?: number | null
+          competition_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          name?: string
+          price?: number
+          round_date?: string | null
+          round_label?: string
+          sales_open?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_ticket_types_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_tickets: {
+        Row: {
+          car: string | null
+          check_in_code: string
+          checked_in_at: string | null
+          class: string | null
+          created_at: string
+          email: string
+          holder_name: string
+          id: string
+          licence_no: string | null
+          payment_status: string
+          phone: string | null
+          quantity: number
+          status: string
+          ticket_type_id: string
+          user_id: string
+        }
+        Insert: {
+          car?: string | null
+          check_in_code?: string
+          checked_in_at?: string | null
+          class?: string | null
+          created_at?: string
+          email: string
+          holder_name: string
+          id?: string
+          licence_no?: string | null
+          payment_status?: string
+          phone?: string | null
+          quantity?: number
+          status?: string
+          ticket_type_id: string
+          user_id: string
+        }
+        Update: {
+          car?: string | null
+          check_in_code?: string
+          checked_in_at?: string | null
+          class?: string | null
+          created_at?: string
+          email?: string
+          holder_name?: string
+          id?: string
+          licence_no?: string | null
+          payment_status?: string
+          phone?: string | null
+          quantity?: number
+          status?: string
+          ticket_type_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_tickets_ticket_type_id_fkey"
+            columns: ["ticket_type_id"]
+            isOneToOne: false
+            referencedRelation: "race_ticket_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      slot_bookings: {
+        Row: {
+          amount: number
+          attendee_email: string
+          attendee_name: string
+          attendee_phone: string | null
+          check_in_code: string
+          created_at: string
+          id: string
+          is_host: boolean
+          kind: string
+          payment_status: string
+          slot_id: string
+          spots: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          attendee_email: string
+          attendee_name: string
+          attendee_phone?: string | null
+          check_in_code?: string
+          created_at?: string
+          id?: string
+          is_host?: boolean
+          kind: string
+          payment_status?: string
+          slot_id: string
+          spots?: number
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          attendee_email?: string
+          attendee_name?: string
+          attendee_phone?: string | null
+          check_in_code?: string
+          created_at?: string
+          id?: string
+          is_host?: boolean
+          kind?: string
+          payment_status?: string
+          slot_id?: string
+          spots?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slot_bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "venue_slots"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -608,18 +809,218 @@ export type Database = {
         }
         Relationships: []
       }
+      venue_price_rules: {
+        Row: {
+          days: number[]
+          end_time: string
+          id: string
+          label: string | null
+          price_per_hour: number
+          start_time: string
+          venue_id: string
+        }
+        Insert: {
+          days: number[]
+          end_time: string
+          id?: string
+          label?: string | null
+          price_per_hour: number
+          start_time: string
+          venue_id: string
+        }
+        Update: {
+          days?: number[]
+          end_time?: string
+          id?: string
+          label?: string | null
+          price_per_hour?: number
+          start_time?: string
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_price_rules_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venue_slots: {
+        Row: {
+          created_at: string
+          date: string
+          end_time: string
+          host_gap: number | null
+          host_id: string | null
+          id: string
+          max_cars: number
+          min_cars: number
+          notes: string | null
+          per_spot_price: number | null
+          price_total: number
+          split_deadline: string | null
+          start_time: string
+          status: string
+          venue_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          end_time: string
+          host_gap?: number | null
+          host_id?: string | null
+          id?: string
+          max_cars: number
+          min_cars?: number
+          notes?: string | null
+          per_spot_price?: number | null
+          price_total: number
+          split_deadline?: string | null
+          start_time: string
+          status?: string
+          venue_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          end_time?: string
+          host_gap?: number | null
+          host_id?: string | null
+          id?: string
+          max_cars?: number
+          min_cars?: number
+          notes?: string | null
+          per_spot_price?: number | null
+          price_total?: number
+          split_deadline?: string | null
+          start_time?: string
+          status?: string
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_slots_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venues: {
+        Row: {
+          city: string | null
+          country: string
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          id: string
+          location_lat: number | null
+          location_lng: number | null
+          location_name: string | null
+          name: string
+          owner_id: string | null
+          phone: string | null
+          requirements: string[]
+          slug: string
+          status: string
+          track_info: string | null
+          website: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          location_name?: string | null
+          name: string
+          owner_id?: string | null
+          phone?: string | null
+          requirements?: string[]
+          slug: string
+          status?: string
+          track_info?: string | null
+          website?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          location_name?: string | null
+          name?: string
+          owner_id?: string | null
+          phone?: string | null
+          requirements?: string[]
+          slug?: string
+          status?: string
+          track_info?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      accept_invite: { Args: { _code: string }; Returns: string }
       announce_event: { Args: { _event_id: string }; Returns: Json }
+      are_friends: { Args: { _a: string; _b: string }; Returns: boolean }
+      book_slot_whole: {
+        Args: {
+          _cars: number
+          _email: string
+          _name: string
+          _phone: string
+          _slot_id: string
+        }
+        Returns: string
+      }
+      buy_race_ticket: {
+        Args: {
+          _car: string
+          _class: string
+          _email: string
+          _licence: string
+          _name: string
+          _phone: string
+          _qty: number
+          _type_id: string
+        }
+        Returns: string
+      }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
+      can_manage_venue: { Args: { _venue_id: string }; Returns: boolean }
+      cancel_race_ticket: { Args: { _ticket_id: string }; Returns: undefined }
+      cancel_slot_booking: { Args: { _booking_id: string }; Returns: undefined }
       check_in_booking: {
         Args: { _booking_id?: string; _code?: string; _event_id?: string }
         Returns: Json
       }
       close_check_in: { Args: { _event_id: string }; Returns: number }
+      friends_going: {
+        Args: { _event_id: string }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          user_id: string
+          username: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -627,18 +1028,66 @@ export type Database = {
         }
         Returns: boolean
       }
+      inviter_preview: {
+        Args: { _code: string }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          username: string
+        }[]
+      }
       is_blocked: { Args: { _user_id: string }; Returns: boolean }
       is_owner: { Args: never; Returns: boolean }
       is_username_available: { Args: { _username: string }; Returns: boolean }
+      join_split: {
+        Args: {
+          _email: string
+          _name: string
+          _phone: string
+          _slot_id: string
+          _spots: number
+        }
+        Returns: string
+      }
+      my_friends: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          friendship_id: string
+          full_name: string
+          incoming: boolean
+          status: string
+          user_id: string
+          username: string
+        }[]
+      }
+      process_split_deadlines: { Args: never; Returns: number }
+      race_tickets_left: { Args: { _type_id: string }; Returns: number }
       redeem_organiser_code: { Args: { _code: string }; Returns: boolean }
+      remove_friend: { Args: { _other: string }; Returns: undefined }
+      respond_friend_request: {
+        Args: { _accept: boolean; _id: string }
+        Returns: undefined
+      }
       review_organiser_application: {
         Args: { _approve: boolean; _id: string; _note?: string }
         Returns: undefined
+      }
+      search_profiles: {
+        Args: { _q: string }
+        Returns: {
+          avatar_url: string
+          friendship: string
+          full_name: string
+          id: string
+          username: string
+        }[]
       }
       send_attendee_message: {
         Args: { _event_id: string; _message: string }
         Returns: Json
       }
+      send_friend_request: { Args: { _target: string }; Returns: string }
       set_admin_role: {
         Args: { _on: boolean; _user_id: string }
         Returns: undefined
@@ -650,6 +1099,18 @@ export type Database = {
       set_user_blocked: {
         Args: { _blocked: boolean; _reason?: string; _user_id: string }
         Returns: undefined
+      }
+      slot_spots_taken: { Args: { _slot_id: string }; Returns: number }
+      start_split: {
+        Args: {
+          _deadline: string
+          _email: string
+          _name: string
+          _phone: string
+          _slot_id: string
+          _spots: number
+        }
+        Returns: string
       }
       undo_check_in: { Args: { _booking_id: string }; Returns: undefined }
     }
