@@ -31,6 +31,8 @@ function ApplyPage() {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [addingOther, setAddingOther] = useState(false);
+  const [other, setOther] = useState("");
   const [f, setF] = useState({
     full_name: "", email: "", phone: "", organiser_type: "organiser", company: "", registration_no: "",
     country: COUNTRIES[0].value as string, city: "", venues: "", event_types: [] as string[], events_per_year: "",
@@ -121,7 +123,33 @@ function ApplyPage() {
                 </button>
               );
             })}
+            {f.event_types.filter((x) => !cats.some((c) => c.value === x)).map((x) => (
+              <button key={x} type="button" onClick={() => set("event_types", f.event_types.filter((v) => v !== x))}
+                className="px-3 h-9 rounded-full text-xs border"
+                style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)", borderColor: "var(--accent)" }}>
+                {x} ×
+              </button>
+            ))}
+            {!addingOther && (
+              <button type="button" onClick={() => setAddingOther(true)} className="px-3 h-9 rounded-full text-xs border" style={{ borderColor: "var(--border)" }}>
+                {t("apply.other")}
+              </button>
+            )}
           </div>
+          {addingOther && (
+            <div className="mt-2 flex gap-2">
+              <input className="input-field" value={other} placeholder={t("apply.otherPlaceholder")} onChange={(e) => setOther(e.target.value)} />
+              <button type="button" className="h-12 shrink-0 rounded-xl border border-border px-4 text-sm"
+                onClick={() => {
+                  const v = other.trim();
+                  if (!v || v.toLowerCase().replace(/\s+/g, "_") === "majorka_special" || f.event_types.includes(v)) return;
+                  set("event_types", [...f.event_types, v]);
+                  setOther(""); setAddingOther(false);
+                }}>
+                {t("apply.add")}
+              </button>
+            </div>
+          )}
         </F>
         <F label={t("apply.perYear")}>
           <select className="input-field" value={f.events_per_year} onChange={(e) => set("events_per_year", e.target.value)}>

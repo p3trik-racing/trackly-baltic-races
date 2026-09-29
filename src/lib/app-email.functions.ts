@@ -48,3 +48,13 @@ export const emailCompetitionEntry = createServerFn({ method: "POST" })
     } catch (e) { console.error("[email] competition entry", e); }
     return { ok: true };
   });
+
+export const emailOrganiserRole = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ ...base, userId: z.string().uuid(), on: z.boolean() }).parse(d))
+  .handler(async ({ data }) => {
+    try {
+      const { m, user } = await caller(data.accessToken);
+      if (user) return await m.sendOrganiserRoleEmail(data.userId, data.on, user.id);
+    } catch (e) { console.error("[email] organiser role", e); }
+    return { ok: false, name: "" };
+  });

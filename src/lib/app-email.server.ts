@@ -201,3 +201,13 @@ export async function sendCompetitionEntry(entryId: string, callerId: string) {
     heading: "New competition entry", competition: comp, fullName: e.full_name, fields, link: `${SITE_URL}/admin?tab=Competitions`,
   }, `competition-entry-admin-${e.id}`);
 }
+
+/** Admin granted/revoked organiser role. Returns the recipient's display name. */
+export async function sendOrganiserRoleEmail(userId: string, on: boolean, callerId: string) {
+  if (!(await isAdmin(callerId))) return { ok: false, name: "" };
+  const p = await profile(userId);
+  const name = p?.full_name || p?.username || p?.email || "";
+  await safeSend(on ? "organiser-role-granted" : "organiser-role-revoked", p?.email, { lang: pick(p?.lang) },
+    `organiser-role-${on ? "granted" : "revoked"}-${userId}-${Date.now()}`);
+  return { ok: true, name };
+}
