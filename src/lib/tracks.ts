@@ -50,3 +50,7 @@ export const SLOT_COLORS: Record<string, string> = {
 };
 
 export const VENUE_REQS = ["helmet", "tech_ok", "sound_limit", "driver_only", "studded_tyres", "rwd_only"] as const;
+
+export function payLabel(t: (k: any) => string, status: string) {
+  return status === "not_required" ? t("slot.free") : status === "paid" ? t("slot.paid") : t("slot.paymentPending");
+}

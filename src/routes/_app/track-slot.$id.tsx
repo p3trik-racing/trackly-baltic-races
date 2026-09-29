@@ -13,7 +13,7 @@ import { ShareSheet } from "@/components/ShareSheet";
 import { QrPass } from "@/components/QrPass";
 import { SplitProgress } from "@/components/SplitProgress";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { eur, hhmm, perSpot, slotStart, type Slot } from "@/lib/tracks";
+import { eur, hhmm, payLabel, perSpot, slotStart, type Slot } from "@/lib/tracks";
 
 const GENERIC = [
   { title: "Track time — Majorka Racing" },
@@ -194,10 +194,6 @@ function SlotPage() {
       {mode && <BookSheet slot={s} mode={mode} taken={taken} onClose={() => setMode(null)} onDone={(r) => { setMode(null); setSuccess(r); load(); }} />}
     </main>
   );
-}
-
-export function payLabel(t: (k: any) => string, status: string) {
-  return status === "not_required" ? t("slot.free") : status === "paid" ? t("slot.paid") : t("slot.paymentPending");
 }
 
 function Line({ k, v }: { k: string; v: string }) {
