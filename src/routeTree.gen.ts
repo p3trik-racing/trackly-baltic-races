@@ -30,6 +30,7 @@ import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppTracksSlugRouteImport } from './routes/_app/tracks_.$slug'
 import { Route as AppTrackSlotIdRouteImport } from './routes/_app/track-slot.$id'
+import { Route as AppOrganiserTracksRouteImport } from './routes/_app/organiser_.tracks'
 import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
 import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
 import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
@@ -149,6 +150,11 @@ const AppTrackSlotIdRoute = AppTrackSlotIdRouteImport.update({
   path: '/track-slot/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOrganiserTracksRoute = AppOrganiserTracksRouteImport.update({
+  id: '/organiser_/tracks',
+  path: '/organiser/tracks',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppOrganiserPostEventRoute = AppOrganiserPostEventRouteImport.update({
   id: '/organiser_/post-event',
   path: '/organiser/post-event',
@@ -249,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
+  '/organiser/tracks': typeof AppOrganiserTracksRoute
   '/track-slot/$id': typeof AppTrackSlotIdRoute
   '/tracks/$slug': typeof AppTracksSlugRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
@@ -285,6 +292,7 @@ export interface FileRoutesByTo {
   '/event/$eventId': typeof AppEventEventIdRoute
   '/organiser/apply': typeof AppOrganiserApplyRoute
   '/organiser/post-event': typeof AppOrganiserPostEventRoute
+  '/organiser/tracks': typeof AppOrganiserTracksRoute
   '/track-slot/$id': typeof AppTrackSlotIdRoute
   '/tracks/$slug': typeof AppTracksSlugRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
@@ -323,6 +331,7 @@ export interface FileRoutesById {
   '/_app/event/$eventId': typeof AppEventEventIdRoute
   '/_app/organiser_/apply': typeof AppOrganiserApplyRoute
   '/_app/organiser_/post-event': typeof AppOrganiserPostEventRoute
+  '/_app/organiser_/tracks': typeof AppOrganiserTracksRoute
   '/_app/track-slot/$id': typeof AppTrackSlotIdRoute
   '/_app/tracks_/$slug': typeof AppTracksSlugRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
@@ -361,6 +370,7 @@ export interface FileRouteTypes {
     | '/event/$eventId'
     | '/organiser/apply'
     | '/organiser/post-event'
+    | '/organiser/tracks'
     | '/track-slot/$id'
     | '/tracks/$slug'
     | '/api/public/cron/reminders'
@@ -397,6 +407,7 @@ export interface FileRouteTypes {
     | '/event/$eventId'
     | '/organiser/apply'
     | '/organiser/post-event'
+    | '/organiser/tracks'
     | '/track-slot/$id'
     | '/tracks/$slug'
     | '/api/public/cron/reminders'
@@ -434,6 +445,7 @@ export interface FileRouteTypes {
     | '/_app/event/$eventId'
     | '/_app/organiser_/apply'
     | '/_app/organiser_/post-event'
+    | '/_app/organiser_/tracks'
     | '/_app/track-slot/$id'
     | '/_app/tracks_/$slug'
     | '/api/public/cron/reminders'
@@ -610,6 +622,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTrackSlotIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/organiser_/tracks': {
+      id: '/_app/organiser_/tracks'
+      path: '/organiser/tracks'
+      fullPath: '/organiser/tracks'
+      preLoaderRoute: typeof AppOrganiserTracksRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/organiser_/post-event': {
       id: '/_app/organiser_/post-event'
       path: '/organiser/post-event'
@@ -730,6 +749,7 @@ interface AppRouteChildren {
   AppEventEventIdRoute: typeof AppEventEventIdRoute
   AppOrganiserApplyRoute: typeof AppOrganiserApplyRoute
   AppOrganiserPostEventRoute: typeof AppOrganiserPostEventRoute
+  AppOrganiserTracksRoute: typeof AppOrganiserTracksRoute
   AppTrackSlotIdRoute: typeof AppTrackSlotIdRoute
   AppTracksSlugRoute: typeof AppTracksSlugRoute
   AppOrganiserEventsEventIdBookingsRoute: typeof AppOrganiserEventsEventIdBookingsRoute
@@ -755,6 +775,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppEventEventIdRoute: AppEventEventIdRoute,
   AppOrganiserApplyRoute: AppOrganiserApplyRoute,
   AppOrganiserPostEventRoute: AppOrganiserPostEventRoute,
+  AppOrganiserTracksRoute: AppOrganiserTracksRoute,
   AppTrackSlotIdRoute: AppTrackSlotIdRoute,
   AppTracksSlugRoute: AppTracksSlugRoute,
   AppOrganiserEventsEventIdBookingsRoute:
