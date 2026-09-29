@@ -1,10 +1,17 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Link } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/lib/theme-context";
-import { LanguageProvider, useLang } from "@/i18n";
+import { LanguageProvider, useLang, FirstLanguageSheet } from "@/i18n";
+import { InAppBrowserBanner } from "@/components/InAppBrowserBanner";
+import { useRouterState } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect } from "react";
 import { initPwa } from "@/lib/pwa";
+
+function LangSheetGate() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  return path === "/" || path === "/home" ? <FirstLanguageSheet /> : null;
+}
 
 function PwaInit() {
   useEffect(() => { initPwa(); }, []);
@@ -35,6 +42,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
+      { name: "google", content: "notranslate" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0A0A0A" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
@@ -68,7 +76,9 @@ export const Route = createRootRoute({
     <ThemeProvider>
       <LanguageProvider>
       <AuthProvider>
+        <InAppBrowserBanner />
         <Outlet />
+        <LangSheetGate />
         <Toaster />
         <PwaInit />
       </AuthProvider>
@@ -80,7 +90,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" translate="no" className="notranslate" suppressHydrationWarning>
       <head>
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />

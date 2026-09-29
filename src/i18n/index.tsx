@@ -54,6 +54,10 @@ function detectLang(): Lang {
   return "en";
 }
 
+export function hasSavedLang() {
+  try { return !!window.localStorage.getItem(STORAGE_KEY); } catch { return true; }
+}
+
 const LangContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: TFn }>({
   lang: "en",
   setLang: () => {},
@@ -69,7 +73,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // Persist the UI language on login so emails can use it later.
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event !== "SIGNED_IN") return;
+      if (event !== "SIGNED_IN" && event !== "INITIAL_SESSION") return;
       const l = detectLang();
       setTimeout(() => saveProfileLang(l, session?.user?.id), 0);
     });
@@ -125,4 +129,30 @@ export function countryName(t: TFn, v?: string | null) {
   if (!v) return "";
   const k = `countries.${v}` as TranslationKey;
   return k in en ? `${FLAGS[v]} ${t(k)}` : v;
+}
+
+const LANG_NAMES: Record<Lang, string> = { en: "English", ru: "Русский", lv: "Latviešu" };
+
+/** One-time bottom sheet shown when no language has been saved yet. */
+export function FirstLanguageSheet() {
+  const { lang, setLang, t } = useLang();
+  const [open, setOpen] = useState(false);
+  useEffect(() => { setOpen(!hasSavedLang()); }, []);
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-background/60" role="dialog" aria-modal="true">
+      <div className="w-full max-w-md bg-card border border-border rounded-t-2xl p-5 pb-8 space-y-3">
+        <p className="font-medium text-center">{t("lang.choose")}</p>
+        <div className="grid grid-cols-3 gap-2">
+          {LANGS.map((l) => (
+            <button key={l} type="button" onClick={() => { setLang(l); setOpen(false); }}
+              className="h-11 rounded-xl text-sm border"
+              style={lang === l ? { backgroundColor: "var(--accent)", color: "var(--accent-foreground)", borderColor: "var(--accent)" } : { borderColor: "var(--border)" }}>
+              {LANG_NAMES[l]}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }

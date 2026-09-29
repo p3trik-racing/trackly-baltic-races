@@ -55,6 +55,9 @@ export const emailOrganiserRole = createServerFn({ method: "POST" })
     try {
       const { m, user } = await caller(data.accessToken);
       if (user) return await m.sendOrganiserRoleEmail(data.userId, data.on, user.id);
-    } catch (e) { console.error("[email] organiser role", e); }
-    return { ok: false, name: "" };
+      return { ok: false, sent: false, reason: "not signed in", name: "" };
+    } catch (e: any) {
+      console.error("[email] organiser role", e);
+      return { ok: false, sent: false, reason: String(e?.message ?? "send failed"), name: "" };
+    }
   });

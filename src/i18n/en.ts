@@ -605,6 +605,20 @@ export const en = {
   "aria.share": "Share",
   "aria.save": "Save event",
   "aria.unsave": "Remove from saved",
+  "lang.choose": "Choose language",
+  "inapp.banner": "For the best experience open in your browser",
+  "inapp.copy": "Copy link",
+  "inapp.copied": "Link copied",
+  "inapp.chrome": "Open in Chrome",
+  "inapp.dismiss": "Dismiss",
+  "ios.title": "Install on iPhone / iPad",
+  "ios.step1": "Tap Share (the square with an arrow) in Safari",
+  "ios.step2": "Choose “Add to Home Screen”",
+  "ios.step3": "Tap “Add”",
+  "ios.openSafari": "Open this page in Safari first",
+  "map.dark": "Dark",
+  "map.satellite": "Satellite",
+  "map.styleToggle": "Switch map style",
 } as const;
 
 export type TranslationKey = keyof typeof en;

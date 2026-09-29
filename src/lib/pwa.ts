@@ -45,19 +45,20 @@ export function initPwa() {
 
 export function useInstallState() {
   const [, force] = useState(0);
-  const [env, setEnv] = useState({ standalone: false, ios: false });
+  const [env, setEnv] = useState({ standalone: false, ios: false, safari: false });
   useEffect(() => {
     const l = () => force((n) => n + 1);
     listeners.add(l);
     const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as any).standalone === true;
     const ua = navigator.userAgent;
     const ios = /iphone|ipad|ipod/i.test(ua) || (ua.includes("Macintosh") && "ontouchend" in document);
-    setEnv({ standalone, ios });
+    const safari = ios && /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|YaBrowser|Telegram|Instagram|FBAN|FBAV|BytedanceWebview|musical_ly/i.test(ua) && !(window as any).TelegramWebviewProxy;
+    setEnv({ standalone, ios, safari });
     return () => { listeners.delete(l); };
   }, []);
   return {
     ...env,
-    canPrompt: !!deferred,
+    canPrompt: !env.ios && !!deferred,
     async prompt() {
       if (!deferred) return;
       await deferred.prompt();
