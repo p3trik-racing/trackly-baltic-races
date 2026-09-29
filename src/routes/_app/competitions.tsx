@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLang, countryName } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
-import { nextRound, type Round } from "@/lib/competitions";
+import { nextRound, type Round, ctext } from "@/lib/competitions";
 import { formatRoundDate } from "@/lib/format";
 
 export const Route = createFileRoute("/_app/competitions")({
@@ -25,7 +25,7 @@ function CompetitionsPage() {
   const [beginner, setBeginner] = useState(false);
 
   useEffect(() => {
-    supabase.from("competitions").select("id,slug,name,discipline,country,season,rounds,beginner_friendly")
+    supabase.from("competitions").select("id,slug,name,discipline,country,season,rounds,beginner_friendly,description,i18n")
       .eq("status", "live").order("sort").then(({ data }) => setRows(data ?? []));
   }, []);
 
@@ -77,6 +77,7 @@ function CompetitionsPage() {
                     </span>
                   )}
                 </div>
+                {ctext(c, "description", lang) && <p className="text-xs text-muted-foreground line-clamp-2">{ctext(c, "description", lang)}</p>}
                 {c.season && <p className="text-xs text-muted-foreground">{t("compete.season")}: {c.season}</p>}
                 <p className="text-xs text-muted-foreground">{r ? <>{t("compete.nextRound")}: {formatRoundDate(r.date, lang)}{r.venue ? ` · ${r.venue}` : ""}</> : t("compete.nextSeasonTbc")}</p>
               </Link>

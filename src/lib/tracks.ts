@@ -54,3 +54,9 @@ export const VENUE_REQS = ["helmet", "tech_ok", "sound_limit", "driver_only", "s
 export function payLabel(t: (k: any) => string, status: string) {
   return status === "not_required" ? t("slot.free") : status === "paid" ? t("slot.paid") : t("slot.paymentPending");
 }
+
+/** Extracts a check-in code from a scanned URL (?c=) or raw text. */
+export function codeFromScan(text: string): string {
+  try { const c = new URL(text.trim()).searchParams.get("c"); if (c) return c.toUpperCase(); } catch {}
+  return text.trim().toUpperCase();
+}
