@@ -204,10 +204,21 @@ export async function sendCompetitionEntry(entryId: string, callerId: string) {
 
 /** Admin granted/revoked organiser role. Returns the recipient's display name. */
 export async function sendOrganiserRoleEmail(userId: string, on: boolean, callerId: string) {
-  if (!(await isAdmin(callerId))) return { ok: false, name: "" };
+  if (!(await isAdmin(callerId))) return { ok: false, sent: false, reason: "forbidden", name: "" };
   const p = await profile(userId);
   const name = p?.full_name || p?.username || p?.email || "";
-  await safeSend(on ? "organiser-role-granted" : "organiser-role-revoked", p?.email, { lang: pick(p?.lang) },
-    `organiser-role-${on ? "granted" : "revoked"}-${userId}-${Date.now()}`);
-  return { ok: true, name };
+  if (!p?.email) return { ok: true, sent: false, reason: "no email address", name };
+  const action = on ? "granted" : "revoked";
+  const minute = Math.floor(Date.now() / 60000);
+  try {
+    const r = await sendTemplateEmail(`organiser-role-${action}`, p.email, {
+      templateData: { lang: pick(p?.lang) },
+      idempotencyKey: `organiser-role-${action}-${userId}-${minute}`,
+      replyTo: REPLY_TO,
+    });
+    return r.sent ? { ok: true, sent: true, name } : { ok: true, sent: false, reason: r.reason, name };
+  } catch (e: any) {
+    console.error("[email] organiser role failed:", e?.code ?? "", e?.message ?? e);
+    return { ok: true, sent: false, reason: e?.code || e?.message || "send failed", name };
+  }
 }

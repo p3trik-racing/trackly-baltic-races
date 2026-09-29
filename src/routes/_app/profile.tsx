@@ -58,12 +58,17 @@ function ProfilePage() {
   const [redeeming, setRedeeming] = useState(false);
   const [followingList, setFollowingList] = useState<{ id: string; name: string }[]>([]);
   const install = useInstallState();
+  const [iosSheet, setIosSheet] = useState(false);
+  const [saved, setSaved] = useState<{ full_name: string | null; username: string | null; email: string | null } | null>(null);
 
   useEffect(() => {
     if (!loading && !user) { navigate({ to: "/login" }); return; }
     if (!user) return;
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
-      .then(({ data }) => setProfile(data as any));
+      .then(({ data }) => {
+        setProfile(data as any);
+        if (data) setSaved({ full_name: (data as any).full_name, username: (data as any).username, email: (data as any).email });
+      });
     supabase.from("organiser_applications").select("status,admin_note").eq("user_id", user.id)
       .order("created_at", { ascending: false }).limit(1).maybeSingle()
       .then(({ data }) => setApplication(data));
@@ -93,6 +98,7 @@ function ProfilePage() {
       .eq("id", user.id);
     setSavingInfo(false);
     if (error) return toast.error(error.message);
+    setSaved((s) => ({ ...(s ?? { username: profile.username, email: profile.email }), full_name: profile.full_name }));
     toast.success(t("profile.infoSaved"));
   }
 
@@ -205,9 +211,13 @@ function ProfilePage() {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-medium truncate">{profile.full_name || "—"}</p>
-          {profile.username && !editingUsername && (
-            <p className="text-xs text-muted-foreground truncate">@{profile.username}</p>
+          <p className="font-medium truncate">{
+            saved?.full_name?.trim() ||
+            (saved?.username ? `@${saved.username}` : "") ||
+            (saved?.email || user?.email || "").split("@")[0] || "—"
+          }</p>
+          {saved?.full_name?.trim() && saved?.username && (
+            <p className="text-xs text-muted-foreground truncate">@{saved.username}</p>
           )}
           <p className="text-sm text-muted-foreground truncate">{profile.email || user?.email}</p>
         </div>
@@ -247,6 +257,7 @@ function ProfilePage() {
                 const { error } = await supabase.from("profiles").update({ username: usernameDraft }).eq("id", user.id);
                 if (error) return toast.error(error.message.includes("duplicate") ? t("profile.usernameTaken") : error.message);
                 setProfile((p) => p ? { ...p, username: usernameDraft } : p);
+                setSaved((s) => s ? { ...s, username: usernameDraft } : s);
                 setEditingUsername(false);
                 toast.success(t("profile.usernameUpdated"));
               }}
@@ -432,13 +443,29 @@ function ProfilePage() {
           <Smartphone size={20} className="text-muted-foreground shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium">{t("profile.install")}</p>
-            <p className="text-xs text-muted-foreground">{install.ios && !install.canPrompt ? t("profile.installIos") : t("profile.installHelp")}</p>
+            <p className="text-xs text-muted-foreground">{install.ios ? t("profile.installIos") : t("profile.installHelp")}</p>
           </div>
-          {install.canPrompt && (
-            <button onClick={() => install.prompt()} className="px-4 h-9 rounded-xl text-sm font-medium text-accent-foreground"
+          {(install.canPrompt || install.ios) && (
+            <button onClick={() => (install.ios ? setIosSheet(true) : install.prompt())} className="px-4 h-9 rounded-xl text-sm font-medium text-accent-foreground"
               style={{ backgroundColor: "var(--accent)" }}>{t("profile.installButton")}</button>
           )}
         </section>
+      )}
+
+      {iosSheet && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-background/60" role="dialog" aria-modal="true" onClick={() => setIosSheet(false)}>
+          <div className="w-full max-w-md bg-card border border-border rounded-t-2xl p-5 pb-8 space-y-3" onClick={(e) => e.stopPropagation()}>
+            <p className="font-medium">{t("ios.title")}</p>
+            {install.safari ? (
+              <ol className="list-decimal pl-5 space-y-2 text-sm">
+                <li>{t("ios.step1")}</li><li>{t("ios.step2")}</li><li>{t("ios.step3")}</li>
+              </ol>
+            ) : (
+              <p className="text-sm">{t("ios.openSafari")}</p>
+            )}
+            <button onClick={() => setIosSheet(false)} className="w-full h-11 rounded-xl border border-border text-sm">{t("common.close")}</button>
+          </div>
+        </div>
       )}
 
       {/* Majorka */}
