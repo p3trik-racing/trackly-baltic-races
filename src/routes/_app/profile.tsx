@@ -519,7 +519,7 @@ function MyCompetitions({ userId }: { userId?: string }) {
           className="flex items-center justify-between gap-3 text-sm">
           <span className="truncate">{r.competitions?.name ?? "—"}</span>
           <span className="shrink-0 text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
-            {t(`compete.status.${r.status}`)}
+            {t(`compete.status.${r.status}` as any)}
           </span>
         </Link>
       ))}
