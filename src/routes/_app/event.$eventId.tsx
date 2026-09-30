@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { formatDate } from "@/lib/format";
 import { useLang, catLabel, countryName, hasTranslationKey, LangSwitcher } from "@/i18n";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { RateEventCard, RatingBadge } from "@/components/Ratings";
 import { supabase } from "@/integrations/supabase/client";
 import { eventCover } from "@/lib/event-cover";
 import { ArrowLeft, Calendar, Clock, MapPin, Share2, Heart, User, ExternalLink, Navigation, CalendarPlus, Flag } from "lucide-react";
@@ -75,6 +76,10 @@ function EventDetail() {
   const [shareOpen, setShareOpen] = useState(false);
   const [following, setFollowing] = useState(false);
   const [followBusy, setFollowBusy] = useState(false);
+  const [rating, setRating] = useState<{ avg_stars: number; ratings: number } | null>(null);
+  const [orgRating, setOrgRating] = useState<{ avg_stars: number; ratings: number } | null>(null);
+  const [highlightRate, setHighlightRate] = useState(false);
+  const rateRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle()
@@ -99,6 +104,23 @@ function EventDetail() {
         setSaved(list.includes(eventId));
       });
   }, [eventId, user]);
+
+  const loadRatings = useCallback(() => {
+    supabase.rpc("event_rating_summary", { _event_id: eventId }).then(({ data }) => setRating((data as any)?.[0] ?? null));
+  }, [eventId]);
+  useEffect(() => { loadRatings(); }, [loadRatings]);
+  useEffect(() => {
+    if (!event?.organiser_id) return;
+    supabase.rpc("organiser_rating_summary", { _organiser_id: event.organiser_id }).then(({ data }) => setOrgRating((data as any)?.[0] ?? null));
+  }, [event?.organiser_id]);
+  // ?rate=1 → scroll to and highlight the rating card once it renders.
+  useEffect(() => {
+    if (typeof window === "undefined" || !myBooking || !rateRef.current) return;
+    if (new URLSearchParams(window.location.search).get("rate") === "1") {
+      setHighlightRate(true);
+      rateRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [myBooking, event]);
 
   function onShare() { setShareOpen(true); }
 
@@ -137,6 +159,7 @@ function EventDetail() {
     return <div className="container-app py-10 text-muted-foreground">{t("common.loading")}</div>;
   }
   const soldOut = event.capacity > 0 && bookedCount >= event.capacity;
+  const isPast = event.date <= new Date().toISOString().slice(0, 10);
 
   return (
     <main className="pb-32 md:container-app md:pt-6">
