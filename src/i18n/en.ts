@@ -811,6 +811,8 @@ export const en = {
   "inbox.event_photos": "Event photos",
   "inbox.rate_event": "Rate the event",
   "compete.cover": "Cover photo",
+  "mytracks.bookingEmails": "Booking emails go to",
+  "mytracks.bookingEmailsHint": "Booking notifications are sent here and to your account email",
 } as const;
 
 export type TranslationKey = keyof typeof en;

@@ -763,4 +763,6 @@ export const ru: Partial<Record<keyof typeof en, string>> = {
   "inbox.event_photos": "Фото события",
   "inbox.rate_event": "Оцени событие",
   "compete.cover": "Обложка",
+  "mytracks.bookingEmails": "Письма о бронях отправляются на",
+  "mytracks.bookingEmailsHint": "Уведомления о бронях приходят сюда и на email твоего аккаунта",
 };

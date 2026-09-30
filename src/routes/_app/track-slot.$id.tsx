@@ -9,6 +9,8 @@ import { useLang } from "@/i18n";
 import { formatDate } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 import { getSlotOg } from "@/lib/og.functions";
+import { sendSlotBookingEmails } from "@/lib/app-email.functions";
+import { fireAndForget } from "@/lib/access-token";
 import { ShareSheet } from "@/components/ShareSheet";
 import { QrPass } from "@/components/QrPass";
 import { SplitProgress } from "@/components/SplitProgress";
@@ -109,6 +111,8 @@ function SlotPage() {
     const { error } = await supabase.rpc("cancel_slot_booking", { _booking_id: mine.id });
     setConfirmCancel(false);
     if (error) return toast.error(error.message);
+    const bid = mine.id;
+    fireAndForget((accessToken) => sendSlotBookingEmails({ data: { accessToken, bookingId: bid, action: "cancelled" } }));
     toast.success(t("slot.cancelled"));
     load();
   }
@@ -236,6 +240,7 @@ function BookSheet({ slot, mode, taken, onClose, onDone }: { slot: Slot; mode: M
     }
     if (res.error) { setBusy(false); return toast.error(res.error.message); }
     const bid = res.data as unknown as string;
+    fireAndForget((accessToken) => sendSlotBookingEmails({ data: { accessToken, bookingId: bid, action: "booked" } }));
     const { data: b } = await supabase.from("slot_bookings").select("check_in_code").eq("id", bid).maybeSingle();
     setBusy(false);
     onDone({ id: bid, code: b?.check_in_code ?? "" });
