@@ -117,7 +117,7 @@ export default function EventsMap({ events, selected, onSelect }: {
   return (
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
-      <MapStyleToggle kind={kind} onChange={setKind} />
+      <MapStyleToggle kind={kind} onChange={setKind} position="top-left" />
     </div>
   );
 }
