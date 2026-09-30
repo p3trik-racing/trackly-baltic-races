@@ -235,3 +235,73 @@ export async function sendOrganiserRoleEmail(userId: string, on: boolean, caller
     return { ok: true, sent: false, reason: e?.code || e?.message || "send failed", name };
   }
 }
+
+const hm = (t?: string | null) => (t ? String(t).slice(0, 5) : "");
+
+/** Track slot booking emails: driver + venue owners; host cancel also notifies other split members. */
+export async function sendSlotBookingEmails(bookingId: string, action: "booked" | "cancelled", callerId: string) {
+  const { data: b0 } = await supabaseAdmin.from("slot_bookings")
+    .select("*, venue_slots(*, venues(id,name))").eq("id", bookingId).maybeSingle();
+  const b = b0 as any;
+  if (!b) return;
+  if (b.user_id !== callerId && !(await isAdmin(callerId))) return;
+  const s = b.venue_slots; const v = s?.venues;
+  if (!s || !v) return;
+  const p = await profile(b.user_id);
+  const l = pick(p?.lang);
+  const isSplit = b.kind === "split";
+  const kind = action === "cancelled" ? "cancelled" : !isSplit ? "whole" : b.is_host ? "split_start" : "split_join";
+  const { data: taken } = await supabaseAdmin.rpc("slot_spots_taken", { _slot_id: s.id });
+  const deadline = s.split_deadline
+    ? new Date(s.split_deadline).toLocaleString(LOCALES[l], { timeZone: "Europe/Riga", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+    : "";
+  const base = {
+    venue: v.name, date: when(s.date, null, l), start: hm(s.start_time), end: hm(s.end_time),
+    spots: b.spots, amount: Number(b.amount ?? 0).toFixed(2), isSplit, taken: taken ?? 0,
+    maxCars: s.max_cars, minCars: s.min_cars, deadline, slotId: s.id, slotUrl: `${SITE_URL}/track-slot/${s.id}`,
+  };
+  const code = String(b.check_in_code ?? "").toUpperCase();
+  if (action === "booked") {
+    await safeSend("slot-booking-confirmed", b.attendee_email, { ...base, lang: l, kind, code }, `slot-booked-${b.id}-${b.attendee_email}`);
+  } else {
+    await safeSend("slot-booking-cancelled", b.attendee_email, { ...base, lang: l, reference: b.id.slice(0, 8).toUpperCase() }, `slot-cancelled-${b.id}-${b.attendee_email}`);
+    if (isSplit && b.is_host) {
+      const { data: others } = await supabaseAdmin.from("slot_bookings")
+        .select("id,user_id,attendee_email").eq("slot_id", s.id).eq("kind", "split").eq("is_host", false).eq("status", "cancelled");
+      for (const o of (others ?? []) as any[]) {
+        const op = await profile(o.user_id);
+        await safeSend("slot-split-cancelled-by-host", o.attendee_email, { ...base, lang: pick(op?.lang) },
+          `slot-hostcancel-${b.id}-${o.id}-${o.attendee_email}`);
+      }
+    }
+  }
+  const { data: owners } = await supabaseAdmin.rpc("venue_owner_emails" as any, { _venue_id: v.id });
+  const { data: ven } = await supabaseAdmin.from("venues").select("owner_id").eq("id", v.id).maybeSingle();
+  const ownerP = await profile((ven as any)?.owner_id);
+  const list = Array.from(new Set(((owners as any as string[]) ?? []).filter(Boolean).map((e) => e.trim().toLowerCase())));
+  for (const to of list) {
+    const ol = ownerP?.email && ownerP.email.toLowerCase() === to ? pick(ownerP.lang) : "en";
+    await safeSend("slot-owner-new-booking", to, {
+      ...base, lang: ol, date: when(s.date, null, ol), kind,
+      name: b.attendee_name, email: b.attendee_email, phone: b.attendee_phone ?? "",
+    }, `slot-${action}-${b.id}-${to}`);
+  }
+}
+
+/** Flush queued outbox emails (written by DB jobs). */
+export async function flushOutbox() {
+  const { data: rows } = await (supabaseAdmin.from("email_outbox" as any) as any)
+    .select("*").is("sent_at", null).lt("attempts", 5).order("created_at", { ascending: true }).limit(50);
+  let sent = 0;
+  for (const r of (rows ?? []) as any[]) {
+    try {
+      await sendTemplateEmail(r.template, r.to_email, { templateData: r.data ?? {}, idempotencyKey: r.idempotency_key, replyTo: REPLY_TO });
+      await (supabaseAdmin.from("email_outbox" as any) as any).update({ sent_at: new Date().toISOString() }).eq("id", r.id);
+      sent++;
+    } catch (e: any) {
+      await (supabaseAdmin.from("email_outbox" as any) as any)
+        .update({ attempts: (r.attempts ?? 0) + 1, last_error: String(e?.code ?? e?.message ?? e).slice(0, 500) }).eq("id", r.id);
+    }
+  }
+  return sent;
+}

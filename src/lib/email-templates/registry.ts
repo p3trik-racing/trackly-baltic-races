@@ -27,8 +27,15 @@ import { applicationNewTemplate, competitionEntryAdminTemplate } from './admin-n
 import { template as competitionEntry } from './competition-entry'
 import { grantedTemplate, revokedTemplate } from './organiser-role'
 import { template as eventPhotos } from './event-photos'
+import { slotOwnerNewBooking, slotBookingConfirmed, slotBookingCancelled, slotSplitCancelledByHost, slotSplitResult, slotOwnerSplitResult } from './slot-emails'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
+  'slot-owner-new-booking': slotOwnerNewBooking,
+  'slot-booking-confirmed': slotBookingConfirmed,
+  'slot-booking-cancelled': slotBookingCancelled,
+  'slot-split-cancelled-by-host': slotSplitCancelledByHost,
+  'slot-split-result': slotSplitResult,
+  'slot-owner-split-result': slotOwnerSplitResult,
   'event-photos': eventPhotos,
   'booking-confirmed': bookingConfirmed,
   'booking-cancelled': bookingCancelled,

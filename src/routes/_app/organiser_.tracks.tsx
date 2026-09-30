@@ -166,10 +166,11 @@ function VenueEditor({ venue, onDone }: { venue: any; onDone: () => void }) {
       </div>
       <Field label={t("organiser.post.description")}><textarea className="input-field py-3" style={{ height: "auto" }} rows={3} value={f.description} onChange={(e) => set("description", e.target.value)} /></Field>
       <Field label={t("tracks.trackInfo")}><textarea className="input-field py-3" style={{ height: "auto" }} rows={3} placeholder={t("mytracks.trackInfoPh")} value={f.track_info} onChange={(e) => set("track_info", e.target.value)} /></Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         <Field label={t("auth.signup.phone")}><input className="input-field" value={f.phone} onChange={(e) => set("phone", e.target.value)} /></Field>
-        <Field label={t("auth.email")}><input className="input-field" value={f.email} onChange={(e) => set("email", e.target.value)} /></Field>
       </div>
+      <Field label={t("mytracks.bookingEmails")}><input className="input-field" type="email" value={f.email} onChange={(e) => set("email", e.target.value)} /></Field>
+      <p className="text-xs text-muted-foreground -mt-2">{t("mytracks.bookingEmailsHint")}</p>
       <Field label={t("tracks.website")}><input className="input-field" value={f.website} onChange={(e) => set("website", e.target.value)} placeholder="https://" /></Field>
       <div>
         <p className="text-xs text-muted-foreground mb-2">{t("organiser.post.requirements")}</p>

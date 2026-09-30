@@ -71,3 +71,13 @@ export const emailOrganiserRole = createServerFn({ method: "POST" })
       return { ok: false, sent: false, reason: String(e?.message ?? "send failed"), name: "" };
     }
   });
+
+export const sendSlotBookingEmails = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ ...base, bookingId: z.string().uuid(), action: z.enum(["booked", "cancelled"]) }).parse(d))
+  .handler(async ({ data }) => {
+    try {
+      const { m, user } = await caller(data.accessToken);
+      if (user) await m.sendSlotBookingEmails(data.bookingId, data.action, user.id);
+    } catch (e) { console.error("[email] slot booking", e); }
+    return { ok: true };
+  });

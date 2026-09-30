@@ -763,4 +763,6 @@ export const lv: Partial<Record<keyof typeof en, string>> = {
   "inbox.event_photos": "Pasākuma foto",
   "inbox.rate_event": "Novērtē pasākumu",
   "compete.cover": "Vāka foto",
+  "mytracks.bookingEmails": "Rezervāciju e-pasti tiek sūtīti uz",
+  "mytracks.bookingEmailsHint": "Rezervāciju paziņojumi tiek sūtīti šeit un uz tava konta e-pastu",
 };
