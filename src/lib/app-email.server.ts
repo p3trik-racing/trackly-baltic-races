@@ -116,6 +116,19 @@ export async function sendEventCancelled(eventId: string, bookingIds: string[]) 
   }
 }
 
+/** Photos shared after an event: one email per confirmed booking. Caller must be organiser or admin. */
+export async function sendEventPhotos(eventId: string, callerId: string) {
+  const { data: e } = await supabaseAdmin.from("events").select("title,organiser_id,photos_url").eq("id", eventId).maybeSingle();
+  if (!e?.photos_url) return 0;
+  if (e.organiser_id !== callerId && !(await isAdmin(callerId))) return 0;
+  const { data: bks } = await supabaseAdmin.from("bookings").select("id,attendee_email,user_id").eq("event_id", eventId).eq("status", "confirmed");
+  for (const b of (bks ?? []) as any[]) {
+    const p = await profile(b.user_id);
+    await safeSend("event-photos", b.attendee_email, { lang: pick(p?.lang), eventTitle: e.title, url: e.photos_url }, `event-photos-${b.id}`);
+  }
+  return bks?.length ?? 0;
+}
+
 /** 4: reminder for each confirmed booking of a live event starting in 20–28 h. */
 export async function runReminders() {
   const now = Date.now();

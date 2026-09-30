@@ -49,6 +49,16 @@ export const emailCompetitionEntry = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const emailEventPhotos = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ ...base, eventId: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    try {
+      const { m, user } = await caller(data.accessToken);
+      if (user) await m.sendEventPhotos(data.eventId, user.id);
+    } catch (e) { console.error("[email] event photos", e); }
+    return { ok: true };
+  });
+
 export const emailOrganiserRole = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ ...base, userId: z.string().uuid(), on: z.boolean() }).parse(d))
   .handler(async ({ data }) => {
