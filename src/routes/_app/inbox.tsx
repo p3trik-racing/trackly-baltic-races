@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_app/inbox")({
   component: InboxPage,
 });
 
-const SLOT_TYPES = ["slot_booked", "split_joined", "split_confirmed", "split_failed", "split_cancelled", "friend_request", "friend_accepted"];
+const SLOT_TYPES = ["slot_booked", "split_joined", "split_confirmed", "split_failed", "split_cancelled", "friend_request", "friend_accepted", "event_photos", "rate_event"];
 
 interface Notif {
   id: string;

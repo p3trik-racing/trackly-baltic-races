@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { formatDate } from "@/lib/format";
 import { MessageAttendees } from "@/components/MessageAttendees";
+import { SharePhotos } from "@/components/SharePhotos";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -100,6 +101,10 @@ function EventBookingsPage() {
       </Link>
 
       <MessageAttendees eventId={eventId} />
+
+      {event && event.status !== "cancelled" && event.date <= new Date().toISOString().slice(0, 10) && (
+        <SharePhotos eventId={eventId} current={event.photos_url} onShared={(u) => setEvent({ ...event, photos_url: u })} />
+      )}
 
       <button onClick={exportCsv} disabled={!bookings.length}
         className="w-full h-11 rounded-xl border border-border text-sm font-medium inline-flex items-center justify-center gap-2 text-muted-foreground disabled:opacity-40">

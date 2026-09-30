@@ -25,7 +25,7 @@ function CompetitionsPage() {
   const [beginner, setBeginner] = useState(false);
 
   useEffect(() => {
-    supabase.from("competitions").select("id,slug,name,discipline,country,season,rounds,beginner_friendly,description,i18n")
+    supabase.from("competitions").select("id,slug,name,discipline,country,season,rounds,beginner_friendly,description,i18n,cover_image_url")
       .eq("status", "live").order("sort").then(({ data }) => setRows(data ?? []));
   }, []);
 
@@ -64,7 +64,8 @@ function CompetitionsPage() {
             const r = nextRound(c.rounds as Round[]);
             return (
               <Link key={c.id} to="/competitions/$slug" params={{ slug: c.slug }}
-                className="block bg-card border border-border rounded-2xl p-4 space-y-2">
+                className="block bg-card border border-border rounded-2xl p-4 space-y-2 overflow-hidden">
+                {c.cover_image_url && <img src={c.cover_image_url} alt="" className="-mx-4 -mt-4 mb-2 w-[calc(100%+2rem)] max-w-none aspect-video object-cover" />}
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-semibold">{c.name}</p>
                   <span className="text-xs whitespace-nowrap">{countryName(t, c.country)}</span>

@@ -9,6 +9,8 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
 import { useOrganiserGuard } from "@/lib/roles";
+import { SharePhotos } from "@/components/SharePhotos";
+import { RatingBadge } from "@/components/Ratings";
 
 export const Route = createFileRoute("/_app/organiser")({
   head: () => ({ meta: [
@@ -32,6 +34,7 @@ interface OrgEvent {
   status: string;
   price: number;
   cover_image_url: string | null;
+  photos_url: string | null;
 }
 
 interface BookingAgg {
@@ -50,6 +53,7 @@ function OrganiserDashboard() {
   
   const [events, setEvents] = useState<OrgEvent[]>([]);
   const [aggs, setAggs] = useState<Record<string, BookingAgg>>({});
+  const [ratings, setRatings] = useState<Record<string, { stars: number; comment: string | null }[]>>({});
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"active" | "past">("active");
   const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
@@ -66,13 +70,17 @@ function OrganiserDashboard() {
     if (!user) return;
     (async () => {
       const { data: ev } = await supabase
-        .from("events").select("id,title,category,date,city,country,status,price,cover_image_url")
+        .from("events").select("id,title,category,date,city,country,status,price,cover_image_url,photos_url")
         .eq("organiser_id", user.id)
         .order("date", { ascending: false });
       const list = (ev as any) ?? [];
       setEvents(list);
       if (list.length) {
         const ids = list.map((e: OrgEvent) => e.id);
+        const { data: rts } = await supabase.from("event_ratings").select("event_id,stars,comment").in("event_id", ids);
+        const rmap: Record<string, { stars: number; comment: string | null }[]> = {};
+        (rts ?? []).forEach((r: any) => (rmap[r.event_id] ??= []).push(r));
+        setRatings(rmap);
         const { data: bks } = await supabase
           .from("bookings").select("event_id,total_price,organiser_payout,status,checked_in_at")
           .in("event_id", ids);
@@ -202,6 +210,29 @@ function OrganiserDashboard() {
                     </p>
                   </div>
                 </div>
+                {tab === "past" && e.status !== "cancelled" && (
+                  <div className="px-3 pb-3 space-y-2">
+                    {(() => {
+                      const rs = ratings[e.id] ?? [];
+                      const avg = rs.length ? rs.reduce((s, r) => s + r.stars, 0) / rs.length : 0;
+                      return (
+                        <>
+                          <p className="text-xs">{rs.length ? <RatingBadge avg={avg} count={rs.length} /> : <span className="text-muted-foreground">{t("rate.noRatings")}</span>}</p>
+                          {rs.some((r) => r.comment) && (
+                            <details className="text-xs">
+                              <summary className="cursor-pointer text-muted-foreground">{t("rate.comments")}</summary>
+                              <ul className="mt-1 space-y-1">
+                                {rs.filter((r) => r.comment).map((r, i) => <li key={i}>★{r.stars} — {r.comment}</li>)}
+                              </ul>
+                            </details>
+                          )}
+                        </>
+                      );
+                    })()}
+                    <SharePhotos eventId={e.id} current={e.photos_url} className="w-full h-9 rounded-xl border border-border text-xs font-medium inline-flex items-center justify-center gap-2"
+                      onShared={(u) => setEvents((es) => es.map((x) => x.id === e.id ? { ...x, photos_url: u } : x))} />
+                  </div>
+                )}
                 <div className="grid grid-cols-4 border-t border-border text-xs">
                   <Link to="/organiser/events/$eventId/bookings" params={{ eventId: e.id }}
                     className="py-3 text-center border-r border-border text-muted-foreground hover:text-foreground">

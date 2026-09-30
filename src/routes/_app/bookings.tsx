@@ -53,6 +53,7 @@ function BookingsPage() {
   const [tab, setTab] = useState<"upcoming" | "past" | "cancelled" | "track" | "race">("upcoming");
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
+  const [rated, setRated] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
@@ -66,6 +67,8 @@ function BookingsPage() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => setBookings((data as any) ?? []));
+    supabase.from("event_ratings").select("event_id").eq("user_id", user.id)
+      .then(({ data }) => setRated(new Set((data ?? []).map((r: any) => r.event_id))));
   }, [user]);
 
   async function cancelBooking(b: BookingRow) {
@@ -156,6 +159,19 @@ function BookingsPage() {
                     <div className="text-xs text-muted-foreground mt-1">{tr("common.ref", { ref: b.id.slice(0, 8).toUpperCase() })}</div>
                   </div>
                 </Link>
+                {tab === "past" && b.status === "confirmed" && (
+                  <div className="px-3 pb-3">
+                    {rated.has(b.events.id) ? (
+                      <p className="text-xs text-muted-foreground">★ {tr("rate.rated")}</p>
+                    ) : (
+                      <Link to="/event/$eventId" params={{ eventId: b.events.id }} search={{ rate: "1" } as any}
+                        className="w-full h-9 rounded-xl text-xs font-medium inline-flex items-center justify-center"
+                        style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}>
+                        ★ {tr("rate.button")}
+                      </Link>
+                    )}
+                  </div>
+                )}
                 {canCancel && confirmingCancel !== b.id && (
                   <div className="px-3 pb-3">
                     <button

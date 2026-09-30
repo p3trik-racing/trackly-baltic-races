@@ -122,6 +122,7 @@ function CompetitionPage() {
       <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={c.name}
         url={`${SITE_URL}/competitions/${c.slug}`}
         text={[t("share.competitionText", { title: c.name }), c.season].filter(Boolean).join(" · ")} />
+      {c.cover_image_url && <img src={c.cover_image_url} alt={c.name} className="w-full aspect-video md:max-h-[360px] object-cover rounded-2xl" />}
       <div className="space-y-2">
         <h1 className="text-[22px] font-semibold">{c.name}</h1>
         <div className="flex gap-2 flex-wrap items-center text-xs">
