@@ -194,6 +194,9 @@ function EventDetail() {
           >
             {catLabel(t, event.category)}
           </span>
+          {isPast && <RatingBadge avg={rating?.avg_stars} count={rating?.ratings} className="ml-2 text-sm font-medium" />}
+          <span className="hidden">
+          </span>
           <h1 className="text-[24px] font-semibold leading-tight">{event.title}</h1>
         </div>
 
@@ -254,7 +257,8 @@ function EventDetail() {
           {event.organiser_name && (
             <div className="flex items-center gap-3 text-foreground">
               <User size={16} className="text-muted-foreground" />
-              <span className="flex-1">{t("event.organisedBy", { name: event.organiser_name })}</span>
+              <span className="flex-1">{t("event.organisedBy", { name: event.organiser_name })}
+                {" "}<RatingBadge avg={orgRating?.avg_stars} count={orgRating?.ratings} className="text-xs text-muted-foreground" /></span>
               {event.organiser_id && event.organiser_id !== user?.id && (
                 <button onClick={onToggleFollow} disabled={followBusy}
                   className="px-3 h-8 rounded-full text-xs font-medium border disabled:opacity-50"
@@ -315,6 +319,19 @@ function EventDetail() {
             </p>
           </div>
         </div>
+        {event.photos_url && (
+          <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-3">
+            <p className="font-semibold">{t("photos.card")}</p>
+            <a href={event.photos_url} target="_blank" rel="noopener noreferrer"
+              className="px-4 h-10 rounded-xl text-sm font-medium inline-flex items-center gap-1"
+              style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}>
+              {t("photos.open")} <ExternalLink size={14} />
+            </a>
+          </div>
+        )}
+        {isPast && myBooking && user && (
+          <RateEventCard ref={rateRef} eventId={eventId} userId={user.id} highlight={highlightRate} onSaved={loadRatings} />
+        )}
       </div>
 
       <FriendsGoing eventId={eventId} />
