@@ -9,6 +9,49 @@ import { useAuth } from "@/lib/auth-context";
 import { useRoles } from "@/lib/roles";
 import { emailOrganiserApplication, emailOrganiserRole } from "@/lib/app-email.functions";
 import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
+import { ImageCropModal } from "@/components/ImageCropModal";
+
+function Ratings() {
+  const [rows, setRows] = useState<any[]>([]);
+  const [open, setOpen] = useState<string | null>(null);
+  const [detail, setDetail] = useState<any[]>([]);
+  useEffect(() => {
+    supabase.rpc("admin_organiser_ratings").then(({ data, error }) => {
+      if (error) toast.error(error.message);
+      setRows([...(data ?? [])].sort((a: any, b: any) => Number(b.avg_stars) - Number(a.avg_stars)));
+    });
+  }, []);
+  async function openOrg(id: string) {
+    if (open === id) return setOpen(null);
+    setOpen(id); setDetail([]);
+    const { data: evs } = await supabase.from("events").select("id,title,date").eq("organiser_id", id).order("date", { ascending: false });
+    const ids = (evs ?? []).map((e) => e.id);
+    const { data: rs } = ids.length ? await supabase.from("event_ratings").select("event_id,stars,comment").in("event_id", ids) : { data: [] as any[] };
+    setDetail((evs ?? []).map((e) => ({ ...e, ratings: (rs ?? []).filter((r: any) => r.event_id === e.id) })).filter((e) => e.ratings.length));
+  }
+  return (
+    <div className="space-y-2">
+      {rows.length === 0 && <p className="text-sm text-muted-foreground">No ratings yet.</p>}
+      {rows.map((r) => (
+        <div key={r.organiser_id} className="bg-card border border-border rounded-2xl p-3 space-y-2">
+          <button onClick={() => openOrg(r.organiser_id)} className="w-full flex items-center justify-between gap-2 text-left">
+            <span className="text-sm font-medium">{r.organiser_name || r.organiser_id.slice(0, 8)}</span>
+            <span className="text-xs">★ {Number(r.avg_stars).toFixed(1)} · {r.ratings} ratings · {r.events_rated} events{r.last_event ? ` · last ${formatDate(r.last_event, "en")}` : ""}</span>
+          </button>
+          {open === r.organiser_id && detail.map((e) => {
+            const avg = e.ratings.reduce((s: number, x: any) => s + x.stars, 0) / e.ratings.length;
+            return (
+              <div key={e.id} className="border-t border-border pt-2 text-xs space-y-1">
+                <p className="font-medium">{e.title} · {formatDate(e.date, "en")} · ★ {avg.toFixed(1)} ({e.ratings.length})</p>
+                {e.ratings.filter((x: any) => x.comment).map((x: any, i: number) => <p key={i} className="text-muted-foreground">★{x.stars} — {x.comment}</p>)}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/_app/admin")({
   head: () => ({ meta: [
@@ -22,7 +65,7 @@ export const Route = createFileRoute("/_app/admin")({
   component: AdminPage,
 });
 
-const TABS = ["Applications", "Codes", "Users", "Events", "Bookings", "Competitions", "Tracks"] as const;
+const TABS = ["Applications", "Codes", "Users", "Events", "Bookings", "Competitions", "Tracks", "Ratings"] as const;
 type Tab = typeof TABS[number];
 
 async function token() {
@@ -73,6 +116,7 @@ function AdminPage() {
       {tab === "Bookings" && <Bookings />}
       {tab === "Competitions" && <Competitions />}
       {tab === "Tracks" && <Tracks />}
+      {tab === "Ratings" && <Ratings />}
     </main>
   );
 }
@@ -357,7 +401,7 @@ function Competitions() {
   const load = useCallback(async () => {
     const [{ data: e }, { data: c }] = await Promise.all([
       supabase.from("competition_entries").select("*").order("created_at", { ascending: false }),
-      supabase.from("competitions").select("id,name,status,sort").order("sort"),
+      supabase.from("competitions").select("id,name,status,sort,cover_image_url").order("sort"),
     ]);
     setEntries(e ?? []);
     setComps(c ?? []);
@@ -407,9 +451,47 @@ function Competitions() {
               <button className={btn} onClick={() => toggleLive(c.id, c.status)}>{c.status === "live" ? "Live → Draft" : "Draft → Live"}</button>
             </div>
           </div>
+          <CompCover id={c.id} url={c.cover_image_url} onChange={load} />
           {openComp === c.id && <RaceAdmin competitionId={c.id} competitionName={c.name} />}
         </Card>
       ))}
+    </div>
+  );
+}
+
+function CompCover({ id, url, onChange }: { id: string; url: string | null; onChange: () => void }) {
+  const { user } = useAuth();
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  function pick() {
+    const input = document.createElement("input");
+    input.type = "file"; input.accept = "image/*";
+    input.onchange = () => { const f = input.files?.[0]; if (f) setCropSrc(URL.createObjectURL(f)); };
+    input.click();
+  }
+  async function save(value: string | null) {
+    const { error } = await supabase.from("competitions").update({ cover_image_url: value }).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Done"); onChange();
+  }
+  async function upload(blob: Blob) {
+    if (!user) return;
+    setBusy(true);
+    const path = `${user.id}/competition-${id}-${Date.now()}.jpg`;
+    const { error } = await supabase.storage.from("event-covers").upload(path, blob, { contentType: "image/jpeg" });
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    await save(supabase.storage.from("event-covers").getPublicUrl(path).data.publicUrl);
+  }
+  return (
+    <div className="flex items-center gap-2 pt-2">
+      {url && <img src={url} alt="" className="w-24 aspect-video rounded-lg object-cover" />}
+      <span className="text-xs text-muted-foreground flex-1">Cover photo</span>
+      <button className={btn} disabled={busy} onClick={pick}>{url ? "Replace" : "Upload"}</button>
+      {url && <button className={btn} onClick={() => save(null)}>Remove</button>}
+      {cropSrc && <ImageCropModal imageSrc={cropSrc} aspectRatio={16 / 9}
+        onConfirm={(blob) => { URL.revokeObjectURL(cropSrc); setCropSrc(null); upload(blob); }}
+        onCancel={() => { URL.revokeObjectURL(cropSrc); setCropSrc(null); }} />}
     </div>
   );
 }
