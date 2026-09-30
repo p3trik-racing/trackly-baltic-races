@@ -144,10 +144,8 @@ function BookPage() {
     try {
       const { data, error } = await supabase.functions.invoke("create-payment-intent", {
         body: {
-          amount: Math.round(total * 100),
-          currency: (event.currency || "eur").toLowerCase(),
           event_id: event.id,
-          description: t("book.description", { title: event.title }),
+          ticket_count: tickets,
         },
       });
       if (error) throw new Error(error.message);

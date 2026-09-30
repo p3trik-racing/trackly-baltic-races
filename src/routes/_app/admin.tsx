@@ -1,3 +1,4 @@
+import { csvCell } from "@/lib/csv";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { formatDate } from "@/lib/format";
 import { categoryLabel } from "@/lib/categories";
@@ -529,7 +530,7 @@ function RaceAdmin({ competitionId, competitionName }: { competitionId: string; 
   function csv(type: any) {
     const rows = tickets.filter((x) => x.ticket_type_id === type.id);
     const head = ["name", "email", "phone", "car", "class", "licence_no", "quantity", "status", "payment_status", "check_in_code", "checked_in_at"];
-    const esc = (v: any) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const esc = csvCell;
     const body = [head.join(","), ...rows.map((r) => head.map((h) => esc(r[h])).join(","))].join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([body], { type: "text/csv" }));

@@ -1,3 +1,4 @@
+import { csvCell } from "@/lib/csv";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { formatDate } from "@/lib/format";
 import { MessageAttendees } from "@/components/MessageAttendees";
@@ -64,7 +65,7 @@ function EventBookingsPage() {
         b.id, new Date(b.created_at).toISOString(), String(b.ticket_count), b.status, b.checked_in_at ?? "", b.no_show ? "yes" : "no",
       ]),
     ];
-    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const csv = rows.map((r) => r.map(csvCell).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

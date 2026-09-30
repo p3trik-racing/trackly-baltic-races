@@ -5,10 +5,12 @@ export const Route = createFileRoute("/api/public/cron/reminders")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const key = request.headers.get("apikey") ?? "";
-        const expected = [process.env["SUPABASE_PUBLISHABLE_KEY"], process.env["SUPABASE_ANON_KEY"], import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY]
-          .filter(Boolean);
-        if (!key || !expected.includes(key)) return new Response("Unauthorized", { status: 401 });
+        const secret = process.env["CRON_SECRET"];
+        const service = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+        const given = request.headers.get("x-cron-secret") ?? "";
+        const bearer = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+        const ok = (!!secret && given === secret) || (!!service && bearer === service);
+        if (!ok) return new Response("Unauthorized", { status: 401 });
         try {
           const { runReminders } = await import("@/lib/app-email.server");
           const sent = await runReminders();
