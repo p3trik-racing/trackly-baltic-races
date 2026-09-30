@@ -18,9 +18,15 @@ export const Route = createFileRoute("/api/public/cron/reminders")({
         }
         if (!ok) return new Response("Unauthorized", { status: 401 });
         try {
-          const { runReminders } = await import("@/lib/app-email.server");
-          const sent = await runReminders();
-          return Response.json({ ok: true, sent });
+          const url = new URL(request.url);
+          let outboxOnly = url.searchParams.get("outbox") === "1";
+          if (!outboxOnly) {
+            try { const body = await request.clone().json(); outboxOnly = body?.outboxOnly === true; } catch { /* no body */ }
+          }
+          const { runReminders, flushOutbox } = await import("@/lib/app-email.server");
+          const sent = outboxOnly ? 0 : await runReminders();
+          const outboxSent = await flushOutbox();
+          return Response.json({ ok: true, sent, outboxSent });
         } catch (e: any) {
           console.error("[cron] reminders", e);
           return Response.json({ ok: false }, { status: 500 });
