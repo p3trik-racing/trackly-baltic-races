@@ -232,6 +232,42 @@ export type Database = {
         }
         Relationships: []
       }
+      email_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          data: Json
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          sent_at: string | null
+          template: string
+          to_email: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          data?: Json
+          id?: string
+          idempotency_key: string
+          last_error?: string | null
+          sent_at?: string | null
+          template: string
+          to_email: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          data?: Json
+          id?: string
+          idempotency_key?: string
+          last_error?: string | null
+          sent_at?: string | null
+          template?: string
+          to_email?: string
+        }
+        Relationships: []
+      }
       event_ratings: {
         Row: {
           comment: string | null
@@ -1199,6 +1235,7 @@ export type Database = {
         Returns: string
       }
       undo_check_in: { Args: { _booking_id: string }; Returns: undefined }
+      venue_owner_emails: { Args: { _venue_id: string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "organiser"
