@@ -161,6 +161,7 @@ export type Database = {
           contact_email: string | null
           contact_phone: string | null
           country: string
+          cover_image_url: string | null
           created_at: string
           description: string | null
           discipline: string
@@ -185,6 +186,7 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           country: string
+          cover_image_url?: string | null
           created_at?: string
           description?: string | null
           discipline: string
@@ -209,6 +211,7 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           country?: string
+          cover_image_url?: string | null
           created_at?: string
           description?: string | null
           discipline?: string
@@ -228,6 +231,41 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      event_ratings: {
+        Row: {
+          comment: string | null
+          created_at: string
+          event_id: string
+          id: string
+          stars: number
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          stars: number
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          stars?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_ratings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       events: {
         Row: {
@@ -251,7 +289,10 @@ export type Database = {
           location_name: string | null
           organiser_id: string | null
           organiser_name: string | null
+          photos_shared_at: string | null
+          photos_url: string | null
           price: number
+          rating_prompted_at: string | null
           requirements: string[]
           status: Database["public"]["Enums"]["event_status"]
           time: string | null
@@ -278,7 +319,10 @@ export type Database = {
           location_name?: string | null
           organiser_id?: string | null
           organiser_name?: string | null
+          photos_shared_at?: string | null
+          photos_url?: string | null
           price?: number
+          rating_prompted_at?: string | null
           requirements?: string[]
           status?: Database["public"]["Enums"]["event_status"]
           time?: string | null
@@ -305,7 +349,10 @@ export type Database = {
           location_name?: string | null
           organiser_id?: string | null
           organiser_name?: string | null
+          photos_shared_at?: string | null
+          photos_url?: string | null
           price?: number
+          rating_prompted_at?: string | null
           requirements?: string[]
           status?: Database["public"]["Enums"]["event_status"]
           time?: string | null
@@ -981,6 +1028,17 @@ export type Database = {
     }
     Functions: {
       accept_invite: { Args: { _code: string }; Returns: string }
+      admin_organiser_ratings: {
+        Args: never
+        Returns: {
+          avg_stars: number
+          events_rated: number
+          last_event: string
+          organiser_id: string
+          organiser_name: string
+          ratings: number
+        }[]
+      }
       announce_event: { Args: { _event_id: string }; Returns: Json }
       are_friends: { Args: { _a: string; _b: string }; Returns: boolean }
       book_slot_whole: {
@@ -1015,6 +1073,13 @@ export type Database = {
         Returns: Json
       }
       close_check_in: { Args: { _event_id: string }; Returns: number }
+      event_rating_summary: {
+        Args: { _event_id: string }
+        Returns: {
+          avg_stars: number
+          ratings: number
+        }[]
+      }
       friends_going: {
         Args: { _event_id: string }
         Returns: {
@@ -1064,8 +1129,21 @@ export type Database = {
           username: string
         }[]
       }
+      organiser_rating_summary: {
+        Args: { _organiser_id: string }
+        Returns: {
+          avg_stars: number
+          events_rated: number
+          ratings: number
+        }[]
+      }
       process_split_deadlines: { Args: never; Returns: number }
+      prompt_event_ratings: { Args: never; Returns: number }
       race_tickets_left: { Args: { _type_id: string }; Returns: number }
+      rate_event: {
+        Args: { _comment: string; _event_id: string; _stars: number }
+        Returns: undefined
+      }
       redeem_organiser_code: { Args: { _code: string }; Returns: boolean }
       remove_friend: { Args: { _other: string }; Returns: undefined }
       respond_friend_request: {
@@ -1102,6 +1180,10 @@ export type Database = {
       set_user_blocked: {
         Args: { _blocked: boolean; _reason?: string; _user_id: string }
         Returns: undefined
+      }
+      share_event_photos: {
+        Args: { _event_id: string; _url: string }
+        Returns: number
       }
       slot_spots_taken: { Args: { _slot_id: string }; Returns: number }
       start_split: {
