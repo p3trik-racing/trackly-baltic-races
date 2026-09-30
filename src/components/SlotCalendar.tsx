@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLang } from "@/i18n";
 import { formatDate } from "@/lib/format";
@@ -17,6 +17,16 @@ export function SlotCalendar({ slots, selected, onSelect }: { slots: Pick<Slot, 
   const byDay: Record<string, Set<string>> = {};
   slots.forEach((s) => { if (s.status !== "cancelled") (byDay[s.date] ??= new Set()).add(s.status === "confirmed" ? "booked" : s.status); });
   const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  // Open on the month of the next upcoming slot (once, when slots first arrive).
+  const jumped = useRef(false);
+  useEffect(() => {
+    if (jumped.current || !slots.length) return;
+    const next = slots.filter((s) => s.status !== "cancelled" && s.date >= today).map((s) => s.date).sort()[0];
+    if (!next) return;
+    jumped.current = true;
+    const [y, m] = next.split("-").map(Number);
+    setYm({ y, m: m - 1 });
+  }, [slots, today]);
   const shift = (d: number) => setYm(({ y, m }) => { const n = new Date(y, m + d, 1); return { y: n.getFullYear(), m: n.getMonth() }; });
 
   return (
