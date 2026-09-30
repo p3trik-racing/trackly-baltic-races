@@ -1068,6 +1068,7 @@ export type Database = {
       can_manage_venue: { Args: { _venue_id: string }; Returns: boolean }
       cancel_race_ticket: { Args: { _ticket_id: string }; Returns: undefined }
       cancel_slot_booking: { Args: { _booking_id: string }; Returns: undefined }
+      check_cron_secret: { Args: { _secret: string }; Returns: boolean }
       check_in_booking: {
         Args: { _booking_id?: string; _code?: string; _event_id?: string }
         Returns: Json
