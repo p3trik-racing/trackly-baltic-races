@@ -9,7 +9,13 @@ export const Route = createFileRoute("/api/public/cron/reminders")({
         const service = process.env["SUPABASE_SERVICE_ROLE_KEY"];
         const given = request.headers.get("x-cron-secret") ?? "";
         const bearer = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
-        const ok = (!!secret && given === secret) || (!!service && bearer === service);
+        let ok = (!!secret && given === secret) || (!!service && bearer === service);
+        if (!ok && given) {
+          // Third accepted case: the header holds the DB-stored cron secret (security definer, service-role only).
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data } = await supabaseAdmin.rpc("check_cron_secret", { _secret: given });
+          ok = data === true;
+        }
         if (!ok) return new Response("Unauthorized", { status: 401 });
         try {
           const { runReminders } = await import("@/lib/app-email.server");
