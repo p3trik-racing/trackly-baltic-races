@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
     const userId = userData.user.id;
 
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
     const {
       event_id,
       attendee_name,
@@ -44,9 +44,17 @@ Deno.serve(async (req) => {
       stripe_payment_intent_id,
     } = body ?? {};
 
-    if (!event_id || typeof event_id !== "string") return json({ error: "Missing event_id" }, 400);
-    if (!attendee_name || typeof attendee_name !== "string") return json({ error: "Missing name" }, 400);
-    if (!attendee_email || typeof attendee_email !== "string") return json({ error: "Missing email" }, 400);
+    if (!event_id || typeof event_id !== "string" || !/^[0-9a-f-]{36}$/i.test(event_id)) {
+      return json({ error: "Missing event_id" }, 400);
+    }
+    const name = typeof attendee_name === "string" ? attendee_name.trim() : "";
+    const email = typeof attendee_email === "string" ? attendee_email.trim() : "";
+    const phone = typeof attendee_phone === "string" ? attendee_phone.trim() : "";
+    if (!name || name.length > 100) return json({ error: "Invalid name" }, 400);
+    if (!email || email.length > 200 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return json({ error: "Invalid email" }, 400);
+    }
+    if (phone.length > 40) return json({ error: "Invalid phone" }, 400);
     const tc = Number(ticket_count);
     if (!Number.isInteger(tc) || tc < 1 || tc > 20) return json({ error: "Invalid ticket count" }, 400);
     if (waiver_accepted !== true) return json({ error: "Waiver must be accepted" }, 400);
@@ -56,8 +64,6 @@ Deno.serve(async (req) => {
     const { data: prof } = await admin.from("profiles").select("blocked").eq("id", userId).maybeSingle();
     if (prof?.blocked) return json({ error: "Account blocked" }, 403);
 
-
-    // Fetch event server-side to get authoritative price
     const { data: event, error: evErr } = await admin
       .from("events")
       .select("id,title,price,deposit,currency,status,capacity,organiser_id")
@@ -66,7 +72,6 @@ Deno.serve(async (req) => {
     if (evErr || !event) return json({ error: "Event not found" }, 404);
     if (event.status !== "live") return json({ error: "Event not available" }, 400);
 
-    // Capacity check
     if (event.capacity && event.capacity > 0) {
       const { data: existing } = await admin
         .from("bookings")
@@ -89,7 +94,7 @@ Deno.serve(async (req) => {
 
     let verifiedIntentId: string | null = null;
     if (!isFree) {
-      if (!stripe_payment_intent_id || typeof stripe_payment_intent_id !== "string") {
+      if (!stripe_payment_intent_id || typeof stripe_payment_intent_id !== "string" || stripe_payment_intent_id.length > 100) {
         return json({ error: "Missing payment intent" }, 400);
       }
       const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
@@ -102,10 +107,20 @@ Deno.serve(async (req) => {
       const intent = await r.json();
       if (!r.ok) return json({ error: intent.error?.message ?? "Could not verify payment" }, 400);
       if (intent.status !== "succeeded") return json({ error: "Payment not completed" }, 400);
-      const expectedAmount = Math.round(total_price * 100);
-      if (Number(intent.amount) !== expectedAmount) {
+      if (String(intent.currency).toLowerCase() !== "eur") return json({ error: "Payment currency mismatch" }, 400);
+      if (Number(intent.amount) !== Math.round(total_price * 100)) {
         return json({ error: "Payment amount mismatch" }, 400);
       }
+      const md = intent.metadata ?? {};
+      if (md.user_id !== userId || md.event_id !== event_id || md.ticket_count !== String(tc)) {
+        return json({ error: "Payment does not match this booking" }, 400);
+      }
+      const { data: used } = await admin
+        .from("bookings")
+        .select("id")
+        .eq("stripe_payment_intent_id", intent.id)
+        .maybeSingle();
+      if (used) return json({ error: "Payment already used" }, 409);
       verifiedIntentId = intent.id;
     }
 
@@ -114,9 +129,9 @@ Deno.serve(async (req) => {
       .insert({
         event_id,
         user_id: userId,
-        attendee_name,
-        attendee_email,
-        attendee_phone: attendee_phone ?? null,
+        attendee_name: name,
+        attendee_email: email,
+        attendee_phone: phone || null,
         ticket_count: tc,
         total_price,
         platform_fee,
@@ -127,7 +142,8 @@ Deno.serve(async (req) => {
       })
       .select("id")
       .single();
-    if (bErr || !booking) return json({ error: bErr?.message ?? "Could not create booking" }, 500);
+    if (bErr?.code === "23505") return json({ error: "Payment already used" }, 409);
+    if (bErr || !booking) return json({ error: "Could not create booking" }, 500);
 
     await admin.from("notifications").insert({
       user_id: userId,
@@ -138,7 +154,7 @@ Deno.serve(async (req) => {
       await admin.from("notifications").insert({
         user_id: event.organiser_id,
         type: "organiser_new_booking",
-        message: `New booking for ${event.title} by ${attendee_name}.`,
+        message: `New booking for ${event.title} by ${name}.`,
       });
     }
 
