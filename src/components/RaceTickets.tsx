@@ -8,6 +8,7 @@ import { formatDate } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 import { eur, payLabel } from "@/lib/tracks";
 import { QrPass } from "@/components/QrPass";
+import { PayItem } from "@/components/PayItem";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 
 export interface TicketType { id: string; competition_id: string; round_label: string; round_date: string | null; kind: string; name: string; price: number; capacity: number | null; sales_open: boolean }
@@ -32,7 +33,7 @@ export function RaceTickets({ competitionId, competitionName }: { competitionId:
   const [types, setTypes] = useState<TicketType[]>([]);
   const [left, setLeft] = useState<Record<string, number | null>>({});
   const [buying, setBuying] = useState<TicketType | null>(null);
-  const [done, setDone] = useState<{ type: TicketType; id: string; code: string; status: string } | null>(null);
+  const [done, setDone] = useState<{ type: TicketType; id: string; code: string; status: string; qty: number; paid?: boolean } | null>(null);
 
   const load = async () => {
     const { data } = await supabase.from("race_ticket_types").select("*").eq("competition_id", competitionId).order("round_date", { nullsFirst: false }).order("kind");
@@ -61,7 +62,9 @@ export function RaceTickets({ competitionId, competitionName }: { competitionId:
           <p className="text-sm border rounded-xl p-4" style={{ borderColor: "var(--accent)" }}>{t("tickets.entrySentBody")}</p>
         ) : (
           <>
-            {Number(done.type.price) > 0 && <p className="text-sm">{t("slot.paymentPending")}</p>}
+            {Number(done.type.price) > 0 && (done.paid ? <p className="text-sm">{t("slot.paid")}</p> : (
+              <PayItem kind="ticket" id={done.id} autoOpen label={t("pay.payAmount", { total: eur(Math.round(Number(done.type.price) * done.qty * 105) / 100) })} onPaid={() => setDone({ ...done, paid: true })} />
+            ))}
             <QrPass bookingId={done.id} code={done.code} url={raceTicketQrUrl(done.code)} />
           </>
         )}
@@ -103,7 +106,7 @@ export function RaceTickets({ competitionId, competitionName }: { competitionId:
   );
 }
 
-function BuySheet({ type, onClose, onDone }: { type: TicketType; onClose: () => void; onDone: (r: { id: string; code: string; status: string }) => void }) {
+function BuySheet({ type, onClose, onDone }: { type: TicketType; onClose: () => void; onDone: (r: { id: string; code: string; status: string; qty: number }) => void }) {
   const { t } = useLang();
   const { user } = useAuth();
   const racer = type.kind === "racer";
@@ -131,7 +134,7 @@ function BuySheet({ type, onClose, onDone }: { type: TicketType; onClose: () => 
     const id = data as unknown as string;
     const { data: row } = await supabase.from("race_tickets").select("check_in_code,status").eq("id", id).maybeSingle();
     setBusy(false);
-    onDone({ id, code: row?.check_in_code ?? "", status: row?.status ?? "reserved" });
+    onDone({ id, code: row?.check_in_code ?? "", status: row?.status ?? "reserved", qty: racer ? 1 : f.qty });
   }
 
   const inp = (k: keyof typeof f, label: string, type = "text") => (
@@ -159,7 +162,7 @@ function BuySheet({ type, onClose, onDone }: { type: TicketType; onClose: () => 
             </label>
           )}
           <p className="text-sm flex justify-between"><span>{t("slot.total")}</span><span className="font-semibold">{Number(type.price) > 0 ? eur(Number(type.price) * (racer ? 1 : f.qty)) : t("slot.free")}</span></p>
-          {Number(type.price) > 0 && <p className="text-xs text-muted-foreground">{payLabel(t, "pending")}</p>}
+          {Number(type.price) > 0 && <p className="text-xs text-muted-foreground">{racer ? t("pay.afterConfirm") : t("pay.feeIncluded")}</p>}
           {racer && (
             <label className="flex items-start gap-2 text-xs text-muted-foreground">
               <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} className="mt-0.5 accent-[var(--accent)]" />

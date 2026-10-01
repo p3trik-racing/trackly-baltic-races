@@ -12,6 +12,10 @@ import { emailBookingCancelled } from "@/lib/app-email.functions";
 import { fireAndForget } from "@/lib/access-token";
 import { eur, hhmm, payLabel } from "@/lib/tracks";
 import { QrPass } from "@/components/QrPass";
+import { PayItem } from "@/components/PayItem";
+import { SlotPay } from "@/routes/_app/track-slot.$id";
+import { accessToken } from "@/lib/access-token";
+import { cancelRaceTicket } from "@/lib/payments.functions";
 import { KindBadge, raceTicketQrUrl } from "@/components/RaceTickets";
 
 export const Route = createFileRoute("/_app/bookings")({
@@ -217,11 +221,12 @@ function TrackBookings() {
   const { user } = useAuth();
   const { t, lang } = useLang();
   const [rows, setRows] = useState<any[] | null>(null);
-  useEffect(() => {
+  const load = () => {
     if (!user) return;
-    supabase.from("slot_bookings").select("id,slot_id,kind,is_host,spots,amount,status,payment_status,venue_slots(date,start_time,end_time,venues(name))")
+    supabase.from("slot_bookings").select("id,slot_id,kind,is_host,spots,amount,status,payment_status,pay_by,venue_slots(date,start_time,end_time,status,venues(name))")
       .eq("user_id", user.id).order("created_at", { ascending: false }).then(({ data }) => setRows(data ?? []));
-  }, [user]);
+  };
+  useEffect(load, [user]);
   if (rows === null) return <p className="text-sm text-muted-foreground text-center py-12">{t("common.loading")}</p>;
   if (!rows.length) return (
     <div className="text-center py-12 space-y-2">
@@ -232,7 +237,8 @@ function TrackBookings() {
   return (
     <div className="space-y-3">
       {rows.map((b) => (
-        <Link key={b.id} to="/track-slot/$id" params={{ id: b.slot_id }} className="block bg-card border border-border rounded-2xl p-3 space-y-1">
+        <div key={b.id} className="bg-card border border-border rounded-2xl p-3 space-y-2">
+        <Link to="/track-slot/$id" params={{ id: b.slot_id }} className="block space-y-1">
           <div className="flex justify-between gap-2">
             <p className="font-medium text-sm truncate">{b.venue_slots?.venues?.name}</p>
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-input">{t(`slot.bstatus.${b.status}` as any)}</span>
@@ -241,6 +247,8 @@ function TrackBookings() {
           <p className="text-xs">{t(`slot.kind.${b.kind}` as any)}{b.is_host ? ` · ${t("slot.host")}` : ""} · {t("slot.spotsN", { n: b.spots })} · {eur(b.amount)}</p>
           {b.status !== "cancelled" && <p className="text-xs text-muted-foreground">{payLabel(t, b.payment_status)}</p>}
         </Link>
+        <SlotPay b={b} slotStatus={b.venue_slots?.status} onPaid={load} />
+        </div>
       ))}
     </div>
   );
@@ -259,8 +267,8 @@ function RaceTicketsList() {
   useEffect(load, [user]);
   async function cancel(id: string) {
     if (!confirm(t("tickets.cancelPrompt"))) return;
-    const { error } = await supabase.rpc("cancel_race_ticket", { _ticket_id: id });
-    if (error) return toast.error(error.message);
+    const r = await cancelRaceTicket({ data: { accessToken: (await accessToken()) ?? "", id } });
+    if (!r.ok) return toast.error(r.error);
     toast.success(t("tickets.cancelled")); load();
   }
   if (rows === null) return <p className="text-sm text-muted-foreground text-center py-12">{t("common.loading")}</p>;
@@ -284,6 +292,10 @@ function RaceTicketsList() {
             <p className="text-xs text-muted-foreground">{tt.round_label}{tt.round_date ? ` · ${formatDate(tt.round_date, lang, "short")}` : ""}</p>
             <div className="flex items-center gap-2 text-xs"><KindBadge kind={tt.kind} /><span>{tt.name} · ×{r.quantity}</span></div>
             {r.status !== "cancelled" && <p className="text-xs text-muted-foreground">{Number(tt.price) > 0 ? payLabel(tr(t), r.payment_status) : t("slot.free")}</p>}
+            {r.status !== "cancelled" && r.payment_status === "pending" && Number(r.amount) > 0 && (tt.kind === "spectator" || r.status === "confirmed") && (
+              <PayItem kind="ticket" id={r.id} label={tt.kind === "racer" ? t("pay.entryFee", { total: eur(Math.round(Number(r.amount) * 105) / 100) }) : t("pay.payAmount", { total: eur(Math.round(Number(r.amount) * 105) / 100) })} onPaid={load} />
+            )}
+            {tt.kind === "racer" && r.status === "reserved" && r.payment_status === "pending" && Number(r.amount) > 0 && <p className="text-xs text-muted-foreground">{t("pay.afterConfirm")}</p>}
             {showQr && (openQr === r.id ? <QrPass bookingId={r.id} code={r.check_in_code} checkedInAt={r.checked_in_at} url={raceTicketQrUrl(r.check_in_code)} />
               : <button onClick={() => setOpenQr(r.id)} className="text-xs font-medium" style={{ color: "var(--accent)" }}>{t("tickets.showQr")}</button>)}
             {r.status !== "cancelled" && !r.checked_in_at && (

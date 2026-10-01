@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { emailBookingCreated } from "@/lib/app-email.functions";
 import { fireAndForget } from "@/lib/access-token";
 import { loadStripe } from "@stripe/stripe-js";
+import { TestModeNote } from "@/components/PayItem";
 import {
   Elements,
   PaymentElement,
@@ -456,7 +457,8 @@ function PaymentForm({
 
   return (
     <>
-      <PaymentElement />
+      <TestModeNote />
+      <PaymentElement options={{ layout: "tabs", wallets: { applePay: "auto", googlePay: "auto" } }} />
       <div
         className="fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border"
         style={{ paddingBottom: "calc(90px + env(safe-area-inset-bottom))" }}
