@@ -370,7 +370,7 @@ function ProfilePage() {
                 <button
                   key={th}
                   onClick={() => { if (!active) toggleTheme(); }}
-                  className="flex-1 h-10 rounded-full text-xs font-medium border capitalize"
+                  className="flex-1 h-10 rounded-full text-xs font-medium border"
                   style={{
                     borderColor: active ? "var(--accent)" : "var(--border)",
                     backgroundColor: active ? "var(--accent)" : "transparent",

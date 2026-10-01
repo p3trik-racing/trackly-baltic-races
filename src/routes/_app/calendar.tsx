@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { formatDate } from "@/lib/format";
+import { formatDate, ucFirst } from "@/lib/format";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
+import { enGB, lv, ru } from "date-fns/locale";
 import { format, parseISO } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { fetchUpcomingEvents, type UpcomingEvent } from "@/lib/upcoming-events";
@@ -28,6 +29,7 @@ function CalendarPage() {
   const [events, setEvents] = useState<UpcomingEvent[]>([]);
   const [category, setCategory] = useState("all");
   const { t, lang } = useLang();
+  const calendarLocale = lang === "ru" ? ru : lang === "lv" ? lv : enGB;
   const [mode, setMode] = useState<"month" | "upcoming">("month");
   const [selected, setSelected] = useState<Date | undefined>();
   const [month, setMonth] = useState<Date>(new Date());
@@ -107,6 +109,8 @@ function CalendarPage() {
           <div className="bg-card border border-border rounded-2xl p-3">
             <DayPicker
               mode="single"
+              locale={calendarLocale}
+              formatters={{ formatCaption: (date) => ucFirst(formatDate(date, lang, "monthYear")) }}
               weekStartsOn={1}
               showOutsideDays
               month={month}
@@ -157,7 +161,7 @@ function CalendarPage() {
           </div>
           <section className="space-y-3">
             <h2 className="text-base font-semibold">
-              {selected ? formatDate(selected, lang, "weekday") : t("calendar.selectDay")}
+              {selected ? ucFirst(formatDate(selected, lang, "weekday")) : t("calendar.selectDay")}
             </h2>
             {dayEvents.length === 0
               ? <p className="text-sm text-muted-foreground py-4">{t("calendar.noEventsDay")}</p>
@@ -169,7 +173,7 @@ function CalendarPage() {
           {grouped.length === 0 && loaded && <p className="text-sm text-muted-foreground">{t("calendar.noUpcoming")}</p>}
           {grouped.map((g) => (
             <section key={g.label} className="space-y-3">
-              <h2 className="text-base font-semibold">{g.label}</h2>
+              <h2 className="text-base font-semibold">{ucFirst(g.label)}</h2>
               {g.items.map((e) => <EventCard key={e.id} event={e} />)}
             </section>
           ))}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLang } from "@/i18n";
+import { useLang, countryName } from "@/i18n";
 
 const COUNTRY_BY_CODE: Record<string, string> = { LV: "Latvia", EE: "Estonia", LT: "Lithuania" };
 interface Place { name: string; street: string; city: string; country: string; countrycode: string; lat: number; lng: number }
@@ -54,7 +54,7 @@ export function PlaceSearch({ initial, onPick, onText }: { initial?: string; onP
           {results.length === 0 ? <p className="px-3 py-2 text-xs text-muted-foreground">{t("organiser.post.noResults")}</p> : results.map((p, i) => (
             <button key={i} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => pick(p)} className="block w-full text-left px-3 py-2 border-b border-border last:border-0">
               <p className="text-sm font-medium truncate">{p.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{[p.street, p.city, p.country].filter(Boolean).join(", ")}</p>
+              <p className="text-xs text-muted-foreground truncate">{[p.street, p.city, countryName(t, COUNTRY_BY_CODE[p.countrycode] ?? p.country)].filter(Boolean).join(", ")}</p>
             </button>
           ))}
         </div>

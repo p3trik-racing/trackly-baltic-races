@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { useLang } from "@/i18n";
-import { countryLabel } from "@/lib/countries";
+import { useLang, countryName } from "@/i18n";
 import { formatDate } from "@/lib/format";
 import { eventCover } from "@/lib/event-cover";
 import { eur } from "@/lib/tracks";
@@ -33,7 +32,7 @@ export function VenueCardView({ v, compact }: { v: VenueCard; compact?: boolean 
       <img src={eventCover("track_days", v.cover_image_url)} alt="" className="w-full h-32 object-cover" />
       <div className="p-3 space-y-0.5">
         <p className="font-medium truncate">{v.name}</p>
-        <p className="text-xs text-muted-foreground">{[v.city, countryLabel(v.country)].filter(Boolean).join(" · ")}</p>
+        <p className="text-xs text-muted-foreground">{[v.city, countryName(t, v.country)].filter(Boolean).join(" · ")}</p>
         <p className="text-xs">
           {v.from != null && <span className="font-medium">{t("tracks.fromPerHour", { price: eur(v.from) })}</span>}
           {v.next && <span className="text-muted-foreground">{v.from != null ? " · " : ""}{t("tracks.nextOpen", { date: formatDate(v.next, lang, "short") })}</span>}

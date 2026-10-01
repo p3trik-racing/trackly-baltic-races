@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { formatDate } from "@/lib/format";
+import { formatDate, ucFirst } from "@/lib/format";
 import { useLang, catLabel, countryName, hasTranslationKey, LangSwitcher } from "@/i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RateEventCard, RatingBadge } from "@/components/Ratings";
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/_app/event/$eventId")({
     const e = loaderData?.og;
     if (!e) return { meta: GENERIC_EVENT_META };
     const url = `${SITE_URL}/event/${e.id}`;
-    const date = new Date(e.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    const date = formatDate(e.date, "en", "long");
     const price = Number(e.price) === 0 ? "Free" : `from €${Number(e.price)}`;
     const desc = [date, e.city, price].filter(Boolean).join(" · ");
     const title = `${e.title} — Majorka Racing`;
@@ -203,7 +203,7 @@ function EventDetail() {
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-3 text-foreground">
             <Calendar size={16} className="text-muted-foreground" />
-            {formatDate(event.date, lang, "weekday")}
+            {ucFirst(formatDate(event.date, lang, "weekday"))}
             {event.time && <> · {String(event.time).slice(0, 5)}</>}
           </div>
           {event.duration && (
@@ -215,7 +215,7 @@ function EventDetail() {
           {event.location_name && (
             <div className="flex items-center gap-3 text-foreground">
               <MapPin size={16} className="text-muted-foreground" />
-              {event.location_name}{event.city ? `, ${event.city}` : ""}{event.country ? `, ${event.country}` : ""}
+              {event.location_name}{event.city ? `, ${event.city}` : ""}{event.country ? `, ${countryName(t, event.country)}` : ""}
             </div>
           )}
           {(event.location_name || event.city || event.country) && (() => {

@@ -63,7 +63,7 @@ function MyTracks() {
           <div className="p-3 flex justify-between gap-2">
             <div className="min-w-0">
               <p className="font-medium truncate">{v.name}</p>
-              <p className="text-xs text-muted-foreground">{[v.city, v.country].filter(Boolean).join(" · ")}</p>
+              <p className="text-xs text-muted-foreground">{[v.city, countryName(t, v.country)].filter(Boolean).join(" · ")}</p>
             </div>
             <span className="text-[11px] px-2 py-0.5 h-fit rounded-full bg-input">{v.status === "live" ? t("organiser.status.live") : t("organiser.status.draft")}</span>
           </div>
