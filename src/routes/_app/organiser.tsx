@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { formatDate } from "@/lib/format";
+import { formatDate, ucFirst } from "@/lib/format";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -167,7 +167,7 @@ function OrganiserDashboard() {
               backgroundColor: tab === t ? "var(--accent)" : "transparent",
                color: tab === t ? "var(--accent-foreground)" : "var(--muted-foreground)",
             }}>
-            {t === "active" ? tr("organiser.tab.active") : tr("organiser.tab.past")}
+            {ucFirst(tr(`organiser.tab.${t}`))}
           </button>
         ))}
       </div>
