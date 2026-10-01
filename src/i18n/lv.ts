@@ -2,6 +2,7 @@ import type { en } from "./en";
 export const lv: Partial<Record<keyof typeof en, string>> = {
   "common.back": "Atpakaļ",
   "common.loading": "Ielādē…",
+  "common.error": "Radās kļūda.",
   "common.cancel": "Atcelt",
   "common.save": "Saglabāt",
   "common.saving": "Saglabā…",

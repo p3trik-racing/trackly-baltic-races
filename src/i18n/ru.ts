@@ -2,6 +2,7 @@ import type { en } from "./en";
 export const ru: Partial<Record<keyof typeof en, string>> = {
   "common.back": "Назад",
   "common.loading": "Загрузка…",
+  "common.error": "Что-то пошло не так.",
   "common.cancel": "Отмена",
   "common.save": "Сохранить",
   "common.saving": "Сохраняем…",

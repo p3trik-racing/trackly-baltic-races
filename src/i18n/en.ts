@@ -2,6 +2,7 @@ export const en = {
   // common
   "common.back": "Back",
   "common.loading": "Loading…",
+  "common.error": "Something went wrong.",
   "common.cancel": "Cancel",
   "common.save": "Save",
   "common.saving": "Saving…",

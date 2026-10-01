@@ -130,7 +130,7 @@ function CalendarPage() {
                 button_next: "w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted",
                 month_grid: "w-full border-collapse",
                 weekdays: "flex",
-                weekday: "flex-1 text-[11px] font-medium text-muted-foreground uppercase py-1",
+                weekday: "flex-1 text-[11px] font-medium text-muted-foreground py-1",
                 week: "flex w-full mt-1",
                 day: "flex-1 aspect-square p-0.5",
                 outside: "opacity-35",

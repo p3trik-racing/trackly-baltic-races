@@ -52,10 +52,20 @@ export const Route = createFileRoute("/_app/competitions_/$slug")({
       links: [{ rel: "canonical", href: url }],
     };
   },
-  errorComponent: () => <div className="container-app py-10 text-muted-foreground">Something went wrong.</div>,
-  notFoundComponent: () => <div className="container-app py-10 text-muted-foreground">Competition not found.</div>,
+  errorComponent: () => <CompetitionError />,
+  notFoundComponent: () => <CompetitionNotFound />,
   component: CompetitionPage,
 });
+
+function CompetitionError() {
+  const { t } = useLang();
+  return <div className="container-app py-10 text-muted-foreground">{t("common.error")}</div>;
+}
+
+function CompetitionNotFound() {
+  const { t } = useLang();
+  return <div className="container-app py-10 text-muted-foreground">{t("compete.notFound")}</div>;
+}
 
 function CompetitionPage() {
   const { slug } = Route.useParams();

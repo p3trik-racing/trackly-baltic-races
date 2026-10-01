@@ -52,10 +52,20 @@ export const Route = createFileRoute("/_app/track-slot/$id")({
       links: [{ rel: "canonical", href: url }],
     };
   },
-  errorComponent: () => <div className="container-app py-10 text-muted-foreground">Something went wrong.</div>,
-  notFoundComponent: () => <div className="container-app py-10 text-muted-foreground">Not found.</div>,
+  errorComponent: () => <SlotError />,
+  notFoundComponent: () => <SlotNotFound />,
   component: SlotPage,
 });
+
+function SlotError() {
+  const { t } = useLang();
+  return <div className="container-app py-10 text-muted-foreground">{t("common.error")}</div>;
+}
+
+function SlotNotFound() {
+  const { t } = useLang();
+  return <div className="container-app py-10 text-muted-foreground">{t("tracks.notFound")}</div>;
+}
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const toLocalInput = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
