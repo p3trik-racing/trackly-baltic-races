@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/format";
 const REPLY_TO = "admin@majorkariga.com";
 type L = "en" | "ru" | "lv";
 const DICTS: Record<L, Record<string, string>> = { en: en as any, ru: ru as any, lv: lv as any };
+const LOCALES: Record<L, string> = { en: "en-GB", ru: "ru-RU", lv: "lv-LV" };
 
 export const pick = (l?: string | null): L => (l === "ru" || l === "lv" ? l : "en");
 
