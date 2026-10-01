@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useLang, countryName } from "@/i18n";
 import { useOrganiserGuard } from "@/lib/roles";
+import { PayoutsCard, useConnectStatus } from "@/components/PayoutsCard";
 import { COUNTRIES } from "@/lib/countries";
 import { formatDate } from "@/lib/format";
 import { ImageCropModal } from "@/components/ImageCropModal";
@@ -36,6 +37,7 @@ function MyTracks() {
   const [venues, setVenues] = useState<any[]>([]);
   const [editing, setEditing] = useState<any | null>(null);
   const [managing, setManaging] = useState<any | null>(null);
+  const connect = useConnectStatus();
 
   const load = () => {
     if (!user) return;
@@ -55,6 +57,7 @@ function MyTracks() {
         <h1 className="text-[22px] font-semibold">{t("mytracks.title")}</h1>
         <button onClick={() => setEditing({})} className="inline-flex items-center gap-1 px-3 h-10 rounded-xl text-sm font-medium" style={primary}><Plus size={16} /> {t("mytracks.add")}</button>
       </div>
+      <PayoutsCard status={connect} />
       {venues.length === 0 ? <p className="bg-card border border-border rounded-2xl p-8 text-center text-sm text-muted-foreground">{t("mytracks.empty")}</p> : venues.map((v) => (
         <div key={v.id} className="bg-card border border-border rounded-2xl overflow-hidden">
           <div className="p-3 flex justify-between gap-2">

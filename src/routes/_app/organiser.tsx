@@ -11,6 +11,7 @@ import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
 import { useOrganiserGuard } from "@/lib/roles";
 import { SharePhotos } from "@/components/SharePhotos";
 import { RatingBadge } from "@/components/Ratings";
+import { PayoutsCard, useConnectStatus } from "@/components/PayoutsCard";
 
 export const Route = createFileRoute("/_app/organiser")({
   head: () => ({ meta: [
@@ -48,7 +49,9 @@ interface BookingAgg {
 function OrganiserDashboard() {
   const { user } = useAuth();
   const { t, lang } = useLang();
-  useOrganiserGuard(t("organiser.notAllowed"));
+  const { isAdmin } = useOrganiserGuard(t("organiser.notAllowed"));
+  const connect = useConnectStatus();
+  const payoutsReady = !!connect?.payouts && !!connect?.details;
   const tr = t;
   
   const [events, setEvents] = useState<OrgEvent[]>([]);
@@ -154,6 +157,8 @@ function OrganiserDashboard() {
         </div>
       </div>
 
+      <PayoutsCard status={connect} />
+
       <div className="flex gap-2 bg-card p-1 rounded-xl border border-border">
         {(["active", "past"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
@@ -198,6 +203,9 @@ function OrganiserDashboard() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <p className="font-medium leading-tight truncate">{e.title}</p>
+                      {connect && !isAdmin && !payoutsReady && Number(e.price) > 0 && e.status !== "cancelled" && (
+                        <p className="text-[11px]" style={{ color: "var(--accent)" }}>{t("payouts.warn")}</p>
+                      )}
                       {statusBadge(e)}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
