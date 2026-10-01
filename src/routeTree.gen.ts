@@ -9,69 +9,53 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as EventTermsRouteImport } from './routes/event-terms'
-import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppTracksRouteImport } from './routes/_app/tracks'
-import { Route as AppProfileRouteImport } from './routes/_app/profile'
-import { Route as AppOrganiserRouteImport } from './routes/_app/organiser'
-import { Route as AppMapRouteImport } from './routes/_app/map'
-import { Route as AppInboxRouteImport } from './routes/_app/inbox'
-import { Route as AppHomeRouteImport } from './routes/_app/home'
-import { Route as AppFriendsRouteImport } from './routes/_app/friends'
-import { Route as AppExploreRouteImport } from './routes/_app/explore'
-import { Route as AppCompetitionsRouteImport } from './routes/_app/competitions'
-import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
-import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as EventTermsRouteImport } from './routes/event-terms'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
-import { Route as AppTracksSlugRouteImport } from './routes/_app/tracks_.$slug'
-import { Route as AppTrackSlotIdRouteImport } from './routes/_app/track-slot.$id'
-import { Route as AppOrganiserTracksRouteImport } from './routes/_app/organiser_.tracks'
-import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
-import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
-import { Route as AppInviteCodeRouteImport } from './routes/_app/invite.$code'
-import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
-import { Route as AppCompetitionsSlugRouteImport } from './routes/_app/competitions_.$slug'
-import { Route as AppCheckinBookingIdRouteImport } from './routes/_app/checkin.$bookingId'
-import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
+import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
+import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
+import { Route as AppCompetitionsRouteImport } from './routes/_app/competitions'
+import { Route as AppExploreRouteImport } from './routes/_app/explore'
+import { Route as AppFriendsRouteImport } from './routes/_app/friends'
+import { Route as AppHomeRouteImport } from './routes/_app/home'
+import { Route as AppInboxRouteImport } from './routes/_app/inbox'
+import { Route as AppMapRouteImport } from './routes/_app/map'
+import { Route as AppOrganiserRouteImport } from './routes/_app/organiser'
+import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppTracksRouteImport } from './routes/_app/tracks'
 import { Route as AppBookEventIdRouteImport } from './routes/_app/book.$eventId'
-import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as ApiPublicQrBookingIdRouteImport } from './routes/api/public/qr.$bookingId'
-import { Route as ApiPublicCronRemindersRouteImport } from './routes/api/public/cron/reminders'
+import { Route as AppBookingBookingIdRouteImport } from './routes/_app/booking.$bookingId'
+import { Route as AppCheckinBookingIdRouteImport } from './routes/_app/checkin.$bookingId'
+import { Route as AppCompetitionsSlugRouteImport } from './routes/_app/competitions_.$slug'
+import { Route as AppEventEventIdRouteImport } from './routes/_app/event.$eventId'
+import { Route as AppInviteCodeRouteImport } from './routes/_app/invite.$code'
+import { Route as AppOrganiserApplyRouteImport } from './routes/_app/organiser_.apply'
+import { Route as AppOrganiserPostEventRouteImport } from './routes/_app/organiser_.post-event'
+import { Route as AppOrganiserTracksRouteImport } from './routes/_app/organiser_.tracks'
+import { Route as AppTrackSlotIdRouteImport } from './routes/_app/track-slot.$id'
+import { Route as AppTracksSlugRouteImport } from './routes/_app/tracks_.$slug'
 import { Route as ApiPublicCronPayoutsRouteImport } from './routes/api/public/cron/payouts'
-import { Route as AppOrganiserEventsEventIdCheckinRouteImport } from './routes/_app/organiser_.events.$eventId.checkin'
+import { Route as ApiPublicCronRemindersRouteImport } from './routes/api/public/cron/reminders'
+import { Route as ApiPublicQrBookingIdRouteImport } from './routes/api/public/qr.$bookingId'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as AppOrganiserEventsEventIdBookingsRouteImport } from './routes/_app/organiser_.events.$eventId.bookings'
+import { Route as AppOrganiserEventsEventIdCheckinRouteImport } from './routes/_app/organiser_.events.$eventId.checkin'
 
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
-  id: '/privacy-policy',
-  path: '/privacy-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventTermsRoute = EventTermsRouteImport.update({
@@ -79,63 +63,34 @@ const EventTermsRoute = EventTermsRouteImport.update({
   path: '/event-terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppRoute = AppRouteImport.update({
-  id: '/_app',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppTracksRoute = AppTracksRouteImport.update({
-  id: '/tracks',
-  path: '/tracks',
-  getParentRoute: () => AppRoute,
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AppProfileRoute = AppProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AppRoute,
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AppOrganiserRoute = AppOrganiserRouteImport.update({
-  id: '/organiser',
-  path: '/organiser',
-  getParentRoute: () => AppRoute,
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AppMapRoute = AppMapRouteImport.update({
-  id: '/map',
-  path: '/map',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppInboxRoute = AppInboxRouteImport.update({
-  id: '/inbox',
-  path: '/inbox',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppHomeRoute = AppHomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppFriendsRoute = AppFriendsRouteImport.update({
-  id: '/friends',
-  path: '/friends',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppExploreRoute = AppExploreRouteImport.update({
-  id: '/explore',
-  path: '/explore',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCompetitionsRoute = AppCompetitionsRouteImport.update({
-  id: '/competitions',
-  path: '/competitions',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCalendarRoute = AppCalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
 const AppBookingsRoute = AppBookingsRouteImport.update({
@@ -143,59 +98,54 @@ const AppBookingsRoute = AppBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAdminRoute = AppAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AppCalendarRoute = AppCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => AppRoute,
 } as any)
-const AppTracksSlugRoute = AppTracksSlugRouteImport.update({
-  id: '/tracks_/$slug',
-  path: '/tracks/$slug',
+const AppCompetitionsRoute = AppCompetitionsRouteImport.update({
+  id: '/competitions',
+  path: '/competitions',
   getParentRoute: () => AppRoute,
 } as any)
-const AppTrackSlotIdRoute = AppTrackSlotIdRouteImport.update({
-  id: '/track-slot/$id',
-  path: '/track-slot/$id',
+const AppExploreRoute = AppExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => AppRoute,
 } as any)
-const AppOrganiserTracksRoute = AppOrganiserTracksRouteImport.update({
-  id: '/organiser_/tracks',
-  path: '/organiser/tracks',
+const AppFriendsRoute = AppFriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
   getParentRoute: () => AppRoute,
 } as any)
-const AppOrganiserPostEventRoute = AppOrganiserPostEventRouteImport.update({
-  id: '/organiser_/post-event',
-  path: '/organiser/post-event',
+const AppHomeRoute = AppHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => AppRoute,
 } as any)
-const AppOrganiserApplyRoute = AppOrganiserApplyRouteImport.update({
-  id: '/organiser_/apply',
-  path: '/organiser/apply',
+const AppInboxRoute = AppInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
   getParentRoute: () => AppRoute,
 } as any)
-const AppInviteCodeRoute = AppInviteCodeRouteImport.update({
-  id: '/invite/$code',
-  path: '/invite/$code',
+const AppMapRoute = AppMapRouteImport.update({
+  id: '/map',
+  path: '/map',
   getParentRoute: () => AppRoute,
 } as any)
-const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
-  id: '/event/$eventId',
-  path: '/event/$eventId',
+const AppOrganiserRoute = AppOrganiserRouteImport.update({
+  id: '/organiser',
+  path: '/organiser',
   getParentRoute: () => AppRoute,
 } as any)
-const AppCompetitionsSlugRoute = AppCompetitionsSlugRouteImport.update({
-  id: '/competitions_/$slug',
-  path: '/competitions/$slug',
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
-const AppCheckinBookingIdRoute = AppCheckinBookingIdRouteImport.update({
-  id: '/checkin/$bookingId',
-  path: '/checkin/$bookingId',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBookingBookingIdRoute = AppBookingBookingIdRouteImport.update({
-  id: '/booking/$bookingId',
-  path: '/booking/$bookingId',
+const AppTracksRoute = AppTracksRouteImport.update({
+  id: '/tracks',
+  path: '/tracks',
   getParentRoute: () => AppRoute,
 } as any)
 const AppBookEventIdRoute = AppBookEventIdRouteImport.update({
@@ -203,25 +153,59 @@ const AppBookEventIdRoute = AppBookEventIdRouteImport.update({
   path: '/book/$eventId',
   getParentRoute: () => AppRoute,
 } as any)
-const LovableEmailTransactionalPreviewRoute =
-  LovableEmailTransactionalPreviewRouteImport.update({
-    id: '/lovable/email/transactional/preview',
-    path: '/lovable/email/transactional/preview',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
-  getParentRoute: () => rootRouteImport,
+const AppBookingBookingIdRoute = AppBookingBookingIdRouteImport.update({
+  id: '/booking/$bookingId',
+  path: '/booking/$bookingId',
+  getParentRoute: () => AppRoute,
 } as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
-  getParentRoute: () => rootRouteImport,
+const AppCheckinBookingIdRoute = AppCheckinBookingIdRouteImport.update({
+  id: '/checkin/$bookingId',
+  path: '/checkin/$bookingId',
+  getParentRoute: () => AppRoute,
 } as any)
-const ApiPublicQrBookingIdRoute = ApiPublicQrBookingIdRouteImport.update({
-  id: '/api/public/qr/$bookingId',
-  path: '/api/public/qr/$bookingId',
+const AppCompetitionsSlugRoute = AppCompetitionsSlugRouteImport.update({
+  id: '/competitions_/$slug',
+  path: '/competitions/$slug',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEventEventIdRoute = AppEventEventIdRouteImport.update({
+  id: '/event/$eventId',
+  path: '/event/$eventId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInviteCodeRoute = AppInviteCodeRouteImport.update({
+  id: '/invite/$code',
+  path: '/invite/$code',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOrganiserApplyRoute = AppOrganiserApplyRouteImport.update({
+  id: '/organiser_/apply',
+  path: '/organiser/apply',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOrganiserPostEventRoute = AppOrganiserPostEventRouteImport.update({
+  id: '/organiser_/post-event',
+  path: '/organiser/post-event',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOrganiserTracksRoute = AppOrganiserTracksRouteImport.update({
+  id: '/organiser_/tracks',
+  path: '/organiser/tracks',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackSlotIdRoute = AppTrackSlotIdRouteImport.update({
+  id: '/track-slot/$id',
+  path: '/track-slot/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTracksSlugRoute = AppTracksSlugRouteImport.update({
+  id: '/tracks_/$slug',
+  path: '/tracks/$slug',
+  getParentRoute: () => AppRoute,
+} as any)
+const ApiPublicCronPayoutsRoute = ApiPublicCronPayoutsRouteImport.update({
+  id: '/api/public/cron/payouts',
+  path: '/api/public/cron/payouts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicCronRemindersRoute = ApiPublicCronRemindersRouteImport.update({
@@ -229,21 +213,37 @@ const ApiPublicCronRemindersRoute = ApiPublicCronRemindersRouteImport.update({
   path: '/api/public/cron/reminders',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicCronPayoutsRoute = ApiPublicCronPayoutsRouteImport.update({
-  id: '/api/public/cron/payouts',
-  path: '/api/public/cron/payouts',
+const ApiPublicQrBookingIdRoute = ApiPublicQrBookingIdRouteImport.update({
+  id: '/api/public/qr/$bookingId',
+  path: '/api/public/qr/$bookingId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppOrganiserEventsEventIdCheckinRoute =
-  AppOrganiserEventsEventIdCheckinRouteImport.update({
-    id: '/organiser_/events/$eventId/checkin',
-    path: '/organiser/events/$eventId/checkin',
-    getParentRoute: () => AppRoute,
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AppOrganiserEventsEventIdBookingsRoute =
   AppOrganiserEventsEventIdBookingsRouteImport.update({
     id: '/organiser_/events/$eventId/bookings',
     path: '/organiser/events/$eventId/bookings',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppOrganiserEventsEventIdCheckinRoute =
+  AppOrganiserEventsEventIdCheckinRouteImport.update({
+    id: '/organiser_/events/$eventId/checkin',
+    path: '/organiser/events/$eventId/checkin',
     getParentRoute: () => AppRoute,
   } as any)
 
@@ -512,46 +512,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy-policy': {
-      id: '/privacy-policy'
-      path: '/privacy-policy'
-      fullPath: '/privacy-policy'
-      preLoaderRoute: typeof PrivacyPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/event-terms': {
-      id: '/event-terms'
-      path: '/event-terms'
-      fullPath: '/event-terms'
-      preLoaderRoute: typeof EventTermsRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -561,81 +526,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/event-terms': {
+      id: '/event-terms'
+      path: '/event-terms'
+      fullPath: '/event-terms'
+      preLoaderRoute: typeof EventTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/tracks': {
-      id: '/_app/tracks'
-      path: '/tracks'
-      fullPath: '/tracks'
-      preLoaderRoute: typeof AppTracksRouteImport
-      parentRoute: typeof AppRoute
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_app/profile': {
-      id: '/_app/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AppProfileRouteImport
-      parentRoute: typeof AppRoute
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_app/organiser': {
-      id: '/_app/organiser'
-      path: '/organiser'
-      fullPath: '/organiser'
-      preLoaderRoute: typeof AppOrganiserRouteImport
-      parentRoute: typeof AppRoute
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_app/map': {
-      id: '/_app/map'
-      path: '/map'
-      fullPath: '/map'
-      preLoaderRoute: typeof AppMapRouteImport
-      parentRoute: typeof AppRoute
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_app/inbox': {
-      id: '/_app/inbox'
-      path: '/inbox'
-      fullPath: '/inbox'
-      preLoaderRoute: typeof AppInboxRouteImport
-      parentRoute: typeof AppRoute
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_app/home': {
-      id: '/_app/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof AppHomeRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/friends': {
-      id: '/_app/friends'
-      path: '/friends'
-      fullPath: '/friends'
-      preLoaderRoute: typeof AppFriendsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/explore': {
-      id: '/_app/explore'
-      path: '/explore'
-      fullPath: '/explore'
-      preLoaderRoute: typeof AppExploreRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/competitions': {
-      id: '/_app/competitions'
-      path: '/competitions'
-      fullPath: '/competitions'
-      preLoaderRoute: typeof AppCompetitionsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/calendar': {
-      id: '/_app/calendar'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof AppCalendarRouteImport
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/bookings': {
@@ -645,81 +582,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBookingsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/admin': {
-      id: '/_app/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AppAdminRouteImport
+    '/_app/calendar': {
+      id: '/_app/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof AppCalendarRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/tracks_/$slug': {
-      id: '/_app/tracks_/$slug'
-      path: '/tracks/$slug'
-      fullPath: '/tracks/$slug'
-      preLoaderRoute: typeof AppTracksSlugRouteImport
+    '/_app/competitions': {
+      id: '/_app/competitions'
+      path: '/competitions'
+      fullPath: '/competitions'
+      preLoaderRoute: typeof AppCompetitionsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/track-slot/$id': {
-      id: '/_app/track-slot/$id'
-      path: '/track-slot/$id'
-      fullPath: '/track-slot/$id'
-      preLoaderRoute: typeof AppTrackSlotIdRouteImport
+    '/_app/explore': {
+      id: '/_app/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof AppExploreRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/organiser_/tracks': {
-      id: '/_app/organiser_/tracks'
-      path: '/organiser/tracks'
-      fullPath: '/organiser/tracks'
-      preLoaderRoute: typeof AppOrganiserTracksRouteImport
+    '/_app/friends': {
+      id: '/_app/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof AppFriendsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/organiser_/post-event': {
-      id: '/_app/organiser_/post-event'
-      path: '/organiser/post-event'
-      fullPath: '/organiser/post-event'
-      preLoaderRoute: typeof AppOrganiserPostEventRouteImport
+    '/_app/home': {
+      id: '/_app/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AppHomeRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/organiser_/apply': {
-      id: '/_app/organiser_/apply'
-      path: '/organiser/apply'
-      fullPath: '/organiser/apply'
-      preLoaderRoute: typeof AppOrganiserApplyRouteImport
+    '/_app/inbox': {
+      id: '/_app/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof AppInboxRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/invite/$code': {
-      id: '/_app/invite/$code'
-      path: '/invite/$code'
-      fullPath: '/invite/$code'
-      preLoaderRoute: typeof AppInviteCodeRouteImport
+    '/_app/map': {
+      id: '/_app/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof AppMapRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/event/$eventId': {
-      id: '/_app/event/$eventId'
-      path: '/event/$eventId'
-      fullPath: '/event/$eventId'
-      preLoaderRoute: typeof AppEventEventIdRouteImport
+    '/_app/organiser': {
+      id: '/_app/organiser'
+      path: '/organiser'
+      fullPath: '/organiser'
+      preLoaderRoute: typeof AppOrganiserRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/competitions_/$slug': {
-      id: '/_app/competitions_/$slug'
-      path: '/competitions/$slug'
-      fullPath: '/competitions/$slug'
-      preLoaderRoute: typeof AppCompetitionsSlugRouteImport
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/checkin/$bookingId': {
-      id: '/_app/checkin/$bookingId'
-      path: '/checkin/$bookingId'
-      fullPath: '/checkin/$bookingId'
-      preLoaderRoute: typeof AppCheckinBookingIdRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/booking/$bookingId': {
-      id: '/_app/booking/$bookingId'
-      path: '/booking/$bookingId'
-      fullPath: '/booking/$bookingId'
-      preLoaderRoute: typeof AppBookingBookingIdRouteImport
+    '/_app/tracks': {
+      id: '/_app/tracks'
+      path: '/tracks'
+      fullPath: '/tracks'
+      preLoaderRoute: typeof AppTracksRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/book/$eventId': {
@@ -729,32 +659,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBookEventIdRouteImport
       parentRoute: typeof AppRoute
     }
-    '/lovable/email/transactional/preview': {
-      id: '/lovable/email/transactional/preview'
-      path: '/lovable/email/transactional/preview'
-      fullPath: '/lovable/email/transactional/preview'
-      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_app/booking/$bookingId': {
+      id: '/_app/booking/$bookingId'
+      path: '/booking/$bookingId'
+      fullPath: '/booking/$bookingId'
+      preLoaderRoute: typeof AppBookingBookingIdRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/lovable/email/auth/webhook': {
-      id: '/lovable/email/auth/webhook'
-      path: '/lovable/email/auth/webhook'
-      fullPath: '/lovable/email/auth/webhook'
-      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_app/checkin/$bookingId': {
+      id: '/_app/checkin/$bookingId'
+      path: '/checkin/$bookingId'
+      fullPath: '/checkin/$bookingId'
+      preLoaderRoute: typeof AppCheckinBookingIdRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_app/competitions_/$slug': {
+      id: '/_app/competitions_/$slug'
+      path: '/competitions/$slug'
+      fullPath: '/competitions/$slug'
+      preLoaderRoute: typeof AppCompetitionsSlugRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/api/public/qr/$bookingId': {
-      id: '/api/public/qr/$bookingId'
-      path: '/api/public/qr/$bookingId'
-      fullPath: '/api/public/qr/$bookingId'
-      preLoaderRoute: typeof ApiPublicQrBookingIdRouteImport
+    '/_app/event/$eventId': {
+      id: '/_app/event/$eventId'
+      path: '/event/$eventId'
+      fullPath: '/event/$eventId'
+      preLoaderRoute: typeof AppEventEventIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/invite/$code': {
+      id: '/_app/invite/$code'
+      path: '/invite/$code'
+      fullPath: '/invite/$code'
+      preLoaderRoute: typeof AppInviteCodeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/organiser_/apply': {
+      id: '/_app/organiser_/apply'
+      path: '/organiser/apply'
+      fullPath: '/organiser/apply'
+      preLoaderRoute: typeof AppOrganiserApplyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/organiser_/post-event': {
+      id: '/_app/organiser_/post-event'
+      path: '/organiser/post-event'
+      fullPath: '/organiser/post-event'
+      preLoaderRoute: typeof AppOrganiserPostEventRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/organiser_/tracks': {
+      id: '/_app/organiser_/tracks'
+      path: '/organiser/tracks'
+      fullPath: '/organiser/tracks'
+      preLoaderRoute: typeof AppOrganiserTracksRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/track-slot/$id': {
+      id: '/_app/track-slot/$id'
+      path: '/track-slot/$id'
+      fullPath: '/track-slot/$id'
+      preLoaderRoute: typeof AppTrackSlotIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracks_/$slug': {
+      id: '/_app/tracks_/$slug'
+      path: '/tracks/$slug'
+      fullPath: '/tracks/$slug'
+      preLoaderRoute: typeof AppTracksSlugRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/api/public/cron/payouts': {
+      id: '/api/public/cron/payouts'
+      path: '/api/public/cron/payouts'
+      fullPath: '/api/public/cron/payouts'
+      preLoaderRoute: typeof ApiPublicCronPayoutsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/cron/reminders': {
@@ -764,25 +743,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/cron/payouts': {
-      id: '/api/public/cron/payouts'
-      path: '/api/public/cron/payouts'
-      fullPath: '/api/public/cron/payouts'
-      preLoaderRoute: typeof ApiPublicCronPayoutsRouteImport
+    '/api/public/qr/$bookingId': {
+      id: '/api/public/qr/$bookingId'
+      path: '/api/public/qr/$bookingId'
+      fullPath: '/api/public/qr/$bookingId'
+      preLoaderRoute: typeof ApiPublicQrBookingIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/organiser_/events/$eventId/checkin': {
-      id: '/_app/organiser_/events/$eventId/checkin'
-      path: '/organiser/events/$eventId/checkin'
-      fullPath: '/organiser/events/$eventId/checkin'
-      preLoaderRoute: typeof AppOrganiserEventsEventIdCheckinRouteImport
-      parentRoute: typeof AppRoute
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/organiser_/events/$eventId/bookings': {
       id: '/_app/organiser_/events/$eventId/bookings'
       path: '/organiser/events/$eventId/bookings'
       fullPath: '/organiser/events/$eventId/bookings'
       preLoaderRoute: typeof AppOrganiserEventsEventIdBookingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/organiser_/events/$eventId/checkin': {
+      id: '/_app/organiser_/events/$eventId/checkin'
+      path: '/organiser/events/$eventId/checkin'
+      fullPath: '/organiser/events/$eventId/checkin'
+      preLoaderRoute: typeof AppOrganiserEventsEventIdCheckinRouteImport
       parentRoute: typeof AppRoute
     }
   }
@@ -868,10 +868,11 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }
