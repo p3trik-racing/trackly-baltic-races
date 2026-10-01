@@ -32,8 +32,11 @@ export type Database = {
           status: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id: string | null
           stripe_refund_id: string | null
+          stripe_transfer_id: string | null
           ticket_count: number
           total_price: number
+          transfer_error: string | null
+          transferred_at: string | null
           user_id: string
           waiver_accepted: boolean
         }
@@ -54,8 +57,11 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
+          stripe_transfer_id?: string | null
           ticket_count?: number
           total_price: number
+          transfer_error?: string | null
+          transferred_at?: string | null
           user_id: string
           waiver_accepted?: boolean
         }
@@ -76,8 +82,11 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
+          stripe_transfer_id?: string | null
           ticket_count?: number
           total_price?: number
+          transfer_error?: string | null
+          transferred_at?: string | null
           user_id?: string
           waiver_accepted?: boolean
         }
@@ -661,6 +670,10 @@ export type Database = {
           phone: string | null
           saved_events: string[]
           show_attendance: boolean
+          stripe_account_id: string | null
+          stripe_charges_enabled: boolean
+          stripe_details_submitted: boolean
+          stripe_payouts_enabled: boolean
           username: string | null
         }
         Insert: {
@@ -683,6 +696,10 @@ export type Database = {
           phone?: string | null
           saved_events?: string[]
           show_attendance?: boolean
+          stripe_account_id?: string | null
+          stripe_charges_enabled?: boolean
+          stripe_details_submitted?: boolean
+          stripe_payouts_enabled?: boolean
           username?: string | null
         }
         Update: {
@@ -705,6 +722,10 @@ export type Database = {
           phone?: string | null
           saved_events?: string[]
           show_attendance?: boolean
+          stripe_account_id?: string | null
+          stripe_charges_enabled?: boolean
+          stripe_details_submitted?: boolean
+          stripe_payouts_enabled?: boolean
           username?: string | null
         }
         Relationships: []
@@ -758,6 +779,7 @@ export type Database = {
       }
       race_tickets: {
         Row: {
+          amount: number
           car: string | null
           check_in_code: string
           checked_in_at: string | null
@@ -767,14 +789,19 @@ export type Database = {
           holder_name: string
           id: string
           licence_no: string | null
+          paid_at: string | null
           payment_status: string
           phone: string | null
+          platform_fee: number
           quantity: number
           status: string
+          stripe_payment_intent_id: string | null
+          stripe_refund_id: string | null
           ticket_type_id: string
           user_id: string
         }
         Insert: {
+          amount?: number
           car?: string | null
           check_in_code?: string
           checked_in_at?: string | null
@@ -784,14 +811,19 @@ export type Database = {
           holder_name: string
           id?: string
           licence_no?: string | null
+          paid_at?: string | null
           payment_status?: string
           phone?: string | null
+          platform_fee?: number
           quantity?: number
           status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_refund_id?: string | null
           ticket_type_id: string
           user_id: string
         }
         Update: {
+          amount?: number
           car?: string | null
           check_in_code?: string
           checked_in_at?: string | null
@@ -801,10 +833,14 @@ export type Database = {
           holder_name?: string
           id?: string
           licence_no?: string | null
+          paid_at?: string | null
           payment_status?: string
           phone?: string | null
+          platform_fee?: number
           quantity?: number
           status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_refund_id?: string | null
           ticket_type_id?: string
           user_id?: string
         }
@@ -827,12 +863,20 @@ export type Database = {
           check_in_code: string
           created_at: string
           id: string
+          is_gap: boolean
           is_host: boolean
           kind: string
+          paid_at: string | null
+          pay_by: string | null
           payment_status: string
+          platform_fee: number
           slot_id: string
           spots: number
           status: string
+          stripe_payment_intent_id: string | null
+          stripe_refund_id: string | null
+          stripe_transfer_id: string | null
+          transferred_at: string | null
           user_id: string
         }
         Insert: {
@@ -843,12 +887,20 @@ export type Database = {
           check_in_code?: string
           created_at?: string
           id?: string
+          is_gap?: boolean
           is_host?: boolean
           kind: string
+          paid_at?: string | null
+          pay_by?: string | null
           payment_status?: string
+          platform_fee?: number
           slot_id: string
           spots?: number
           status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_refund_id?: string | null
+          stripe_transfer_id?: string | null
+          transferred_at?: string | null
           user_id: string
         }
         Update: {
@@ -859,12 +911,20 @@ export type Database = {
           check_in_code?: string
           created_at?: string
           id?: string
+          is_gap?: boolean
           is_host?: boolean
           kind?: string
+          paid_at?: string | null
+          pay_by?: string | null
           payment_status?: string
+          platform_fee?: number
           slot_id?: string
           spots?: number
           status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_refund_id?: string | null
+          stripe_transfer_id?: string | null
+          transferred_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -1182,6 +1242,7 @@ export type Database = {
         Returns: undefined
       }
       redeem_organiser_code: { Args: { _code: string }; Returns: boolean }
+      release_unpaid_slots: { Args: never; Returns: number }
       remove_friend: { Args: { _other: string }; Returns: undefined }
       respond_friend_request: {
         Args: { _accept: boolean; _id: string }

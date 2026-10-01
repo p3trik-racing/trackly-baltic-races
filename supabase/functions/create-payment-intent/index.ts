@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
 
     const { data: event, error: evErr } = await admin
       .from("events")
-      .select("id,title,price,deposit,status,capacity")
+      .select("id,title,price,deposit,status,capacity,organiser_id")
       .eq("id", event_id)
       .maybeSingle();
     if (evErr || !event) return json({ error: "Event not found" }, 404);
@@ -83,7 +83,9 @@ Deno.serve(async (req) => {
     params.append("metadata[event_id]", event_id);
     params.append("metadata[user_id]", userId);
     params.append("metadata[ticket_count]", String(tc));
-    params.append("payment_method_types[]", "card");
+    params.append("metadata[organiser_id]", String(event.organiser_id ?? ""));
+    params.append("transfer_group", `event_${event_id}`);
+    params.append("automatic_payment_methods[enabled]", "true");
 
     const resp = await fetch("https://api.stripe.com/v1/payment_intents", {
       method: "POST",

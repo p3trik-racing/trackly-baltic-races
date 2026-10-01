@@ -45,6 +45,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicQrBookingIdRouteImport } from './routes/api/public/qr.$bookingId'
 import { Route as ApiPublicCronRemindersRouteImport } from './routes/api/public/cron/reminders'
+import { Route as ApiPublicCronPayoutsRouteImport } from './routes/api/public/cron/payouts'
 import { Route as AppOrganiserEventsEventIdCheckinRouteImport } from './routes/_app/organiser_.events.$eventId.checkin'
 import { Route as AppOrganiserEventsEventIdBookingsRouteImport } from './routes/_app/organiser_.events.$eventId.bookings'
 
@@ -228,6 +229,11 @@ const ApiPublicCronRemindersRoute = ApiPublicCronRemindersRouteImport.update({
   path: '/api/public/cron/reminders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronPayoutsRoute = ApiPublicCronPayoutsRouteImport.update({
+  id: '/api/public/cron/payouts',
+  path: '/api/public/cron/payouts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppOrganiserEventsEventIdCheckinRoute =
   AppOrganiserEventsEventIdCheckinRouteImport.update({
     id: '/organiser_/events/$eventId/checkin',
@@ -272,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/organiser/tracks': typeof AppOrganiserTracksRoute
   '/track-slot/$id': typeof AppTrackSlotIdRoute
   '/tracks/$slug': typeof AppTracksSlugRoute
+  '/api/public/cron/payouts': typeof ApiPublicCronPayoutsRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -311,6 +318,7 @@ export interface FileRoutesByTo {
   '/organiser/tracks': typeof AppOrganiserTracksRoute
   '/track-slot/$id': typeof AppTrackSlotIdRoute
   '/tracks/$slug': typeof AppTracksSlugRoute
+  '/api/public/cron/payouts': typeof ApiPublicCronPayoutsRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -352,6 +360,7 @@ export interface FileRoutesById {
   '/_app/organiser_/tracks': typeof AppOrganiserTracksRoute
   '/_app/track-slot/$id': typeof AppTrackSlotIdRoute
   '/_app/tracks_/$slug': typeof AppTracksSlugRoute
+  '/api/public/cron/payouts': typeof ApiPublicCronPayoutsRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -393,6 +402,7 @@ export interface FileRouteTypes {
     | '/organiser/tracks'
     | '/track-slot/$id'
     | '/tracks/$slug'
+    | '/api/public/cron/payouts'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
@@ -432,6 +442,7 @@ export interface FileRouteTypes {
     | '/organiser/tracks'
     | '/track-slot/$id'
     | '/tracks/$slug'
+    | '/api/public/cron/payouts'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
@@ -472,6 +483,7 @@ export interface FileRouteTypes {
     | '/_app/organiser_/tracks'
     | '/_app/track-slot/$id'
     | '/_app/tracks_/$slug'
+    | '/api/public/cron/payouts'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
     | '/lovable/email/auth/preview'
@@ -490,6 +502,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
+  ApiPublicCronPayoutsRoute: typeof ApiPublicCronPayoutsRoute
   ApiPublicCronRemindersRoute: typeof ApiPublicCronRemindersRoute
   ApiPublicQrBookingIdRoute: typeof ApiPublicQrBookingIdRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -751,6 +764,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/payouts': {
+      id: '/api/public/cron/payouts'
+      path: '/api/public/cron/payouts'
+      fullPath: '/api/public/cron/payouts'
+      preLoaderRoute: typeof ApiPublicCronPayoutsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/organiser_/events/$eventId/checkin': {
       id: '/_app/organiser_/events/$eventId/checkin'
       path: '/organiser/events/$eventId/checkin'
@@ -836,6 +856,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
+  ApiPublicCronPayoutsRoute: ApiPublicCronPayoutsRoute,
   ApiPublicCronRemindersRoute: ApiPublicCronRemindersRoute,
   ApiPublicQrBookingIdRoute: ApiPublicQrBookingIdRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

@@ -10,7 +10,9 @@ import { formatDate } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 import { getSlotOg } from "@/lib/og.functions";
 import { sendSlotBookingEmails } from "@/lib/app-email.functions";
-import { fireAndForget } from "@/lib/access-token";
+import { fireAndForget, accessToken } from "@/lib/access-token";
+import { cancelSlotBooking } from "@/lib/payments.functions";
+import { PayItem, SlotPay } from "@/components/PayItem";
 import { ShareSheet } from "@/components/ShareSheet";
 import { QrPass } from "@/components/QrPass";
 import { SplitProgress } from "@/components/SplitProgress";
@@ -108,9 +110,10 @@ function SlotPage() {
 
   async function cancel() {
     if (!mine) return;
-    const { error } = await supabase.rpc("cancel_slot_booking", { _booking_id: mine.id });
+    const r = await cancelSlotBooking({ data: { accessToken: (await accessToken()) ?? "", id: mine.id } });
     setConfirmCancel(false);
-    if (error) return toast.error(error.message);
+    if (!r.ok) return toast.error(r.error);
+    r.data.warnings.forEach((w) => toast.warning(w));
     const bid = mine.id;
     fireAndForget((accessToken) => sendSlotBookingEmails({ data: { accessToken, bookingId: bid, action: "cancelled" } }));
     toast.success(t("slot.cancelled"));
@@ -122,7 +125,12 @@ function SlotPage() {
       <main className="container-app py-6 space-y-4">
         <h1 className="text-[22px] font-semibold">{t("slot.successTitle")}</h1>
         <p className="text-sm text-muted-foreground">{s.venues?.name} · {formatDate(s.date, lang, "weekday")} · {hhmm(s.start_time)}–{hhmm(s.end_time)}</p>
-        <p className="text-sm">{t("slot.paymentPending")}</p>
+        {(() => {
+          const b = bookings.find((x) => x.id === success.id);
+          if (!b || b.payment_status !== "pending") return b?.payment_status === "paid" ? <p className="text-sm">{t("slot.paid")}</p> : null;
+          if (b.kind === "whole") return <PayItem kind="slot" id={b.id} autoOpen payBy={b.pay_by} label={t("pay.payAmount", { total: eur(Number(b.amount) * 1.05) })} onPaid={load} />;
+          return <p className="text-sm">{t("pay.whenConfirmed")}</p>;
+        })()}
         <QrPass bookingId={success.id} code={success.code} url={`${SITE_URL}/track-slot/${s.id}`} />
         <button onClick={() => setShareOpen(true)} className="w-full h-12 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2" style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}>
           <Share2 size={16} /> {t("slot.invite")}
@@ -172,6 +180,7 @@ function SlotPage() {
             <p className="font-medium">{t("slot.youreIn", { n: mine.spots })}</p>
             <p className="text-muted-foreground">{payLabel(t, mine.payment_status)}</p>
           </div>
+          <SlotPay b={mine} slotStatus={s.status} onPaid={load} />
           <QrPass bookingId={mine.id} code={mine.check_in_code} url={shareUrl} />
           {canCancel && (confirmCancel ? (
             <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
@@ -281,3 +290,4 @@ function BookSheet({ slot, mode, taken, onClose, onDone }: { slot: Slot; mode: M
     </Drawer>
   );
 }
+
