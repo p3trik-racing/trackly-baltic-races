@@ -5,6 +5,7 @@ import { ArrowLeft, Copy, Share2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/i18n";
+import { ucFirst } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 import { ShareSheet } from "@/components/ShareSheet";
 import { Avatar, displayName, type MiniProfile } from "@/components/FriendsGoing";
@@ -119,7 +120,7 @@ function FriendsPage() {
         {(["friends", "requests", "find"] as const).map((k) => (
           <button key={k} onClick={() => setTab(k)} className="flex-1 h-9 rounded-lg text-sm font-medium"
             style={tab === k ? accent : undefined}>
-            {t(`friends.tab.${k}` as any)}{k === "requests" && incoming.length > 0 ? ` (${incoming.length})` : ""}
+            {ucFirst(t(`friends.tab.${k}` as any))}{k === "requests" && incoming.length > 0 ? ` (${incoming.length})` : ""}
           </button>
         ))}
       </div>

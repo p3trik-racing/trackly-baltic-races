@@ -112,7 +112,7 @@ function BookingsPage() {
                color: tab === t ? "var(--accent-foreground)" : "var(--muted-foreground)",
             }}
           >
-            {t === "race" ? tr("bookings.tab.race") : ucFirst(tr(`bookings.tab.${t}`))}
+            {ucFirst(tr(`bookings.tab.${t}`))}
           </button>
         ))}
       </div>
