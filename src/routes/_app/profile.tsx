@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES, SPECIAL } from "@/lib/categories";
 import { LogOut, User, Upload, ChevronRight, KeyRound, Globe, ShoppingBag, Users } from "lucide-react";
 import { toast } from "sonner";
+import { deleteMyAccount } from "@/lib/account.functions";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import { useTheme } from "@/lib/theme-context";
 import { useRoles } from "@/lib/roles";
@@ -180,12 +181,30 @@ function ProfilePage() {
     toast.success(t("profile.passwordResetSent"));
   }
 
+  const [delOpen, setDelOpen] = useState(false);
+  const [delText, setDelText] = useState("");
+  const [deleting, setDeleting] = useState(false);
   async function deleteAccount() {
-    if (!confirm(t("profile.deleteConfirm"))) return;
-    // Account deletion requires admin privileges; sign out and notify.
-    await supabase.auth.signOut();
-    toast.message(t("profile.deleteRequested"));
-    navigate({ to: "/" });
+    if (delText.trim() !== "DELETE") return;
+    setDeleting(true);
+    const { data: s } = await supabase.auth.getSession();
+    const token = s.session?.access_token;
+    if (!token) { setDeleting(false); return; }
+    try {
+      const r = await deleteMyAccount({ data: { accessToken: token } });
+      if (!r.ok) {
+        setDeleting(false);
+        if (r.reason === "admin") return toast.error(t("profile.delete.admin"));
+        if (r.reason === "paid_upcoming") return toast.error(t("profile.delete.paidUpcoming"));
+        return toast.error(t("profile.delete.failed"));
+      }
+      await supabase.auth.signOut().catch(() => {});
+      toast.success(t("profile.delete.done"));
+      navigate({ to: "/" });
+    } catch {
+      setDeleting(false);
+      toast.error(t("profile.delete.failed"));
+    }
   }
 
   async function logout() {
@@ -509,11 +528,28 @@ function ProfilePage() {
         <LogOut size={16} /> {t("profile.logout")}
       </button>
 
-      <button onClick={deleteAccount}
+      <button onClick={() => { setDelText(""); setDelOpen(true); }}
         className="w-full text-center text-sm font-medium py-4"
         style={{ color: "var(--accent)" }}>
         {t("profile.deleteAccount")}
       </button>
+      {delOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-background/80 p-4" role="dialog" aria-modal="true" aria-labelledby="del-title">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-5 space-y-3">
+            <h2 id="del-title" className="text-lg font-semibold">{t("profile.deleteAccount")}</h2>
+            <p className="text-sm text-muted-foreground">{t("profile.delete.body")}</p>
+            <label htmlFor="del-input" className="block text-xs text-muted-foreground">{t("profile.delete.typeHint")}</label>
+            <input id="del-input" className="input-field" value={delText} onChange={(e) => setDelText(e.target.value)} autoComplete="off" autoCapitalize="characters" placeholder="DELETE" />
+            <div className="flex gap-2 pt-1">
+              <button onClick={() => setDelOpen(false)} disabled={deleting} className="flex-1 h-11 rounded-xl border border-border text-sm">{t("common.cancel")}</button>
+              <button onClick={deleteAccount} disabled={deleting || delText.trim() !== "DELETE"}
+                className="flex-1 h-11 rounded-xl text-sm font-medium bg-destructive text-destructive-foreground disabled:opacity-50">
+                {deleting ? t("profile.delete.deleting") : t("profile.delete.confirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {cropSrc && (
         <ImageCropModal
           imageSrc={cropSrc}

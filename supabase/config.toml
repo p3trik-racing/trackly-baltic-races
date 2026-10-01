@@ -3,12 +3,6 @@ project_id = "tmaomcglqmomvscdkzfx"
 [functions.create-payment-intent]
 verify_jwt = false
 
-[functions.get-metrics]
-verify_jwt = false
-
-[functions.get-weekly-bookings]
-verify_jwt = false
-
 [functions.create-booking]
 verify_jwt = true
 

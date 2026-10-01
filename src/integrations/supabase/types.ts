@@ -37,7 +37,7 @@ export type Database = {
           total_price: number
           transfer_error: string | null
           transferred_at: string | null
-          user_id: string
+          user_id: string | null
           waiver_accepted: boolean
         }
         Insert: {
@@ -62,7 +62,7 @@ export type Database = {
           total_price: number
           transfer_error?: string | null
           transferred_at?: string | null
-          user_id: string
+          user_id?: string | null
           waiver_accepted?: boolean
         }
         Update: {
@@ -87,7 +87,7 @@ export type Database = {
           total_price?: number
           transfer_error?: string | null
           transferred_at?: string | null
-          user_id?: string
+          user_id?: string | null
           waiver_accepted?: boolean
         }
         Relationships: [
@@ -96,13 +96,6 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -798,7 +791,7 @@ export type Database = {
           stripe_payment_intent_id: string | null
           stripe_refund_id: string | null
           ticket_type_id: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           amount?: number
@@ -820,7 +813,7 @@ export type Database = {
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
           ticket_type_id: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -842,7 +835,7 @@ export type Database = {
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
           ticket_type_id?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -877,7 +870,7 @@ export type Database = {
           stripe_refund_id: string | null
           stripe_transfer_id: string | null
           transferred_at: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           amount?: number
@@ -901,7 +894,7 @@ export type Database = {
           stripe_refund_id?: string | null
           stripe_transfer_id?: string | null
           transferred_at?: string | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -925,7 +918,7 @@ export type Database = {
           stripe_refund_id?: string | null
           stripe_transfer_id?: string | null
           transferred_at?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {

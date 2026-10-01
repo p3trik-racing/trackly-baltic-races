@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Eye, EyeOff, Check, X } from "lucide-react";
 import { LogoFull } from "@/components/Logo";
+import { SocialAuthButtons } from "@/components/SocialAuthButtons";
 
 export const Route = createFileRoute("/signup")({
   validateSearch: (s: Record<string, unknown>): { redirect?: string } => {
@@ -24,7 +25,10 @@ export const Route = createFileRoute("/signup")({
 
 function SignupPage() {
   const navigate = useNavigate();
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const [sentTo, setSentTo] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
+  const [adult, setAdult] = useState(false);
   const [form, setForm] = useState({ fullName: "", username: "", phone: "", email: "", password: "", confirmPassword: "" });
   const [showPw, setShowPw] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -49,23 +53,45 @@ function SignupPage() {
     e.preventDefault();
     if (form.password !== form.confirmPassword) return toast.error(t("auth.passwordMismatch"));
     if (!agreed) return toast.error(t("auth.signup.acceptTerms"));
-    if (form.password.length < 6) return toast.error(t("auth.signup.passwordShort"));
+    if (!adult) return toast.error(t("auth.signup.ageRequired"));
+    if (form.password.length < 8) return toast.error(t("auth.signup.passwordShort"));
     if (!usernameValid) return toast.error(t("auth.signup.usernameInvalid"));
     if (usernameStatus === "taken") return toast.error(t("auth.signup.usernameTakenHint"));
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data: su, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
         emailRedirectTo: window.location.origin + (redirect ?? ""),
-        data: { full_name: form.fullName, phone: form.phone, username: form.username.toLowerCase() },
+        data: { full_name: form.fullName, phone: form.phone, username: form.username.toLowerCase(), lang },
       },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
+    if (!su.session) { setSentTo(form.email); return; }
     toast.success(t("auth.signup.welcome"));
     if (redirect) window.location.assign(redirect);
     else navigate({ to: "/home" });
+  }
+
+  async function resend() {
+    if (!sentTo) return;
+    setResending(true);
+    const { error } = await supabase.auth.resend({ type: "signup", email: sentTo, options: { emailRedirectTo: window.location.origin + (redirect ?? "") } });
+    setResending(false);
+    if (error) toast.error(error.message); else toast.success(t("auth.confirm.resent"));
+  }
+
+  if (sentTo) {
+    return (
+      <main className="min-h-screen container-app py-6 text-center">
+        <LogoFull className="w-[180px] h-auto mx-auto my-8 text-foreground" />
+        <h1 className="text-2xl font-semibold mb-2">{t("auth.confirm.title")}</h1>
+        <p className="text-muted-foreground text-sm mb-6">{t("auth.confirm.body", { email: sentTo })}</p>
+        <button className="cta-button" onClick={resend} disabled={resending}>{t("auth.confirm.resend")}</button>
+        <p className="text-sm text-muted-foreground mt-6"><Link to="/login" search={redirect ? { redirect } : {}} style={{ color: "var(--accent)" }}>{t("auth.signup.logIn")}</Link></p>
+      </main>
+    );
   }
 
   return (
@@ -77,6 +103,7 @@ function SignupPage() {
       <h1 className="text-2xl font-semibold mb-1">{t("auth.signup.title")}</h1>
       <p className="text-muted-foreground text-sm mb-6">{t("auth.signup.subtitle")}</p>
 
+      <SocialAuthButtons redirect={redirect} />
       <form onSubmit={onSubmit} className="space-y-3">
         <div className="space-y-1">
           <label htmlFor="signup-full-name" className="block text-xs text-muted-foreground">{t("auth.signup.fullName")}</label>
@@ -115,7 +142,7 @@ function SignupPage() {
           <label htmlFor="signup-password" className="block text-xs text-muted-foreground">{t("auth.password")}</label>
           <div className="relative">
             <input id="signup-password" className="input-field pr-12" type={showPw ? "text" : "password"} placeholder={t("auth.password")} value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })} required autoComplete="new-password" />
+              onChange={(e) => setForm({ ...form, password: e.target.value })} required autoComplete="new-password" minLength={8} />
             <button type="button" onClick={() => setShowPw((s) => !s)}
               aria-label={showPw ? t("auth.hidePassword") : t("auth.showPassword")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-2">
@@ -136,6 +163,11 @@ function SignupPage() {
           )}
         </div>
 
+        <label className="flex items-start gap-2 text-sm text-muted-foreground pt-2">
+          <input type="checkbox" checked={adult} onChange={(e) => setAdult(e.target.checked)} required
+            className="mt-1 accent-[var(--accent)]" />
+          <span>{t("auth.signup.age16")}</span>
+        </label>
         <label className="flex items-start gap-2 text-sm text-muted-foreground py-2">
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
             className="mt-1 accent-[var(--accent)]" />

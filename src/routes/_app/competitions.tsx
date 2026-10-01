@@ -43,6 +43,7 @@ function CompetitionsPage() {
       <div>
         <h1 className="text-[22px] font-semibold">{t("compete.title")}</h1>
         <p className="text-sm text-muted-foreground">{t("compete.subtitle")}</p>
+        <p className="mt-2 text-xs text-muted-foreground">{t("compete.disclaimer")}</p>
       </div>
       <div className="flex gap-2 flex-wrap">
         {[{ value: "all", label: t("common.all") }, ...COUNTRIES.map((c) => ({ value: c.value, label: countryName(t, c.value) }))].map((c) => (

@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useLang, catLabel, countryName, LangSwitcher } from "@/i18n";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { LogoFull } from "@/components/Logo";
+import { SocialAuthButtons, OAUTH_REDIRECT_KEY } from "@/components/SocialAuthButtons";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>): { redirect?: string } => {
@@ -30,13 +31,37 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [unconfirmed, setUnconfirmed] = useState(false);
+
+  // Return point for Google/Apple sign-in: forward once the session exists.
+  useEffect(() => {
+    let stored: string | null = null;
+    try { stored = sessionStorage.getItem(OAUTH_REDIRECT_KEY); } catch {}
+    if (!stored) return;
+    const forward = () => {
+      try { sessionStorage.removeItem(OAUTH_REDIRECT_KEY); } catch {}
+      const dest = stored && stored.startsWith("/") && !stored.startsWith("//") ? stored : "/home";
+      window.location.assign(dest);
+    };
+    supabase.auth.getSession().then(({ data }) => { if (data.session) forward(); });
+    const { data: sub } = supabase.auth.onAuthStateChange((ev, session) => { if (ev === "SIGNED_IN" && session) forward(); });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  async function resendConfirm() {
+    const { error } = await supabase.auth.resend({ type: "signup", email, options: { emailRedirectTo: window.location.origin + (redirect ?? "") } });
+    if (error) toast.error(error.message); else toast.success(t("auth.confirm.resent"));
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      if (/confirm/i.test(error.message)) { setUnconfirmed(true); return toast.error(t("auth.confirm.notConfirmed")); }
+      return toast.error(error.message);
+    }
     if (redirect) window.location.assign(redirect);
     else navigate({ to: "/home" });
   }
@@ -61,6 +86,7 @@ function LoginPage() {
       <h1 className="text-2xl font-semibold mb-1">{t("auth.login.title")}</h1>
       <p className="text-muted-foreground text-sm mb-6">{t("auth.login.subtitle")}</p>
 
+      <SocialAuthButtons redirect={redirect} />
       <form onSubmit={onSubmit} className="space-y-3">
         <div className="space-y-1">
           <label htmlFor="login-email" className="block text-xs text-muted-foreground">{t("auth.email")}</label>
@@ -81,6 +107,9 @@ function LoginPage() {
         </div>
         <button className="cta-button" disabled={loading}>{loading ? t("auth.login.submitting") : t("auth.login.submit")}</button>
       </form>
+      {unconfirmed && (
+        <button onClick={resendConfirm} className="block mx-auto mt-4 text-sm underline">{t("auth.confirm.resend")}</button>
+      )}
       <button onClick={onReset} className="block mx-auto mt-4 text-sm" style={{ color: "var(--accent)" }}>
         {t("auth.login.forgot")}
       </button>
