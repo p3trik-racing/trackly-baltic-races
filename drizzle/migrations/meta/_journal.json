@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790891893788,
+      "tag": "0000_account_deletion_retention_and_oauth_profiles",
+      "breakpoints": true
+    }
+  ]
+}
