@@ -31,10 +31,24 @@ function PrivacyPolicyPage() {
         <Section title={t("privacy.s2.title")}>{t("privacy.s2.body")}</Section>
         <Section title={t("privacy.s3.title")}>{t("privacy.s3.body")}</Section>
         <Section title={t("privacy.s4.title")}>{t("privacy.s4.body")}</Section>
-        <Section title={t("privacy.s5.title")}>{t("privacy.s5.body")}</Section>
-        <Section title={t("privacy.s6.title")}>{t("privacy.s6.body")}</Section>
-        <Section title={t("privacy.s7.title")}>{t("privacy.s7.body")}</Section>
-        <Section title={t("privacy.s8.title")}>{t("privacy.s8.body")}</Section>
+        <Section title={t("privacy.proc.title")}>{t("privacy.proc.body")}</Section>
+        <Section title={t("privacy.rights.title")}>{t("privacy.rights.body")}</Section>
+        <section>
+          <h2 className="font-semibold mb-2">{t("privacy.ret.title")}</h2>
+          <table className="w-full text-left text-muted-foreground border-collapse">
+            <thead><tr className="border-b border-border"><th className="py-2 pr-3 font-medium text-foreground">{t("privacy.ret.colData")}</th><th className="py-2 font-medium text-foreground">{t("privacy.ret.colPeriod")}</th></tr></thead>
+            <tbody>
+              {(["account", "bookings", "emails"] as const).map((k) => (
+                <tr key={k} className="border-b border-border align-top">
+                  <td className="py-2 pr-3">{t(`privacy.ret.${k}` as any)}</td>
+                  <td className="py-2">{t(`privacy.ret.${k}P` as any)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+        <Section title={t("privacy.cookies.title")}>{t("privacy.cookies.body")}</Section>
+        <Section title={t("privacy.contact.title")}>{t("privacy.s8.body")}</Section>
       </div>
     </main>
   );
@@ -44,7 +58,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <section>
       <h2 className="font-semibold mb-2">{title}</h2>
-      <p className="text-muted-foreground">{children}</p>
+      <p className="text-muted-foreground whitespace-pre-line">{children}</p>
     </section>
   );
 }
