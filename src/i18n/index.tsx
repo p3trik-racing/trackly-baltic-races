@@ -119,6 +119,19 @@ export function catLabel(t: TFn, v: string) {
   return k in en ? t(k) : v;
 }
 
+const DISCIPLINES: Record<string, TranslationKey> = {
+  "mini rally": "discipline.mini_rally", rally: "discipline.rally", folkrace: "discipline.folkrace",
+  drift: "discipline.drift", "ice drift": "discipline.ice_drift", autocross: "discipline.autocross",
+  rallycross: "discipline.rallycross", karting: "discipline.karting", drag: "discipline.drag",
+  "ice racing": "discipline.ice_racing", "circuit racing": "discipline.circuit", "track day": "discipline.track_day",
+};
+
+export function disciplineName(t: TFn, value?: string | null) {
+  if (!value) return "";
+  const key = DISCIPLINES[value.trim().toLowerCase().replace(/[_-]+/g, " ")];
+  return key ? t(key) : value;
+}
+
 export function hasTranslationKey(key: string): key is TranslationKey {
   return key in en;
 }

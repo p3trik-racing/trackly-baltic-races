@@ -21,7 +21,7 @@ export function nextRound(rounds: Round[] | null | undefined): Round | null {
 
 export const HELP_OPTIONS = ["licence", "car_prep", "co_driver", "entry_payment"] as const;
 
-export type CompTextField = "description" | "entry_fee" | "licence" | "car_requirements" | "how_to_enter";
+export type CompTextField = "description" | "entry_fee" | "licence" | "car_requirements" | "how_to_enter" | "season";
 /** Translated competition text from the i18n jsonb column, falling back to the English column. */
 export function ctext(c: any, field: CompTextField, lang: string): string | null {
   const v = lang !== "en" ? c?.i18n?.[lang]?.[field] : null;
