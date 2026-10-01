@@ -123,3 +123,12 @@ function PayForm({ kind, id, total, onPaid }: { kind: "slot" | "ticket"; id: str
     </div>
   );
 }
+
+export function SlotPay({ b, slotStatus, onPaid }: { b: any; slotStatus: string; onPaid: () => void }) {
+  const { t } = useLang();
+  if (b.status === "cancelled" || b.payment_status !== "pending" || !(Number(b.amount) > 0)) return null;
+  if (b.kind === "split" && slotStatus !== "confirmed") return <p className="text-xs text-muted-foreground">{t("pay.whenConfirmed")}</p>;
+  const total = eur(Math.round(Number(b.amount) * 105) / 100);
+  const label = b.kind === "split" ? (b.is_host ? t("pay.hostTotal", { total }) : t("pay.share", { total })) : t("pay.payAmount", { total });
+  return <PayItem kind="slot" id={b.id} payBy={b.kind === "whole" ? b.pay_by : null} label={label} onPaid={onPaid} />;
+}

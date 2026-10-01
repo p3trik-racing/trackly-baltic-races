@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/i18n";
 import { formatDate } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
-import { eur, payLabel } from "@/lib/tracks";
+import { eur } from "@/lib/tracks";
 import { QrPass } from "@/components/QrPass";
 import { PayItem } from "@/components/PayItem";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
