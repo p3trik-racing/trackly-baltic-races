@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { useLang, countryName } from "@/i18n";
+import { useLang, countryName, disciplineName } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
 import { nextRound, type Round, ctext } from "@/lib/competitions";
@@ -72,7 +72,7 @@ function CompetitionsPage() {
                   <span className="text-xs whitespace-nowrap">{countryName(t, c.country)}</span>
                 </div>
                 <div className="flex gap-2 flex-wrap items-center">
-                  <span className="category-pill">{c.discipline}</span>
+                  <span className="category-pill">{disciplineName(t, c.discipline)}</span>
                   {c.beginner_friendly && (
                     <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}>
                       {t("compete.beginner")}
@@ -80,7 +80,7 @@ function CompetitionsPage() {
                   )}
                 </div>
                 {ctext(c, "description", lang) && <p className="text-xs text-muted-foreground line-clamp-2">{ctext(c, "description", lang)}</p>}
-                {c.season && <p className="text-xs text-muted-foreground">{t("compete.season")}: {c.season}</p>}
+                {ctext(c, "season", lang) && <p className="text-xs text-muted-foreground">{t("compete.season")}: {ctext(c, "season", lang)}</p>}
                 <p className="text-xs text-muted-foreground">{r ? <>{t("compete.nextRound")}: {formatRoundDate(r.date, lang)}{r.venue ? ` · ${r.venue}` : ""}</> : t("compete.nextSeasonTbc")}</p>
               </Link>
             );
