@@ -1,6 +1,7 @@
 import { csvCell } from "@/lib/csv";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { formatDate } from "@/lib/format";
+import { countryName, useLang } from "@/i18n";
 import { categoryLabel } from "@/lib/categories";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { codeFromScan } from "@/lib/tracks";
@@ -724,6 +725,7 @@ function RaceCheckInDesk({ tickets, onChange }: { tickets: any[]; onChange: () =
 }
 
 function Tracks() {
+  const { t } = useLang();
   const [rows, setRows] = useState<any[]>([]);
   const load = () => supabase.from("venues").select("id,name,slug,city,country,status,owner_id,profiles:owner_id(full_name,email)" as any).order("created_at", { ascending: false })
     .then(({ data, error }) => {
@@ -744,7 +746,7 @@ function Tracks() {
           <div className="flex justify-between gap-2">
             <div className="min-w-0">
               <p className="font-medium truncate">{v.name}</p>
-              <p className="text-xs text-muted-foreground">{[v.city, v.country].filter(Boolean).join(" · ")} · Owner: {v.profiles?.full_name || v.profiles?.email || v.owner_id?.slice(0, 8) || "—"}</p>
+              <p className="text-xs text-muted-foreground">{[v.city, countryName(t, v.country)].filter(Boolean).join(" · ")} · Owner: {v.profiles?.full_name || v.profiles?.email || v.owner_id?.slice(0, 8) || "—"}</p>
             </div>
             <span className="text-[11px] px-2 py-0.5 h-fit rounded-full bg-input">{v.status}</span>
           </div>

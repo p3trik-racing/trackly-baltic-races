@@ -2,9 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Globe, Mail, MapPin, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useLang } from "@/i18n";
-import { countryLabel } from "@/lib/countries";
-import { formatDate } from "@/lib/format";
+import { useLang, countryName } from "@/i18n";
+import { formatDate, ucFirst } from "@/lib/format";
 import { eventCover } from "@/lib/event-cover";
 import { SlotCalendar } from "@/components/SlotCalendar";
 import { SplitProgress } from "@/components/SplitProgress";
@@ -66,7 +65,7 @@ function VenuePage() {
       <img src={eventCover("track_days", v.cover_image_url)} alt="" className="w-full rounded-2xl object-cover max-h-[300px]" />
       <div>
         <h1 className="text-[22px] font-semibold">{v.name}</h1>
-        <p className="text-sm text-muted-foreground">{[v.location_name, v.city, countryLabel(v.country)].filter(Boolean).join(" · ")}</p>
+        <p className="text-sm text-muted-foreground">{[v.location_name, v.city, countryName(t, v.country)].filter(Boolean).join(" · ")}</p>
       </div>
       {v.description && <p className="text-sm whitespace-pre-wrap">{v.description}</p>}
       {v.track_info && (
@@ -105,7 +104,7 @@ function VenuePage() {
         <SlotCalendar slots={slots} selected={day} onSelect={setDay} />
         {day && (
           <div className="space-y-2">
-            <p className="text-sm font-medium capitalize">{formatDate(day, lang, "weekday")}</p>
+            <p className="text-sm font-medium">{ucFirst(formatDate(day, lang, "weekday"))}</p>
             {daySlots.length === 0 ? <p className="text-sm text-muted-foreground">{t("tracks.noSlotsDay")}</p> : daySlots.map((s) => (
               <SlotRow key={s.id} s={s} taken={taken[s.id] ?? 0} onOpen={(a) => go(s.id, a)} />
             ))}

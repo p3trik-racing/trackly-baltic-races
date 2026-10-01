@@ -1,5 +1,10 @@
 export type DateStyle = "short" | "medium" | "long" | "weekday" | "weekdayShort" | "monthYear" | "dateTime";
 
+/** Capitalise only the start of a standalone heading, never the words inside a date. */
+export function ucFirst(s: string): string {
+  return s.charAt(0).toLocaleUpperCase() + s.slice(1);
+}
+
 const LOCALES: Record<string, string> = { en: "en-GB", ru: "ru-RU", lv: "lv-LV" };
 
 const STYLES: Record<DateStyle, Intl.DateTimeFormatOptions> = {

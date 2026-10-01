@@ -313,7 +313,7 @@ function PostEventPage() {
                   <button key={i} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => pickPlace(p)}
                     className="block w-full text-left px-3 py-2 border-b border-border last:border-0">
                     <p className="text-sm font-medium truncate">{p.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{[p.street, p.city, p.country].filter(Boolean).join(", ")}</p>
+                    <p className="text-xs text-muted-foreground truncate">{[p.street, p.city, countryName(t, COUNTRY_BY_CODE[p.countrycode] ?? p.country)].filter(Boolean).join(", ")}</p>
                   </button>
                 ))}
               </div>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLang } from "@/i18n";
-import { formatDate } from "@/lib/format";
+import { formatDate, ucFirst } from "@/lib/format";
 import { dayName, SLOT_COLORS, type Slot } from "@/lib/tracks";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -33,7 +33,7 @@ export function SlotCalendar({ slots, selected, onSelect }: { slots: Pick<Slot, 
     <div className="bg-card border border-border rounded-2xl p-3">
       <div className="flex items-center justify-between mb-2">
         <button onClick={() => shift(-1)} aria-label={t("tracks.prevMonth")} className="p-2"><ChevronLeft size={18} /></button>
-        <p className="text-sm font-medium capitalize">{formatDate(first, lang, "monthYear")}</p>
+        <p className="text-sm font-medium">{ucFirst(formatDate(first, lang, "monthYear"))}</p>
         <button onClick={() => shift(1)} aria-label={t("tracks.nextMonth")} className="p-2"><ChevronRight size={18} /></button>
       </div>
       <div className="grid grid-cols-7 text-center text-[10px] text-muted-foreground mb-1">

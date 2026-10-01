@@ -6,7 +6,7 @@ import { ArrowLeft, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/i18n";
-import { formatDate } from "@/lib/format";
+import { formatDate, ucFirst } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 import { getSlotOg } from "@/lib/og.functions";
 import { sendSlotBookingEmails } from "@/lib/app-email.functions";
@@ -52,10 +52,20 @@ export const Route = createFileRoute("/_app/track-slot/$id")({
       links: [{ rel: "canonical", href: url }],
     };
   },
-  errorComponent: () => <div className="container-app py-10 text-muted-foreground">Something went wrong.</div>,
-  notFoundComponent: () => <div className="container-app py-10 text-muted-foreground">Not found.</div>,
+  errorComponent: () => <SlotError />,
+  notFoundComponent: () => <SlotNotFound />,
   component: SlotPage,
 });
+
+function SlotError() {
+  const { t } = useLang();
+  return <div className="container-app py-10 text-muted-foreground">{t("common.error")}</div>;
+}
+
+function SlotNotFound() {
+  const { t } = useLang();
+  return <div className="container-app py-10 text-muted-foreground">{t("tracks.notFound")}</div>;
+}
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const toLocalInput = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -150,7 +160,7 @@ function SlotPage() {
       </div>
       <div>
         <h1 className="text-[22px] font-semibold">{s.venues?.name}</h1>
-        <p className="text-sm text-muted-foreground capitalize">{formatDate(s.date, lang, "weekday")} · {hhmm(s.start_time)}–{hhmm(s.end_time)}</p>
+        <p className="text-sm text-muted-foreground">{ucFirst(formatDate(s.date, lang, "weekday"))} · {hhmm(s.start_time)}–{hhmm(s.end_time)}</p>
       </div>
       <div className="bg-card border border-border rounded-2xl p-4 space-y-2 text-sm">
         <Line k={t("slot.statusLabel")} v={t(`slot.status.${s.status}` as any)} />

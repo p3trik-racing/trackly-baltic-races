@@ -174,9 +174,9 @@ function SignupPage() {
           <span>
             {t("auth.signup.agreePrefix")}{" "}
             <Link to="/terms" style={{ color: "var(--accent)" }}>{t("splash.terms")}</Link>
-            {" "}{t("splash.and")}{" "}
-            <Link to="/event-terms" style={{ color: "var(--accent)" }}>{t("eventTerms.title")}</Link>
-            {", "}
+            {t("auth.signup.legalAnd")}
+            <Link to="/event-terms" style={{ color: "var(--accent)" }}>{t("auth.signup.eventTerms")}</Link>
+            {t("auth.signup.legalFinalAnd")}
             <Link to="/privacy-policy" style={{ color: "var(--accent)" }}>{t("splash.privacy")}</Link>.
           </span>
         </label>

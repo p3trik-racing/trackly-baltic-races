@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useLang } from "@/i18n";
-import { formatDate } from "@/lib/format";
+import { formatDate, ucFirst } from "@/lib/format";
 import { cancelCopy } from "@/lib/cancel-copy";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -106,13 +106,13 @@ function BookingsPage() {
               setTab(t);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex-1 h-9 px-2 rounded-lg text-sm font-medium capitalize whitespace-nowrap"
+            className="flex-1 h-9 px-2 rounded-lg text-sm font-medium whitespace-nowrap"
             style={{
               backgroundColor: tab === t ? "var(--accent)" : "transparent",
                color: tab === t ? "var(--accent-foreground)" : "var(--muted-foreground)",
             }}
           >
-            {tr(`bookings.tab.${t}`)}
+            {t === "race" ? tr("bookings.tab.race") : ucFirst(tr(`bookings.tab.${t}`))}
           </button>
         ))}
       </div>

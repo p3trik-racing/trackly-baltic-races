@@ -17,7 +17,7 @@ const GENERIC_COMP_META = [
   { property: "og:type", content: "website" },
   { name: "twitter:card", content: "summary_large_image" },
 ];
-import { useLang, countryName } from "@/i18n";
+import { useLang, countryName, disciplineName } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { HELP_OPTIONS, isRoundPast, ctext, type Round } from "@/lib/competitions";
@@ -52,10 +52,20 @@ export const Route = createFileRoute("/_app/competitions_/$slug")({
       links: [{ rel: "canonical", href: url }],
     };
   },
-  errorComponent: () => <div className="container-app py-10 text-muted-foreground">Something went wrong.</div>,
-  notFoundComponent: () => <div className="container-app py-10 text-muted-foreground">Competition not found.</div>,
+  errorComponent: () => <CompetitionError />,
+  notFoundComponent: () => <CompetitionNotFound />,
   component: CompetitionPage,
 });
+
+function CompetitionError() {
+  const { t } = useLang();
+  return <div className="container-app py-10 text-muted-foreground">{t("common.error")}</div>;
+}
+
+function CompetitionNotFound() {
+  const { t } = useLang();
+  return <div className="container-app py-10 text-muted-foreground">{t("compete.notFound")}</div>;
+}
 
 function CompetitionPage() {
   const { slug } = Route.useParams();
@@ -121,14 +131,14 @@ function CompetitionPage() {
       </div>
       <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title={c.name}
         url={`${SITE_URL}/competitions/${c.slug}`}
-        text={[t("share.competitionText", { title: c.name }), c.season].filter(Boolean).join(" · ")} />
+        text={[t("share.competitionText", { title: c.name }), ctext(c, "season", lang)].filter(Boolean).join(" · ")} />
       {c.cover_image_url && <img src={c.cover_image_url} alt={c.name} className="w-full aspect-video md:max-h-[360px] object-cover rounded-2xl" />}
       <div className="space-y-2">
         <h1 className="text-[22px] font-semibold">{c.name}</h1>
         <div className="flex gap-2 flex-wrap items-center text-xs">
-          <span className="category-pill">{c.discipline}</span>
+          <span className="category-pill">{disciplineName(t, c.discipline)}</span>
           <span>{countryName(t, c.country)}</span>
-          {c.season && <span className="text-muted-foreground">{c.season}</span>}
+          {ctext(c, "season", lang) && <span className="text-muted-foreground">{ctext(c, "season", lang)}</span>}
           {c.beginner_friendly && <span className="px-2 py-0.5 rounded-full" style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}>{t("compete.beginner")}</span>}
         </div>
         {c.organiser && <p className="text-xs text-muted-foreground">{t("compete.organiser")}: {c.organiser}</p>}
