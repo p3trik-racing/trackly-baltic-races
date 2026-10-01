@@ -11,6 +11,70 @@ import { useRoles } from "@/lib/roles";
 import { emailOrganiserApplication, emailOrganiserRole } from "@/lib/app-email.functions";
 import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
 import { ImageCropModal } from "@/components/ImageCropModal";
+import { accessToken } from "@/lib/access-token";
+import { adminPaymentsOverview, adminEnableApplePay, cancelRaceTicket } from "@/lib/payments.functions";
+
+function Payments() {
+  const [d, setD] = useState<any>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const load = async () => {
+    const r = await adminPaymentsOverview({ data: { accessToken: (await accessToken()) ?? "" } });
+    if (r.ok) setD(r.data); else setErr(r.error);
+  };
+  useEffect(() => { load(); }, []);
+  async function applePay() {
+    const r = await adminEnableApplePay({ data: { accessToken: (await accessToken()) ?? "" } });
+    if (!r.ok) return toast.error(r.error);
+    toast.success(r.data.already ? "Apple Pay domain already registered" : "Apple Pay domain registered");
+  }
+  function csv() {
+    const head = ["kind", "date", "who", "item", "gross", "fee", "payout", "status", "payment_intent", "transfer", "refund", "transfer_error"];
+    const body = [head.join(","), ...d.rows.map((r: any) => head.map((h) => csvCell(r[h])).join(","))].join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([body], { type: "text/csv" }));
+    a.download = `majorka-payments-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  }
+  if (err) return <p className="text-sm" style={{ color: "var(--accent)" }}>{err}</p>;
+  if (!d) return <p className="text-sm text-muted-foreground">Loading…</p>;
+  const e = (n: number) => `€${Number(n).toFixed(2)}`;
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {[["Gross", d.totals.gross], ["Majorka fees", d.totals.fees], ["Pending payouts", d.totals.pending], ["Transferred", d.totals.transferred]].map(([k, v]) => (
+          <div key={k as string} className="bg-card border border-border rounded-xl p-3"><p className="text-[11px] text-muted-foreground">{k}</p><p className="font-semibold">{e(v as number)}</p></div>
+        ))}
+      </div>
+      <div className="flex gap-2 flex-wrap">
+        <button className={btn} onClick={csv}>CSV export</button>
+        <button className={btn} onClick={applePay}>Enable Apple Pay domain</button>
+        <button className={btn} onClick={load}>Refresh</button>
+      </div>
+      <p className="text-xs text-muted-foreground">Payouts run via POST /api/public/cron/payouts. Paid-out bookings can't be refunded automatically.</p>
+      <section className="space-y-2">
+        <h3 className="text-sm font-semibold">Organisers & Stripe</h3>
+        {d.organisers.map((o: any) => (
+          <p key={o.id} className="text-xs flex justify-between gap-2 border-b border-border py-1">
+            <span className="truncate">{o.full_name || o.email}</span>
+            <span className="text-muted-foreground">{!o.stripe_account_id ? "not connected" : o.stripe_payouts_enabled && o.stripe_details_submitted ? "payouts active ✓" : "incomplete"}</span>
+          </p>
+        ))}
+      </section>
+      <section className="space-y-2">
+        <h3 className="text-sm font-semibold">Payments ({d.rows.length})</h3>
+        {d.rows.map((r: any) => (
+          <div key={r.kind + r.id} className="text-xs border border-border rounded-xl p-2 space-y-0.5">
+            <p className="font-medium">{r.kind} · {r.item} · {r.who}</p>
+            <p className="text-muted-foreground">{formatDate(r.date.slice(0, 10), "en")} · gross {e(r.gross)} · fee {e(r.fee)} · payout {e(r.payout)} · {r.status}</p>
+            <p>{r.refund ? `Refunded (${r.refund})` : r.transfer ? `Transferred (${r.transfer})` : r.kind === "race" ? "Platform keeps" : "Awaiting payout"}</p>
+            {r.transfer_error && <p style={{ color: "var(--destructive)" }}>Transfer error: {r.transfer_error}</p>}
+            {r.transfer && !r.refund && <p className="text-muted-foreground">⚠ Already paid out — refund manually only after recovering funds.</p>}
+          </div>
+        ))}
+      </section>
+    </div>
+  );
+}
 
 function Ratings() {
   const [rows, setRows] = useState<any[]>([]);
@@ -66,7 +130,7 @@ export const Route = createFileRoute("/_app/admin")({
   component: AdminPage,
 });
 
-const TABS = ["Applications", "Codes", "Users", "Events", "Bookings", "Competitions", "Tracks", "Ratings"] as const;
+const TABS = ["Applications", "Codes", "Users", "Events", "Bookings", "Competitions", "Tracks", "Ratings", "Payments"] as const;
 type Tab = typeof TABS[number];
 
 async function token() {
@@ -118,6 +182,7 @@ function AdminPage() {
       {tab === "Competitions" && <Competitions />}
       {tab === "Tracks" && <Tracks />}
       {tab === "Ratings" && <Ratings />}
+      {tab === "Payments" && <Payments />}
     </main>
   );
 }
@@ -591,7 +656,12 @@ function RaceAdmin({ competitionId, competitionName }: { competitionId: string; 
                 {tt.kind === "racer" && r.status !== "cancelled" && (
                   <div className="flex gap-2">
                     {r.status !== "confirmed" && <button className={btn} onClick={() => setTicket(r.id, "confirmed")}>Confirm</button>}
-                    <button className={btn} onClick={() => confirm("Cancel this entry?") && setTicket(r.id, "cancelled")}>Cancel</button>
+                    <button className={btn} onClick={async () => {
+                      if (!confirm(r.payment_status === "paid" ? "Cancel this entry and refund in full?" : "Cancel this entry?")) return;
+                      const res = await cancelRaceTicket({ data: { accessToken: (await accessToken()) ?? "", id: r.id } });
+                      if (!res.ok) return toast.error(res.error);
+                      toast.success("Cancelled"); load();
+                    }}>Cancel</button>
                   </div>
                 )}
               </div>
