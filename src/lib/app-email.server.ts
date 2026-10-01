@@ -5,11 +5,11 @@ import { en } from "@/i18n/en";
 import { ru } from "@/i18n/ru";
 import { lv } from "@/i18n/lv";
 import { SITE_URL } from "@/lib/site";
+import { formatDate } from "@/lib/format";
 
 const REPLY_TO = "admin@majorkariga.com";
 type L = "en" | "ru" | "lv";
 const DICTS: Record<L, Record<string, string>> = { en: en as any, ru: ru as any, lv: lv as any };
-const LOCALES: Record<L, string> = { en: "en-GB", ru: "ru-RU", lv: "lv-LV" };
 
 export const pick = (l?: string | null): L => (l === "ru" || l === "lv" ? l : "en");
 
@@ -45,7 +45,7 @@ function reqLabels(list: string[] | null | undefined, l: L) {
 }
 
 function when(date: string, time: string | null | undefined, l: L) {
-  const d = new Date(`${date}T00:00:00`).toLocaleDateString(LOCALES[l], { day: "numeric", month: "long", year: "numeric" });
+  const d = formatDate(date, l, "long");
   return time ? `${d} · ${String(time).slice(0, 5)}` : d;
 }
 
