@@ -15,9 +15,9 @@ import { loadVenueCards, VenueCardView, type VenueCard } from "@/components/Venu
 export const Route = createFileRoute("/_app/home")({
   head: () => ({ meta: [
     { title: "Home — Majorka Racing" },
-    { name: "description", content: "Find your legal track time — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { name: "description", content: "Drive it where it belongs. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
     { property: "og:title", content: "Home — Majorka Racing" },
-    { property: "og:description", content: "Find your legal track time — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { property: "og:description", content: "Drive it where it belongs. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
