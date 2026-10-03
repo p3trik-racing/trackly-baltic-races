@@ -23,7 +23,7 @@ export const en = {
   "common.language": "Language",
 
   // splash
-  "splash.tagline": "Find your legal track time.",
+  "splash.tagline": "Drive it where it belongs.",
   "splash.browse": "Browse events without signing up →",
   "splash.majorkaRiga": "Majorka Riga",
   "splash.shop": "Shop",
@@ -87,7 +87,7 @@ export const en = {
   "nav.profile": "Profile",
 
   // home
-  "home.tagline": "Find your legal track time",
+  "home.tagline": "Drive it where it belongs",
   "home.search": "Search events",
   "home.featured": "Featured",
   "home.recent": "Recently added",
