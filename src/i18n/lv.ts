@@ -110,7 +110,6 @@ export const lv: Partial<Record<keyof typeof en, string>> = {
   "event.requirements": "Prasības",
   "event.format": "Formāts",
   "event.refund": "Pilna atmaksa (ieskaitot rezervācijas maksu), ja organizators atceļ pasākumu. Atcel 48 h+ pirms sākuma, lai atgūtu depozītu (atskaitot 5% maksu); vēlāk atceļot vai neierodoties, depozīts netiek atmaksāts.",
-  "old_content_marker": ""
   "req.helmet": "Ķivere obligāta",
   "req.tech_ok": "Tehniski kārtīgs auto (bremzes, riepas, šķidrumi, bez noplūdēm)",
   "req.sound_limit": "Trokšņa limits",
