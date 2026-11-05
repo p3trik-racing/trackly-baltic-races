@@ -13,10 +13,10 @@ export const Route = createFileRoute("/login")({
     return typeof r === "string" && r.startsWith("/") && !r.startsWith("//") ? { redirect: r } : {};
   },
   head: () => ({ meta: [
-    { title: "Log in — Majorka Racing" },
-    { name: "description", content: "Log in to Majorka Racing to manage your motorsport bookings." },
-    { property: "og:title", content: "Log in — Majorka Racing" },
-    { property: "og:description", content: "Log in to Majorka Racing to manage your motorsport bookings." },
+    { title: "Log in — Trackly" },
+    { name: "description", content: "Log in to Trackly to manage your motorsport bookings." },
+    { property: "og:title", content: "Log in — Trackly" },
+    { property: "og:description", content: "Log in to Trackly to manage your motorsport bookings." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),

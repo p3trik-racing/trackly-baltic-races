@@ -15,10 +15,10 @@ import { Smartphone } from "lucide-react";
 
 export const Route = createFileRoute("/_app/profile")({
   head: () => ({ meta: [
-    { title: "Profile — Majorka Racing" },
-    { name: "description", content: "Manage your Majorka Racing account and preferences." },
-    { property: "og:title", content: "Profile — Majorka Racing" },
-    { property: "og:description", content: "Manage your Majorka Racing account and preferences." },
+    { title: "Profile — Trackly" },
+    { name: "description", content: "Manage your Trackly account and preferences." },
+    { property: "og:title", content: "Profile — Trackly" },
+    { property: "og:description", content: "Manage your Trackly account and preferences." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
@@ -500,7 +500,7 @@ function ProfilePage() {
         </div>
       </section>
 
-      {/* Majorka */}
+      {/* Trackly */}
       <section className="bg-card border border-border rounded-2xl p-2">
         <p className="px-3 pt-2 pb-1 text-xs text-muted-foreground">{t("profile.majorka")}</p>
         <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer"

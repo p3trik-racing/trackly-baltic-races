@@ -13,9 +13,9 @@ import { CATEGORIES } from "@/lib/categories";
 
 export const Route = createFileRoute("/_app/calendar")({
   head: () => ({ meta: [
-    { title: "Events calendar — Majorka Racing" },
+    { title: "Events calendar — Trackly" },
     { name: "description", content: "Browse upcoming Baltic motorsport events by date in a monthly calendar." },
-    { property: "og:title", content: "Events calendar — Majorka Racing" },
+    { property: "og:title", content: "Events calendar — Trackly" },
     { property: "og:description", content: "Browse upcoming Baltic motorsport events by date in a monthly calendar." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
       const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
       if (!stripeKey) return json({ error: "Stripe not configured" }, 500);
       const params = new URLSearchParams();
-      if (booking.stripe_transfer_id) return json({ error: "This booking was already paid out to the organiser — contact Majorka for a refund" }, 400);
+      if (booking.stripe_transfer_id) return json({ error: "This booking was already paid out to the organiser — contact Trackly for a refund" }, 400);
       params.append("payment_intent", booking.stripe_payment_intent_id);
       // Refund the online amount minus the non-refundable 5% platform fee.
       const refundAmount = Math.round((Number(booking.total_price) - Number(booking.platform_fee)) * 100);

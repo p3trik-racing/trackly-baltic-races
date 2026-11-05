@@ -24,7 +24,7 @@ const Email = (p: Props) => {
 
 export const template = {
   component: Email,
-  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Majorka Racing'),
+  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Trackly'),
   displayName: 'Event cancelled',
   previewData: { eventTitle: 'Biķernieki Track Day', when: '12 October 2026', reference: 'AB12CD34' },
 } satisfies TemplateEntry

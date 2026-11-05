@@ -20,9 +20,9 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/u
 import { eur, hhmm, payLabel, perSpot, slotStart, type Slot } from "@/lib/tracks";
 
 const GENERIC = [
-  { title: "Track time — Majorka Racing" },
+  { title: "Track time — Trackly" },
   { name: "description", content: "Book the whole track or split the cost with other drivers." },
-  { property: "og:title", content: "Track time — Majorka Racing" },
+  { property: "og:title", content: "Track time — Trackly" },
   { property: "og:description", content: "Book the whole track or split the cost with other drivers." },
   { property: "og:type", content: "website" },
   { name: "twitter:card", content: "summary_large_image" },
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_app/track-slot/$id")({
     const s = loaderData?.og;
     if (!s) return { meta: GENERIC };
     const url = `${SITE_URL}/track-slot/${params.id}`;
-    const title = `${s.venues?.name ?? "Track"} · ${s.date} ${hhmm(s.start_time)} — Majorka Racing`;
+    const title = `${s.venues?.name ?? "Track"} · ${s.date} ${hhmm(s.start_time)} — Trackly`;
     const desc = `${hhmm(s.start_time)}–${hhmm(s.end_time)} · ${eur(s.price_total)} · ${eur(perSpot(s))} per car`;
     const image = /^https:/.test(s.venues?.cover_image_url ?? "") ? s.venues.cover_image_url : `${SITE_URL}/og.png`;
     return {
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_app/track-slot/$id")({
         { title }, { name: "description", content: desc },
         { property: "og:title", content: title }, { property: "og:description", content: desc },
         { property: "og:type", content: "website" }, { property: "og:url", content: url },
-        { property: "og:site_name", content: "Majorka Racing" },
+        { property: "og:site_name", content: "Trackly" },
         { property: "og:image", content: image }, { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:image", content: image },
       ],

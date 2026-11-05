@@ -11,9 +11,9 @@ import { daysLabel, eur, hhmm, perSpot, type PriceRule, type Slot } from "@/lib/
 
 export const Route = createFileRoute("/_app/tracks_/$slug")({
   head: () => ({ meta: [
-    { title: "Track — Majorka Racing" },
+    { title: "Track — Trackly" },
     { name: "description", content: "Track info, hourly prices and open slots — book the whole track or split it with other drivers." },
-    { property: "og:title", content: "Track — Majorka Racing" },
+    { property: "og:title", content: "Track — Trackly" },
     { property: "og:description", content: "Track info, hourly prices and open slots — book the whole track or split it with other drivers." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

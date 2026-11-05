@@ -10,10 +10,10 @@ import { Avatar, displayName, type MiniProfile } from "@/components/FriendsGoing
 export const Route = createFileRoute("/_app/invite/$code")({
   validateSearch: (s: Record<string, unknown>): { auto?: number } => (s.auto ? { auto: 1 } : {}),
   head: () => ({ meta: [
-    { title: "You're invited — Majorka Racing" },
-    { name: "description", content: "Join me on Majorka Racing — track days, drift & ice in the Baltics." },
-    { property: "og:title", content: "You're invited — Majorka Racing" },
-    { property: "og:description", content: "Join me on Majorka Racing — track days, drift & ice in the Baltics." },
+    { title: "You're invited — Trackly" },
+    { name: "description", content: "Join me on Trackly — track days, drift & ice in the Baltics." },
+    { property: "og:title", content: "You're invited — Trackly" },
+    { property: "og:description", content: "Join me on Trackly — track days, drift & ice in the Baltics." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),

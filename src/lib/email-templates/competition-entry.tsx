@@ -3,9 +3,9 @@ import type { TemplateEntry } from './registry'
 import { Btn, Layout, P, SITE, pickLang } from './_layout'
 
 const C = {
-  en: { subject: (t: string) => `We got your entry for ${t}`, title: 'Entry received', body: (t: string) => `We got your entry for ${t} — Majorka will contact you within 48 h with the next steps.`, btn: 'View competition' },
-  ru: { subject: (t: string) => `Мы получили вашу заявку: ${t}`, title: 'Заявка получена', body: (t: string) => `Мы получили вашу заявку на ${t} — Majorka свяжется с вами в течение 48 часов и расскажет о следующих шагах.`, btn: 'Открыть соревнование' },
-  lv: { subject: (t: string) => `Saņēmām tavu pieteikumu: ${t}`, title: 'Pieteikums saņemts', body: (t: string) => `Saņēmām tavu pieteikumu ${t} — Majorka sazināsies ar tevi 48 stundu laikā par nākamajiem soļiem.`, btn: 'Skatīt sacensības' },
+  en: { subject: (t: string) => `We got your entry for ${t}`, title: 'Entry received', body: (t: string) => `We got your entry for ${t} — Trackly will contact you within 48 h with the next steps.`, btn: 'View competition' },
+  ru: { subject: (t: string) => `Мы получили вашу заявку: ${t}`, title: 'Заявка получена', body: (t: string) => `Мы получили вашу заявку на ${t} — Trackly свяжется с вами в течение 48 часов и расскажет о следующих шагах.`, btn: 'Открыть соревнование' },
+  lv: { subject: (t: string) => `Saņēmām tavu pieteikumu: ${t}`, title: 'Pieteikums saņemts', body: (t: string) => `Saņēmām tavu pieteikumu ${t} — Trackly sazināsies ar tevi 48 stundu laikā par nākamajiem soļiem.`, btn: 'Skatīt sacensības' },
 }
 
 interface Props { lang?: string; competition?: string; slug?: string }
@@ -22,7 +22,7 @@ const Email = (p: Props) => {
 
 export const template = {
   component: Email,
-  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.competition ?? 'Majorka Racing'),
+  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.competition ?? 'Trackly'),
   displayName: 'Competition entry',
   previewData: { competition: 'Latvian Drift Series', slug: 'latvian-drift-series' },
 } satisfies TemplateEntry

@@ -38,7 +38,7 @@ const Email = (p: BookingConfirmedProps) => {
 
 export const template = {
   component: Email,
-  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Majorka Racing'),
+  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Trackly'),
   displayName: 'Booking confirmed',
-  previewData: { name: 'Jane', eventTitle: 'Biķernieki Track Day', when: '12 October 2026 · 09:00', location: 'Biķernieki, Riga', spots: 1, paidNow: '€52.50', balance: '€100.00', requirements: ['Helmet'], reference: 'AB12CD34', code: '3F9A2C7B', passUrl: 'https://majorkaracing.com/booking/x' },
+  previewData: { name: 'Jane', eventTitle: 'Biķernieki Track Day', when: '12 October 2026 · 09:00', location: 'Biķernieki, Riga', spots: 1, paidNow: '€52.50', balance: '€100.00', requirements: ['Helmet'], reference: 'AB12CD34', code: '3F9A2C7B', passUrl: 'https://trackly.racing/booking/x' },
 } satisfies TemplateEntry

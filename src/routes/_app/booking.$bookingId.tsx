@@ -12,9 +12,9 @@ import { fireAndForget } from "@/lib/access-token";
 
 export const Route = createFileRoute("/_app/booking/$bookingId")({
   head: () => ({ meta: [
-    { title: "Booking details — Majorka Racing" },
+    { title: "Booking details — Trackly" },
     { name: "description", content: "View your motorsport event booking details and confirmation." },
-    { property: "og:title", content: "Booking details — Majorka Racing" },
+    { property: "og:title", content: "Booking details — Trackly" },
     { property: "og:description", content: "View your motorsport event booking details and confirmation." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

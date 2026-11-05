@@ -3,14 +3,14 @@ import type { TemplateEntry } from './registry'
 import { Btn, Layout, P, SITE, pickLang } from './_layout'
 
 const G = {
-  en: { subject: "You're now a Majorka Racing organiser", title: "You're an organiser!", body: "Good news — we've added you as an organiser on Majorka Racing. You can now post events from your Organiser Dashboard.", btn: 'Open dashboard' },
-  ru: { subject: 'Теперь вы организатор Majorka Racing', title: 'Вы организатор!', body: 'Хорошие новости — мы добавили вас как организатора на Majorka Racing. Теперь вы можете публиковать события в Панели организатора.', btn: 'Открыть панель' },
-  lv: { subject: 'Tu tagad esi Majorka Racing organizators', title: 'Tu esi organizators!', body: 'Labas ziņas — mēs tevi pievienojām kā organizatoru Majorka Racing. Tagad vari publicēt pasākumus savā Organizatora panelī.', btn: 'Atvērt paneli' },
+  en: { subject: "You're now a Trackly organiser", title: "You're an organiser!", body: "Good news — we've added you as an organiser on Trackly. You can now post events from your Organiser Dashboard.", btn: 'Open dashboard' },
+  ru: { subject: 'Теперь вы организатор Trackly', title: 'Вы организатор!', body: 'Хорошие новости — мы добавили вас как организатора на Trackly. Теперь вы можете публиковать события в Панели организатора.', btn: 'Открыть панель' },
+  lv: { subject: 'Tu tagad esi Trackly organizators', title: 'Tu esi organizators!', body: 'Labas ziņas — mēs tevi pievienojām kā organizatoru Trackly. Tagad vari publicēt pasākumus savā Organizatora panelī.', btn: 'Atvērt paneli' },
 }
 const R = {
-  en: { subject: 'Your Majorka Racing organiser access', title: 'Organiser access', body: "Sorry, your organiser status on Majorka Racing has been revoked, so you can no longer post new events. Your existing bookings as a participant aren't affected. If you think this is a mistake, just reply to this email." },
-  ru: { subject: 'Ваш доступ организатора Majorka Racing', title: 'Доступ организатора', body: 'К сожалению, ваш статус организатора на Majorka Racing отозван, поэтому вы больше не можете публиковать новые события. Ваши бронирования как участника не затронуты. Если вы считаете это ошибкой, просто ответьте на это письмо.' },
-  lv: { subject: 'Tava Majorka Racing organizatora piekļuve', title: 'Organizatora piekļuve', body: 'Diemžēl tavs organizatora statuss Majorka Racing ir atsaukts, tāpēc vairs nevari publicēt jaunus pasākumus. Tavas esošās rezervācijas kā dalībniekam netiek ietekmētas. Ja domā, ka tā ir kļūda, vienkārši atbildi uz šo e-pastu.' },
+  en: { subject: 'Your Trackly organiser access', title: 'Organiser access', body: "Sorry, your organiser status on Trackly has been revoked, so you can no longer post new events. Your existing bookings as a participant aren't affected. If you think this is a mistake, just reply to this email." },
+  ru: { subject: 'Ваш доступ организатора Trackly', title: 'Доступ организатора', body: 'К сожалению, ваш статус организатора на Trackly отозван, поэтому вы больше не можете публиковать новые события. Ваши бронирования как участника не затронуты. Если вы считаете это ошибкой, просто ответьте на это письмо.' },
+  lv: { subject: 'Tava Trackly organizatora piekļuve', title: 'Organizatora piekļuve', body: 'Diemžēl tavs organizatora statuss Trackly ir atsaukts, tāpēc vairs nevari publicēt jaunus pasākumus. Tavas esošās rezervācijas kā dalībniekam netiek ietekmētas. Ja domā, ka tā ir kļūda, vienkārši atbildi uz šo e-pastu.' },
 }
 
 const Granted = ({ lang }: { lang?: string }) => {

@@ -19,10 +19,10 @@ import {
 
 export const Route = createFileRoute("/_app/book/$eventId")({
   head: () => ({ meta: [
-    { title: "Book an event — Majorka Racing" },
-    { name: "description", content: "Book your spot at a track day or drift event with Majorka Racing." },
-    { property: "og:title", content: "Book an event — Majorka Racing" },
-    { property: "og:description", content: "Book your spot at a track day or drift event with Majorka Racing." },
+    { title: "Book an event — Trackly" },
+    { name: "description", content: "Book your spot at a track day or drift event with Trackly." },
+    { property: "og:title", content: "Book an event — Trackly" },
+    { property: "og:description", content: "Book your spot at a track day or drift event with Trackly." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),

@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
     const params = new URLSearchParams();
     params.append("amount", String(amount));
     params.append("currency", "eur");
-    params.append("description", `Majorka Racing — ${String(event.title).slice(0, 200)}`);
+    params.append("description", `Trackly — ${String(event.title).slice(0, 200)}`);
     params.append("metadata[event_id]", event_id);
     params.append("metadata[user_id]", userId);
     params.append("metadata[ticket_count]", String(tc));

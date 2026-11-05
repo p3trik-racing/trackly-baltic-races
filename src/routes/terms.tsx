@@ -5,10 +5,10 @@ import { ArrowLeft } from "lucide-react";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — Majorka Racing" },
-      { name: "description", content: "Terms governing the use of the Majorka Racing motorsport booking platform." },
-      { property: "og:title", content: "Terms of Service — Majorka Racing" },
-      { property: "og:description", content: "Terms governing the use of the Majorka Racing motorsport booking platform." },
+      { title: "Terms of Service — Trackly" },
+      { name: "description", content: "Terms governing the use of the Trackly motorsport booking platform." },
+      { property: "og:title", content: "Terms of Service — Trackly" },
+      { property: "og:description", content: "Terms governing the use of the Trackly motorsport booking platform." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

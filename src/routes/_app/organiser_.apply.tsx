@@ -11,10 +11,10 @@ import { emailOrganiserApplication } from "@/lib/app-email.functions";
 
 export const Route = createFileRoute("/_app/organiser_/apply")({
   head: () => ({ meta: [
-    { title: "Become an organiser — Majorka Racing" },
-    { name: "description", content: "Apply to list your track days and drift events on Majorka Racing." },
-    { property: "og:title", content: "Become an organiser — Majorka Racing" },
-    { property: "og:description", content: "Apply to list your track days and drift events on Majorka Racing." },
+    { title: "Become an organiser — Trackly" },
+    { name: "description", content: "Apply to list your track days and drift events on Trackly." },
+    { property: "og:title", content: "Become an organiser — Trackly" },
+    { property: "og:description", content: "Apply to list your track days and drift events on Trackly." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),

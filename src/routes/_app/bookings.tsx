@@ -19,9 +19,9 @@ import { KindBadge, raceTicketQrUrl } from "@/components/RaceTickets";
 
 export const Route = createFileRoute("/_app/bookings")({
   head: () => ({ meta: [
-    { title: "My bookings — Majorka Racing" },
+    { title: "My bookings — Trackly" },
     { name: "description", content: "Review your upcoming and past motorsport event bookings." },
-    { property: "og:title", content: "My bookings — Majorka Racing" },
+    { property: "og:title", content: "My bookings — Trackly" },
     { property: "og:description", content: "Review your upcoming and past motorsport event bookings." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
