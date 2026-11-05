@@ -1,5 +1,5 @@
 /** Canonical public site URL — used for QR codes, share links and link previews so preview/domain differences never leak. */
-export const SITE_URL = "https://majorkaracing.com";
+export const SITE_URL = "https://trackly.racing";
 
 export function absoluteAsset(path: string) {
   if (/^https:\/\//.test(path)) return path;

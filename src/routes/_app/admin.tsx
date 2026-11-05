@@ -42,7 +42,7 @@ function Payments() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {[["Gross", d.totals.gross], ["Majorka fees", d.totals.fees], ["Pending payouts", d.totals.pending], ["Transferred", d.totals.transferred]].map(([k, v]) => (
+        {[["Gross", d.totals.gross], ["Trackly fees", d.totals.fees], ["Pending payouts", d.totals.pending], ["Transferred", d.totals.transferred]].map(([k, v]) => (
           <div key={k as string} className="bg-card border border-border rounded-xl p-3"><p className="text-[11px] text-muted-foreground">{k}</p><p className="font-semibold">{e(v as number)}</p></div>
         ))}
       </div>
@@ -121,10 +121,10 @@ function Ratings() {
 
 export const Route = createFileRoute("/_app/admin")({
   head: () => ({ meta: [
-    { title: "Admin — Majorka Racing" },
-    { name: "description", content: "Majorka Racing admin panel." },
-    { property: "og:title", content: "Admin — Majorka Racing" },
-    { property: "og:description", content: "Majorka Racing admin panel." },
+    { title: "Admin — Trackly" },
+    { name: "description", content: "Trackly admin panel." },
+    { property: "og:title", content: "Admin — Trackly" },
+    { property: "og:description", content: "Trackly admin panel." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),

@@ -10,10 +10,10 @@ export const Route = createFileRoute("/_app/checkin/$bookingId")({
   validateSearch: (s: Record<string, unknown>): { c?: string } =>
     typeof s.c === "string" ? { c: s.c } : {},
   head: () => ({ meta: [
-    { title: "Check-in — Majorka Racing" },
-    { name: "description", content: "Check in an attendee at a Majorka Racing event." },
-    { property: "og:title", content: "Check-in — Majorka Racing" },
-    { property: "og:description", content: "Check in an attendee at a Majorka Racing event." },
+    { title: "Check-in — Trackly" },
+    { name: "description", content: "Check in an attendee at a Trackly event." },
+    { property: "og:title", content: "Check-in — Trackly" },
+    { property: "og:description", content: "Check in an attendee at a Trackly event." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "robots", content: "noindex" },

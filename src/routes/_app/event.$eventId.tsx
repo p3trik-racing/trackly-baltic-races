@@ -15,9 +15,9 @@ import { getEventOg } from "@/lib/og.functions";
 import { SITE_URL, absoluteAsset } from "@/lib/site";
 
 const GENERIC_EVENT_META = [
-  { title: "Event details — Majorka Racing" },
+  { title: "Event details — Trackly" },
   { name: "description", content: "Book track days and drift events across the Baltics — dates, spots, deposits and requirements." },
-  { property: "og:title", content: "Event details — Majorka Racing" },
+  { property: "og:title", content: "Event details — Trackly" },
   { property: "og:description", content: "Book track days and drift events across the Baltics — dates, spots, deposits and requirements." },
   { property: "og:type", content: "website" },
   { name: "twitter:card", content: "summary_large_image" },
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/_app/event/$eventId")({
     const date = formatDate(e.date, "en", "long");
     const price = Number(e.price) === 0 ? "Free" : `from €${Number(e.price)}`;
     const desc = [date, e.city, price].filter(Boolean).join(" · ");
-    const title = `${e.title} — Majorka Racing`;
+    const title = `${e.title} — Trackly`;
     const isHosted = !!e.cover_image_url && /^https:\/\//.test(e.cover_image_url);
     const image = absoluteAsset(eventCover(e.category, e.cover_image_url));
     return {
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/_app/event/$eventId")({
         { property: "og:description", content: desc },
         { property: "og:type", content: "website" },
         { property: "og:url", content: url },
-        { property: "og:site_name", content: "Majorka Racing" },
+        { property: "og:site_name", content: "Trackly" },
         { property: "og:image", content: image },
         ...(isHosted ? [] : [{ property: "og:image:width", content: "1200" }, { property: "og:image:height", content: "630" }]),
         { name: "twitter:card", content: "summary_large_image" },

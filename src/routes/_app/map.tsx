@@ -12,9 +12,9 @@ const EventsMap = lazy(() => import("@/components/EventsMap"));
 
 export const Route = createFileRoute("/_app/map")({
   head: () => ({ meta: [
-    { title: "Events map — Majorka Racing" },
+    { title: "Events map — Trackly" },
     { name: "description", content: "See upcoming track days, drift and car meets across Latvia and the Baltics on a map." },
-    { property: "og:title", content: "Events map — Majorka Racing" },
+    { property: "og:title", content: "Events map — Trackly" },
     { property: "og:description", content: "See upcoming track days, drift and car meets across Latvia and the Baltics on a map." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

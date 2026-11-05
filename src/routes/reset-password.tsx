@@ -7,10 +7,10 @@ import { Check, Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [
-    { title: "Reset password — Majorka Racing" },
-    { name: "description", content: "Set a new password for your Majorka Racing account." },
-    { property: "og:title", content: "Reset password — Majorka Racing" },
-    { property: "og:description", content: "Set a new password for your Majorka Racing account." },
+    { title: "Reset password — Trackly" },
+    { name: "description", content: "Set a new password for your Trackly account." },
+    { property: "og:title", content: "Reset password — Trackly" },
+    { property: "og:description", content: "Set a new password for your Trackly account." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),

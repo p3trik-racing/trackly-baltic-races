@@ -4,10 +4,10 @@ import { useLang } from "@/i18n";
 
 export const Route = createFileRoute("/event-terms")({
   head: () => ({ meta: [
-    { title: "Event Participation Terms — Majorka Racing" },
-    { name: "description", content: "Safety, participation and liability terms for events booked through Majorka Racing." },
-    { property: "og:title", content: "Event Participation Terms — Majorka Racing" },
-    { property: "og:description", content: "Safety, participation and liability terms for events booked through Majorka Racing." },
+    { title: "Event Participation Terms — Trackly" },
+    { name: "description", content: "Safety, participation and liability terms for events booked through Trackly." },
+    { property: "og:title", content: "Event Participation Terms — Trackly" },
+    { property: "og:description", content: "Safety, participation and liability terms for events booked through Trackly." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),

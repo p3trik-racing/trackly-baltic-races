@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Body, Button, Container, Head, Heading, Hr, Html, Img, Link, Preview, Section, Text } from '@react-email/components'
 
 export type EmailLang = 'en' | 'ru' | 'lv'
-export const SITE = 'https://majorkaracing.com'
+export const SITE = 'https://trackly.racing'
 
 export function pickLang(l?: string): EmailLang {
   return l === 'ru' || l === 'lv' ? l : 'en'
@@ -17,12 +17,12 @@ export function Layout({ lang = 'en', preview, title, children }: {
       <Preview>{preview}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={brand}>MAJORKA RACING</Text>
+          <Text style={brand}>TRACKLY</Text>
           <Heading style={h1}>{title}</Heading>
           {children}
           <Hr style={hr} />
           <Text style={footer}>
-            Majorka Racing · <Link href={SITE} style={link}>majorkaracing.com</Link> · admin@majorkariga.com
+            Trackly · <Link href={SITE} style={link}>trackly.racing</Link> · admin@majorkariga.com
           </Text>
         </Container>
       </Body>

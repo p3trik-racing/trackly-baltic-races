@@ -18,9 +18,9 @@ const LocationPickerMap = lazy(() => import("@/components/LocationPickerMap"));
 
 export const Route = createFileRoute("/_app/organiser_/tracks")({
   head: () => ({ meta: [
-    { title: "My tracks — Majorka Racing" },
+    { title: "My tracks — Trackly" },
     { name: "description", content: "Manage your track, hourly prices and bookable slots." },
-    { property: "og:title", content: "My tracks — Majorka Racing" },
+    { property: "og:title", content: "My tracks — Trackly" },
     { property: "og:description", content: "Manage your track, hourly prices and bookable slots." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

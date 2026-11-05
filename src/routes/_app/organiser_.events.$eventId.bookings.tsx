@@ -11,9 +11,9 @@ import { useOrganiserGuard } from "@/lib/roles";
 
 export const Route = createFileRoute("/_app/organiser_/events/$eventId/bookings")({
   head: () => ({ meta: [
-    { title: "Event bookings — Majorka Racing" },
+    { title: "Event bookings — Trackly" },
     { name: "description", content: "Review attendees and bookings for your motorsport event." },
-    { property: "og:title", content: "Event bookings — Majorka Racing" },
+    { property: "og:title", content: "Event bookings — Trackly" },
     { property: "og:description", content: "Review attendees and bookings for your motorsport event." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

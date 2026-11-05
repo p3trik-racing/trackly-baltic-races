@@ -47,7 +47,7 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
       await db.from("event_ratings").delete().eq("user_id", uid);
 
       // Booking records are kept 7 years for tax — anonymise the personal fields.
-      const PLACEHOLDER = "deleted-user@majorkaracing.com";
+      const PLACEHOLDER = "deleted-user@trackly.racing";
       await db.from("bookings").update({ attendee_name: "Deleted user", attendee_email: PLACEHOLDER, attendee_phone: null }).eq("user_id", uid);
       await db.from("slot_bookings").update({ attendee_name: "Deleted user", attendee_email: PLACEHOLDER, attendee_phone: null }).eq("user_id", uid);
       await db.from("race_tickets").update({ holder_name: "Deleted user", email: PLACEHOLDER, phone: null }).eq("user_id", uid);

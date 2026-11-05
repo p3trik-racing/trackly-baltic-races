@@ -28,7 +28,7 @@ const Email = (p: Props) => {
 
 export const template = {
   component: Email,
-  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Majorka Racing'),
+  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Trackly'),
   displayName: 'Event reminder (24 h)',
-  previewData: { eventTitle: 'Biķernieki Track Day', when: '12 October 2026 · 09:00', location: 'Biķernieki, Riga', requirements: ['Helmet'], code: '3F9A2C7B', passUrl: 'https://majorkaracing.com/booking/x' },
+  previewData: { eventTitle: 'Biķernieki Track Day', when: '12 October 2026 · 09:00', location: 'Biķernieki, Riga', requirements: ['Helmet'], code: '3F9A2C7B', passUrl: 'https://trackly.racing/booking/x' },
 } satisfies TemplateEntry

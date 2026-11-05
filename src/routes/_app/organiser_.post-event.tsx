@@ -21,9 +21,9 @@ const searchSchema = z.object({ edit: z.string().optional() });
 
 export const Route = createFileRoute("/_app/organiser_/post-event")({
   head: () => ({ meta: [
-    { title: "Post an event — Majorka Racing" },
+    { title: "Post an event — Trackly" },
     { name: "description", content: "Create or edit a motorsport event listing." },
-    { property: "og:title", content: "Post an event — Majorka Racing" },
+    { property: "og:title", content: "Post an event — Trackly" },
     { property: "og:description", content: "Create or edit a motorsport event listing." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

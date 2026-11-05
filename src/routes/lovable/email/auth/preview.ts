@@ -18,8 +18,8 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "Majorka Racing"
-const ROOT_DOMAIN = "majorkaracing.com"
+const SITE_NAME = "Trackly"
+const ROOT_DOMAIN = "trackly.racing"
 
 // Sample data for preview mode ONLY (not used in actual email sending).
 // URLs are baked in at scaffold time from the project's real data.

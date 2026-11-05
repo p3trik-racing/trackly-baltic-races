@@ -23,7 +23,7 @@ const Email = (p: Props) => {
 
 export const template = {
   component: Email,
-  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Majorka Racing'),
+  subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Trackly'),
   displayName: 'Event photos',
   previewData: { eventTitle: 'Biķernieki Track Day', url: 'https://photos.google.com' },
 } satisfies TemplateEntry

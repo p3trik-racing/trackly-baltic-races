@@ -12,9 +12,9 @@ import { Avatar, displayName, type MiniProfile } from "@/components/FriendsGoing
 
 export const Route = createFileRoute("/_app/friends")({
   head: () => ({ meta: [
-    { title: "Friends — Majorka Racing" },
+    { title: "Friends — Trackly" },
     { name: "description", content: "Add friends and see which track days and drift events they're going to." },
-    { property: "og:title", content: "Friends — Majorka Racing" },
+    { property: "og:title", content: "Friends — Trackly" },
     { property: "og:description", content: "Add friends and see which track days and drift events they're going to." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
@@ -114,7 +114,7 @@ function FriendsPage() {
           </button>
         </div>
       </section>
-      <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title="Majorka Racing" url={link} text={t("friends.inviteText")} />
+      <ShareSheet open={shareOpen} onOpenChange={setShareOpen} title="Trackly" url={link} text={t("friends.inviteText")} />
 
       <div className="flex gap-1 bg-card p-1 rounded-xl border border-border">
         {(["friends", "requests", "find"] as const).map((k) => (

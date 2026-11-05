@@ -10,9 +10,9 @@ import { MessageAttendees } from "@/components/MessageAttendees";
 
 export const Route = createFileRoute("/_app/organiser_/events/$eventId/checkin")({
   head: () => ({ meta: [
-    { title: "Event check-in — Majorka Racing" },
+    { title: "Event check-in — Trackly" },
     { name: "description", content: "Scan passes and check in attendees at the track." },
-    { property: "og:title", content: "Event check-in — Majorka Racing" },
+    { property: "og:title", content: "Event check-in — Trackly" },
     { property: "og:description", content: "Scan passes and check in attendees at the track." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

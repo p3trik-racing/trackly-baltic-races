@@ -39,7 +39,7 @@ export async function connectAccountLink(userId: string, email: string | undefin
   if (!acct) {
     const a = await stripe("/accounts", {
       type: "express", country, email: prof?.email ?? email,
-      "business_profile[url]": "https://majorkaracing.com",
+      "business_profile[url]": "https://trackly.racing",
       "capabilities[card_payments][requested]": true, "capabilities[transfers][requested]": true,
       "metadata[user_id]": userId,
     }, { idempotencyKey: `connect-account-${userId}` });
@@ -91,7 +91,7 @@ export async function createSlotPayment(id: string, userId: string) {
   await supabaseAdmin.from("slot_bookings").update({ platform_fee: fee }).eq("id", id);
   const pi = await stripe("/payment_intents", {
     amount: cents(total), currency: "eur", "automatic_payment_methods[enabled]": true,
-    description: "Majorka Racing — track time", transfer_group: `slot_${slot.id}`,
+    description: "Trackly — track time", transfer_group: `slot_${slot.id}`,
     "metadata[kind]": "slot", "metadata[slot_booking_id]": b.id, "metadata[user_id]": userId, "metadata[venue_id]": slot.venue_id,
   }, { idempotencyKey: `slot-pi-${b.id}-${cents(total)}` });
   return { clientSecret: pi.client_secret as string, total };
@@ -118,7 +118,7 @@ async function loadTicket(id: string, userId: string) {
   const tt: any = tk.race_ticket_types;
   if (tk.status === "cancelled") throw new Error("This ticket is cancelled");
   if (tk.payment_status !== "pending") throw new Error(tk.payment_status === "paid" ? "Already paid" : "No payment needed");
-  if (tt?.kind === "racer" && tk.status !== "confirmed") throw new Error("Wait until Majorka confirms your entry");
+  if (tt?.kind === "racer" && tk.status !== "confirmed") throw new Error("Wait until Trackly confirms your entry");
   const base = r2(Number(tk.amount));
   if (!(base > 0)) throw new Error("No payment needed");
   const fee = r2(base * FEE_RATE);
@@ -130,7 +130,7 @@ export async function createTicketPayment(id: string, userId: string) {
   await supabaseAdmin.from("race_tickets").update({ platform_fee: fee }).eq("id", id);
   const pi = await stripe("/payment_intents", {
     amount: cents(total), currency: "eur", "automatic_payment_methods[enabled]": true,
-    description: "Majorka Racing — race ticket", transfer_group: `race_${tt?.competition_id ?? ""}`,
+    description: "Trackly — race ticket", transfer_group: `race_${tt?.competition_id ?? ""}`,
     "metadata[kind]": "race_ticket", "metadata[race_ticket_id]": tk.id, "metadata[user_id]": userId,
   }, { idempotencyKey: `ticket-pi-${tk.id}-${cents(total)}` });
   return { clientSecret: pi.client_secret as string, total };
@@ -286,8 +286,8 @@ export async function adminPayments() {
 }
 
 export async function enableApplePayDomain() {
-  const list = await stripe("/payment_method_domains?domain_name=majorkaracing.com&limit=1");
+  const list = await stripe("/payment_method_domains?domain_name=trackly.racing&limit=1");
   if (list.data?.length) return { already: true, id: list.data[0].id };
-  const d = await stripe("/payment_method_domains", { domain_name: "majorkaracing.com" }, { idempotencyKey: "pmd-majorkaracing.com" });
+  const d = await stripe("/payment_method_domains", { domain_name: "trackly.racing" }, { idempotencyKey: "pmd-trackly.racing" });
   return { already: false, id: d.id };
 }

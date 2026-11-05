@@ -10,9 +10,9 @@ import { emailCompetitionEntry } from "@/lib/app-email.functions";
 import { fireAndForget } from "@/lib/access-token";
 
 const GENERIC_COMP_META = [
-  { title: "Competition — Majorka Racing" },
+  { title: "Competition — Trackly" },
   { name: "description", content: "Rounds, entry fee, licence and car requirements — and how to enter this series." },
-  { property: "og:title", content: "Competition — Majorka Racing" },
+  { property: "og:title", content: "Competition — Trackly" },
   { property: "og:description", content: "Rounds, entry fee, licence and car requirements — and how to enter this series." },
   { property: "og:type", content: "website" },
   { name: "twitter:card", content: "summary_large_image" },
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_app/competitions_/$slug")({
     const c = loaderData?.og;
     if (!c) return { meta: GENERIC_COMP_META };
     const url = `${SITE_URL}/competitions/${c.slug}`;
-    const title = `${c.name} — Majorka Racing`;
+    const title = `${c.name} — Trackly`;
     const desc = [c.discipline, c.country, c.season ? `Season ${c.season}` : null].filter(Boolean).join(" · ");
     const image = `${SITE_URL}/og.png`;
     return {
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/_app/competitions_/$slug")({
         { property: "og:description", content: desc },
         { property: "og:type", content: "website" },
         { property: "og:url", content: url },
-        { property: "og:site_name", content: "Majorka Racing" },
+        { property: "og:site_name", content: "Trackly" },
         { property: "og:image", content: image },
         { property: "og:image:width", content: "1200" },
         { property: "og:image:height", content: "630" },

@@ -5,10 +5,10 @@ import { ArrowLeft } from "lucide-react";
 export const Route = createFileRoute("/privacy-policy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — Majorka Racing" },
-      { name: "description", content: "How Majorka Racing collects, uses, and protects your personal data." },
-      { property: "og:title", content: "Privacy Policy — Majorka Racing" },
-      { property: "og:description", content: "How Majorka Racing collects, uses, and protects your personal data." },
+      { title: "Privacy Policy — Trackly" },
+      { name: "description", content: "How Trackly collects, uses, and protects your personal data." },
+      { property: "og:title", content: "Privacy Policy — Trackly" },
+      { property: "og:description", content: "How Trackly collects, uses, and protects your personal data." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
