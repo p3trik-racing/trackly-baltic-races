@@ -7,6 +7,8 @@ export const CATEGORIES = [
   { value: "races", label: "Races & Competitions" },
 ] as const;
 
+export const SHOW_MAJORKA_SPECIAL = false;
+
 export const SPECIAL = "majorka_special";
 
 export type CategoryValue = (typeof CATEGORIES)[number]["value"];
@@ -16,18 +18,20 @@ export function categoryLabel(v: string) {
 }
 
 export function orderCategories(favs: string[]) {
-  const special = CATEGORIES.filter((c) => c.value === SPECIAL);
+  const special = SHOW_MAJORKA_SPECIAL ? CATEGORIES.filter((c) => c.value === SPECIAL) : [];
   const favourites = CATEGORIES.filter((c) => c.value !== SPECIAL && favs.includes(c.value));
   const rest = CATEGORIES.filter((c) => c.value !== SPECIAL && !favs.includes(c.value));
   return [...favourites, ...special, ...rest];
 }
 
 export function orderEvents<T extends { category: string }>(list: T[], selected: string, favs: string[]): T[] {
-  if (selected !== "all") return list.filter((item) => item.category === selected);
+  let items = list;
+  if (!SHOW_MAJORKA_SPECIAL) items = items.filter((item) => item.category !== SPECIAL);
+  if (selected !== "all") return items.filter((item) => item.category === selected);
   const favouriteSet = new Set(favs.filter((category) => category !== SPECIAL));
   return [
-    ...list.filter((item) => favouriteSet.has(item.category)),
-    ...list.filter((item) => item.category === SPECIAL),
-    ...list.filter((item) => item.category !== SPECIAL && !favouriteSet.has(item.category)),
+    ...items.filter((item) => favouriteSet.has(item.category)),
+    ...items.filter((item) => item.category === SPECIAL),
+    ...items.filter((item) => item.category !== SPECIAL && !favouriteSet.has(item.category)),
   ];
 }
