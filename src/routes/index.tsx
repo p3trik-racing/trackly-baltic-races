@@ -39,7 +39,7 @@ function Splash() {
   return (
     <main className="min-h-screen flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center container-app text-center">
-        <LogoFull className="w-[220px] h-auto mx-auto mb-8 text-foreground" />
+        <LogoFull className="w-[150px] h-auto mx-auto mb-8 text-foreground" />
         <p className="mt-3 text-muted-foreground text-base max-w-xs">
           {t("splash.tagline")}
         </p>

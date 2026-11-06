@@ -94,7 +94,7 @@ function HomePage() {
         </div>
       )}
       <header className="flex items-center gap-2">
-        <LogoMark className="h-7 w-auto text-foreground shrink-0" />
+        <LogoMark className="h-8 w-auto text-foreground shrink-0" />
         <p className="text-sm text-muted-foreground truncate min-w-0 flex-1">{t("home.tagline")}</p>
         {roles.isAdmin ? (
           <Link to="/admin" className="shrink-0 px-2.5 h-6 inline-flex items-center rounded-full text-[11px] font-medium"

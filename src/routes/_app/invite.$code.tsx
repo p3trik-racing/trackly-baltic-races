@@ -57,7 +57,7 @@ function InvitePage() {
   const name = inviter ? displayName(inviter) : "";
   return (
     <main className="container-app py-10 space-y-6 text-center">
-      <LogoFull className="w-[160px] h-auto mx-auto text-foreground" />
+      <LogoFull className="w-[110px] h-auto mx-auto text-foreground" />
       {inviter === undefined ? <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
         : inviter === null ? <p className="text-sm text-muted-foreground">{t("invite.invalid")}</p>
         : (

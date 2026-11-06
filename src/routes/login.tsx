@@ -81,7 +81,7 @@ function LoginPage() {
         <ArrowLeft size={20} /> {t("common.back")}
       </Link>
 
-      <LogoFull className="w-[180px] h-auto mx-auto mb-6 text-foreground" />
+      <LogoFull className="w-[110px] h-auto mx-auto mb-6 text-foreground" />
 
       <h1 className="text-2xl font-semibold mb-1">{t("auth.login.title")}</h1>
       <p className="text-muted-foreground text-sm mb-6">{t("auth.login.subtitle")}</p>

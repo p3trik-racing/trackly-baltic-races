@@ -85,7 +85,7 @@ function SignupPage() {
   if (sentTo) {
     return (
       <main className="min-h-screen container-app py-6 text-center">
-        <LogoFull className="w-[180px] h-auto mx-auto my-8 text-foreground" />
+        <LogoFull className="w-[110px] h-auto mx-auto my-8 text-foreground" />
         <h1 className="text-2xl font-semibold mb-2">{t("auth.confirm.title")}</h1>
         <p className="text-muted-foreground text-sm mb-6">{t("auth.confirm.body", { email: sentTo })}</p>
         <button className="cta-button" onClick={resend} disabled={resending}>{t("auth.confirm.resend")}</button>
@@ -99,7 +99,7 @@ function SignupPage() {
       <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground mb-6">
         <ArrowLeft size={20} /> {t("common.back")}
       </Link>
-      <LogoFull className="w-[180px] h-auto mx-auto mb-6 text-foreground" />
+      <LogoFull className="w-[110px] h-auto mx-auto mb-6 text-foreground" />
       <h1 className="text-2xl font-semibold mb-1">{t("auth.signup.title")}</h1>
       <p className="text-muted-foreground text-sm mb-6">{t("auth.signup.subtitle")}</p>
 
