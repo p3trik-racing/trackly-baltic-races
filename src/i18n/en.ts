@@ -367,7 +367,7 @@ export const en = {
 
   // terms
   "terms.title": "Terms of Service",
-  "terms.updated": "Last updated: 9 October 2026",
+  "terms.updated": "Last updated: 7 November 2026",
   "terms.s1.title": "1. About Trackly",
   "terms.s1.body": "Trackly (trackly.racing) is an online marketplace where drivers find and book motorsport events, track time and race tickets from independent organisers and track owners in Latvia, Estonia and Lithuania. Trackly does not organise or run these events. When you book, Trackly acts only as the commercial agent of the organiser: it shows the listing, takes your booking and collects your payment on the organiser's behalf.",
   "terms.s2.title": "2. Bookings and payments",
@@ -387,7 +387,7 @@ export const en = {
 
   // event participation terms
   "eventTerms.title": "Event Participation Terms",
-  "eventTerms.updated": "Last updated: 9 October 2026",
+  "eventTerms.updated": "Last updated: 7 November 2026",
   "eventTerms.s1.title": "1. Who runs the event",
   "eventTerms.s1.body": "Events are run by the organiser named on the event page. Trackly is a booking platform.",
   "eventTerms.s2.title": "2. Who can take part",
@@ -415,7 +415,7 @@ export const en = {
 
   // privacy
   "privacy.title": "Privacy Policy",
-  "privacy.updated": "Last updated: October 2026",
+  "privacy.updated": "Last updated: November 2026",
   "privacy.s1.title": "1. Who We Are",
   "privacy.s1.body": "Trackly (trackly.racing) is a motorsport event discovery and booking platform operated as a marketplace connecting car enthusiasts with event organisers across Latvia and the Baltic States. The data controller is SIA \"Trackly Studio\" (reg. no. 40203795568, Ūnijas iela 12A-8, Rīga, LV-1084, Latvia).",
   "privacy.s2.title": "2. Data We Collect",
