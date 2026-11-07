@@ -865,7 +865,7 @@ export const en = {
   "profile.delete.done": "Account deleted",
   "compete.disclaimer": "Trackly is not affiliated with these series. Information comes from the organisers' public sources — always check the official regulations before entering.",
   "terms.op.title": "8. Operator",
-  "terms.op.body": "Trackly is operated by Trackly (Riga, Latvia). Company name, registration number and registered address will be published here before the first paid event. Contact: hello@trackly.racing",
+  "terms.op.body": "Trackly is operated by SIA \"Trackly Studio\", registration no. 40203795568, registered address Ūnijas iela 12A-8, Rīga, LV-1084, Latvia. Contact: hello@trackly.racing",
   "terms.wd.title": "9. No 14-day right of withdrawal",
   "terms.wd.body": "Bookings for events, track time and race tickets on a specific date are services related to leisure activities with a fixed date of performance. Under Article 16(l) of EU Directive 2011/83/EU and Latvian Cabinet Regulation No. 255 (Regulations on distance contracts), the 14-day right of withdrawal does not apply — also when you book through Trackly as the organiser's agent (EU Court of Justice, case C-96/21, CTS Eventim). Your cancellation rights are those in section 4.",
   "terms.age.title": "10. Age — 18+",

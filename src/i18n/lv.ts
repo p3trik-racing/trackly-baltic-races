@@ -817,7 +817,7 @@ export const lv: Partial<Record<keyof typeof en, string>> = {
   "profile.delete.done": "Konts dzēsts",
   "compete.disclaimer": "Trackly nav saistīta ar šīm sērijām. Informācija ņemta no organizatoru publiskajiem avotiem — pirms pieteikšanās vienmēr pārbaudi oficiālo nolikumu.",
   "terms.op.title": "8. Operators",
-  "terms.op.body": "Trackly pārvalda Trackly (Rīga, Latvija). Uzņēmuma nosaukums, reģistrācijas numurs un juridiskā adrese tiks publicēti šeit pirms pirmā maksas pasākuma. Kontakti: hello@trackly.racing",
+  "terms.op.body": "Trackly pārvalda SIA “Trackly Studio”, reģ. nr. 40203795568, juridiskā adrese Ūnijas iela 12A-8, Rīga, LV-1084, Latvija. Kontakti: hello@trackly.racing",
   "terms.wd.title": "9. Nav 14 dienu atteikuma tiesību",
   "terms.wd.body": "Rezervācijas pasākumiem, trases laikam un sacensību biļetēm konkrētā datumā ir ar brīvā laika pavadīšanu saistīti pakalpojumi ar noteiktu izpildes datumu. Saskaņā ar ES Direktīvas 2011/83/ES 16. panta l) punktu un Ministru kabineta noteikumiem Nr. 255 “Noteikumi par distances līgumu” 14 dienu atteikuma tiesības uz tiem neattiecas — arī tad, ja rezervē caur Trackly kā organizatora aģentu (ES Tiesa, lieta C-96/21, CTS Eventim). Tavas atcelšanas tiesības ir noteiktas 4. sadaļā.",
   "terms.age.title": "10. Vecums — 18+",
