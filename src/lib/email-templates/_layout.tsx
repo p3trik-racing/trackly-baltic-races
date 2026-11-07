@@ -22,7 +22,7 @@ export function Layout({ lang = 'en', preview, title, children }: {
           {children}
           <Hr style={hr} />
           <Text style={footer}>
-            Trackly · <Link href={SITE} style={link}>trackly.racing</Link> · admin@majorkariga.com
+            Trackly · <Link href={SITE} style={link}>trackly.racing</Link> · hello@trackly.racing
           </Text>
         </Container>
       </Body>

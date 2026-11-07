@@ -2,7 +2,7 @@ import * as React from 'react'
 import type { TemplateEntry } from './registry'
 import { Btn, Layout, Row, SITE } from './_layout'
 
-const ADMIN = 'admin@majorkariga.com'
+const ADMIN = 'hello@trackly.racing'
 
 interface FieldsProps { heading?: string; fields?: [string, string][]; link?: string }
 
