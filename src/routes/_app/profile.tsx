@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { CATEGORIES, SPECIAL } from "@/lib/categories";
-import { LogOut, User, Upload, ChevronRight, KeyRound, Globe, ShoppingBag, Users } from "lucide-react";
+import { LogOut, User, Upload, ChevronRight, KeyRound, Users } from "lucide-react";
 import { toast } from "sonner";
 import { deleteMyAccount } from "@/lib/account.functions";
 import { ImageCropModal } from "@/components/ImageCropModal";
@@ -498,21 +498,6 @@ function ProfilePage() {
           <ToggleRow label={t("profile.showAttendance")} checked={(profile as any).show_attendance ?? true}
             onChange={async (v) => { if (!user) return; setProfile({ ...profile, show_attendance: v } as any); await supabase.from("profiles").update({ show_attendance: v }).eq("id", user.id); }} />
         </div>
-      </section>
-
-      {/* Trackly */}
-      <section className="bg-card border border-border rounded-2xl p-2">
-        <p className="px-3 pt-2 pb-1 text-xs text-muted-foreground">{t("profile.majorka")}</p>
-        <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer"
-          className="w-full flex items-center justify-between px-3 h-12 text-sm">
-          <span className="inline-flex items-center gap-2"><Globe size={16} /> {t("profile.communitySite")}</span>
-          <ChevronRight size={16} className="text-muted-foreground" />
-        </a>
-        <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer"
-          className="w-full flex items-center justify-between px-3 h-12 text-sm">
-          <span className="inline-flex items-center gap-2"><ShoppingBag size={16} /> {t("profile.shop")}</span>
-          <ChevronRight size={16} className="text-muted-foreground" />
-        </a>
       </section>
 
       {/* Account */}

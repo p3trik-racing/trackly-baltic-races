@@ -15,9 +15,9 @@ import { loadVenueCards, VenueCardView, type VenueCard } from "@/components/Venu
 export const Route = createFileRoute("/_app/home")({
   head: () => ({ meta: [
     { title: "Home — Trackly" },
-    { name: "description", content: "Drive it where it belongs. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { name: "description", content: "Book the track. Split the bill. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
     { property: "og:title", content: "Home — Trackly" },
-    { property: "og:description", content: "Drive it where it belongs. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { property: "og:description", content: "Book the track. Split the bill. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),

@@ -7,9 +7,9 @@ import { LogoFull } from "@/components/Logo";
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "Trackly — Motorsport events in the Baltics" },
-    { name: "description", content: "Drive it where it belongs. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { name: "description", content: "Book the track. Split the bill. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
     { property: "og:title", content: "Trackly — Motorsport events in the Baltics" },
-    { property: "og:description", content: "Drive it where it belongs. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { property: "og:description", content: "Book the track. Split the bill. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://trackly.racing" },
     { property: "og:image", content: "https://trackly.racing/og.png" },
@@ -60,11 +60,6 @@ function Splash() {
           {t("splash.browse")}
         </Link>
         <LangSwitcher />
-        <p className="text-center text-xs text-muted-foreground">
-          <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t("splash.majorkaRiga")}</a>
-          {" · "}
-          <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t("splash.shop")}</a>
-        </p>
         <p className="text-center text-muted-foreground pt-2" style={{ fontSize: "11px" }}>
           {t("splash.agreePrefix")}{" "}
           <Link to="/terms" style={{ color: "var(--accent)" }}>{t("splash.terms")}</Link>

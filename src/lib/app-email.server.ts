@@ -186,7 +186,7 @@ export async function sendApplicationEmail(type: "new_application" | "approved" 
       ["Events per year", a.events_per_year ?? ""], ["Website", a.website ?? ""], ["Socials", a.socials ?? ""],
       ["Experience", a.experience ?? ""], ["Message", a.message ?? ""],
     ].filter(([, v]) => v) as [string, string][];
-    await safeSend("organiser-application-new", "admin@majorkariga.com", {
+    await safeSend("organiser-application-new", "hello@trackly.racing", {
       heading: "New organiser application", fullName: a.full_name, company: a.company, fields,
     }, `organiser-application-new-${a.id}`);
     return;
@@ -211,7 +211,7 @@ export async function sendCompetitionEntry(entryId: string, callerId: string) {
     ["Class", e.class ?? ""], ["Has licence", e.has_licence ? "Yes" : "No"], ["Needs help with", (e.needs_help ?? []).join(", ")],
     ["Message", e.message ?? ""],
   ].filter(([, v]) => v) as [string, string][];
-  await safeSend("competition-entry-admin", "admin@majorkariga.com", {
+  await safeSend("competition-entry-admin", "hello@trackly.racing", {
     heading: "New competition entry", competition: comp, fullName: e.full_name, fields, link: `${SITE_URL}/admin?tab=Competitions`,
   }, `competition-entry-admin-${e.id}`);
 }
