@@ -23,7 +23,7 @@ export const en = {
   "common.language": "Language",
 
   // splash
-  "splash.tagline": "Drive it where it belongs.",
+  "splash.tagline": "Book the track. Split the bill.",
   "splash.browse": "Browse events without signing up →",
   "splash.majorkaRiga": "Majorka Riga",
   "splash.shop": "Shop",
@@ -87,7 +87,7 @@ export const en = {
   "nav.profile": "Profile",
 
   // home
-  "home.tagline": "Drive it where it belongs",
+  "home.tagline": "Book the track. Split the bill.",
   "home.search": "Search events",
   "home.featured": "Featured",
   "home.recent": "Recently added",

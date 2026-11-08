@@ -60,11 +60,6 @@ function Splash() {
           {t("splash.browse")}
         </Link>
         <LangSwitcher />
-        <p className="text-center text-xs text-muted-foreground">
-          <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t("splash.majorkaRiga")}</a>
-          {" · "}
-          <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t("splash.shop")}</a>
-        </p>
         <p className="text-center text-muted-foreground pt-2" style={{ fontSize: "11px" }}>
           {t("splash.agreePrefix")}{" "}
           <Link to="/terms" style={{ color: "var(--accent)" }}>{t("splash.terms")}</Link>

@@ -500,21 +500,6 @@ function ProfilePage() {
         </div>
       </section>
 
-      {/* Trackly */}
-      <section className="bg-card border border-border rounded-2xl p-2">
-        <p className="px-3 pt-2 pb-1 text-xs text-muted-foreground">{t("profile.majorka")}</p>
-        <a href="https://majorkariga.com" target="_blank" rel="noopener noreferrer"
-          className="w-full flex items-center justify-between px-3 h-12 text-sm">
-          <span className="inline-flex items-center gap-2"><Globe size={16} /> {t("profile.communitySite")}</span>
-          <ChevronRight size={16} className="text-muted-foreground" />
-        </a>
-        <a href="https://majorkashop.com" target="_blank" rel="noopener noreferrer"
-          className="w-full flex items-center justify-between px-3 h-12 text-sm">
-          <span className="inline-flex items-center gap-2"><ShoppingBag size={16} /> {t("profile.shop")}</span>
-          <ChevronRight size={16} className="text-muted-foreground" />
-        </a>
-      </section>
-
       {/* Account */}
       <section className="bg-card border border-border rounded-2xl p-2">
         <button onClick={changePassword}
