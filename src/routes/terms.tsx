@@ -39,6 +39,7 @@ function TermsPage() {
         <Section title={t("terms.age.title")}>{t("terms.age.body")}</Section>
         <Section title={t("terms.ctrl.title")}>{t("terms.ctrl.body")}</Section>
         <Section title={t("terms.s8.title")}>{t("terms.s8.body")}</Section>
+        <Section title={t("terms.na.title")}>{t("terms.na.body")}</Section>
       </div>
     </main>
   );
