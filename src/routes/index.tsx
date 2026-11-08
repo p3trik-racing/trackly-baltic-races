@@ -7,9 +7,9 @@ import { LogoFull } from "@/components/Logo";
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "Trackly — Motorsport events in the Baltics" },
-    { name: "description", content: "Drive it where it belongs. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { name: "description", content: "Book the track. Split the bill. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
     { property: "og:title", content: "Trackly — Motorsport events in the Baltics" },
-    { property: "og:description", content: "Drive it where it belongs. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { property: "og:description", content: "Book the track. Split the bill. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://trackly.racing" },
     { property: "og:image", content: "https://trackly.racing/og.png" },
