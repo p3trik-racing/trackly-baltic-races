@@ -367,7 +367,7 @@ export const en = {
 
   // terms
   "terms.title": "Terms of Service",
-  "terms.updated": "Last updated: 7 November 2026",
+  "terms.updated": "Last updated: 8 November 2026",
   "terms.s1.title": "1. About Trackly",
   "terms.s1.body": "Trackly (trackly.racing) is an online marketplace where drivers find and book motorsport events, track time and race tickets from independent organisers and track owners in Latvia, Estonia and Lithuania. Trackly does not organise or run these events. When you book, Trackly acts only as the commercial agent of the organiser: it shows the listing, takes your booking and collects your payment on the organiser's behalf.",
   "terms.s2.title": "2. Bookings and payments",
@@ -384,10 +384,12 @@ export const en = {
   "terms.s7.body": "These terms are governed by the laws of the Republic of Latvia.",
   "terms.s8.title": "12. Contact",
   "terms.s8.body": "For any questions: hello@trackly.racing",
+  "terms.na.title": "13. No affiliation",
+  "terms.na.body": "Trackly and SIA \"Trackly Studio\" are not affiliated with, endorsed by or responsible for Majorka, Majorka Riga, Majorka Racing, or any car community, club, meet or event run under those names. Those activities are organised by others, who are solely responsible for them.",
 
   // event participation terms
   "eventTerms.title": "Event Participation Terms",
-  "eventTerms.updated": "Last updated: 7 November 2026",
+  "eventTerms.updated": "Last updated: 8 November 2026",
   "eventTerms.s1.title": "1. Who runs the event",
   "eventTerms.s1.body": "Events are run by the organiser named on the event page. Trackly is a booking platform.",
   "eventTerms.s2.title": "2. Who can take part",
@@ -411,7 +413,7 @@ export const en = {
   "eventTerms.s11.title": "11. Deposits, cancellations and no-shows",
   "eventTerms.s11.body": "Cancel 48 h or more before the start to get back what you paid online (minus the 5% booking fee); later cancellations and no-shows lose the deposit. If the organiser cancels, you get a full refund. Full rules: section 4 of the Terms of Service.",
   "eventTerms.s12.title": "12. Law",
-  "eventTerms.s12.body": "These terms are governed by the laws of the Republic of Latvia. Questions: hello@trackly.racing",
+  "eventTerms.s12.body": "These terms are governed by the laws of the Republic of Latvia. Questions: hello@trackly.racing Trackly and SIA \"Trackly Studio\" are not affiliated with, endorsed by or responsible for Majorka, Majorka Riga, Majorka Racing, or any car community, club, meet or event run under those names. Those activities are organised by others, who are solely responsible for them.",
 
   // privacy
   "privacy.title": "Privacy Policy",
