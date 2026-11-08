@@ -10,9 +10,9 @@ import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 // Configuration
 const SITE_NAME = "Trackly"
-const SENDER_DOMAIN = "notify.majorkaracing.com"
+const SENDER_DOMAIN = "notify.trackly.racing"
 const ROOT_DOMAIN = "trackly.racing"
-const FROM_DOMAIN = "majorkaracing.com"
+const FROM_DOMAIN = "trackly.racing"
 const SITE_URL = `https://${ROOT_DOMAIN}`
 
 // The SDK handler owns verification, dispatch, and retry semantics; this file
