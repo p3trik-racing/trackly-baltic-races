@@ -7,7 +7,7 @@ import { lv } from "@/i18n/lv";
 import { SITE_URL } from "@/lib/site";
 import { formatDate } from "@/lib/format";
 
-const REPLY_TO = "admin@majorkariga.com";
+const REPLY_TO = "hello@trackly.racing";
 type L = "en" | "ru" | "lv";
 const DICTS: Record<L, Record<string, string>> = { en: en as any, ru: ru as any, lv: lv as any };
 const LOCALES: Record<L, string> = { en: "en-GB", ru: "ru-RU", lv: "lv-LV" };
