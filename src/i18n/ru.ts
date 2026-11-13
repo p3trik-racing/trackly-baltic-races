@@ -29,6 +29,8 @@ export const ru: Partial<Record<keyof typeof en, string>> = {
   "splash.terms": "Условия использования",
   "splash.and": "и",
   "splash.privacy": "Политику конфиденциальности",
+  "splash.seoTitle": "Трек-дни, дрифт и езда по льду в Прибалтике",
+  "splash.seoBody": "Trackly Racing — приложение, где можно найти и забронировать автоспортивные мероприятия и время на треке в Латвии, Литве и Эстонии. Бронируй весь трек или один слот и дели счёт с друзьями.",
   "auth.login.title": "С возвращением",
   "auth.login.subtitle": "Войди, чтобы продолжить",
   "auth.email": "Эл. почта",

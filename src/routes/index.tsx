@@ -6,10 +6,10 @@ import { LogoFull } from "@/components/Logo";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
-    { title: "Trackly — Motorsport events in the Baltics" },
-    { name: "description", content: "Book the track. Split the bill. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
-    { property: "og:title", content: "Trackly — Motorsport events in the Baltics" },
-    { property: "og:description", content: "Book the track. Split the bill. — track days, drift and ice driving across Latvia, Estonia and Lithuania. Book your spot." },
+    { title: "Trackly Racing | Book the track. Split the bill." },
+    { name: "description", content: "Trackly Racing: book track days, drift days and ice driving in Latvia, Lithuania and Estonia. Book the whole track or a single slot and split the cost with friends." },
+    { property: "og:title", content: "Trackly Racing | Book the track. Split the bill." },
+    { property: "og:description", content: "Trackly Racing: book track days, drift days and ice driving in Latvia, Lithuania and Estonia. Book the whole track or a single slot and split the cost with friends." },
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://trackly.racing" },
     { property: "og:image", content: "https://trackly.racing/og.png" },
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
     { property: "og:image:alt", content: "Trackly" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: "https://trackly.racing/og.png" },
-  ] }),
+  ], links: [{ rel: "canonical", href: "https://trackly.racing" }] }),
   component: Splash,
 });
 
@@ -60,6 +60,10 @@ function Splash() {
           {t("splash.browse")}
         </Link>
         <LangSwitcher />
+        <section className="text-center text-muted-foreground pt-4 max-w-sm mx-auto" style={{ fontSize: "12px" }}>
+          <h2 className="font-medium mb-1" style={{ fontSize: "13px" }}>{t("splash.seoTitle")}</h2>
+          <p>{t("splash.seoBody")}</p>
+        </section>
         <p className="text-center text-muted-foreground pt-2" style={{ fontSize: "11px" }}>
           {t("splash.agreePrefix")}{" "}
           <Link to="/terms" style={{ color: "var(--accent)" }}>{t("splash.terms")}</Link>

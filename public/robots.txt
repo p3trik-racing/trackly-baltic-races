@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /organiser
+Disallow: /booking/
+Disallow: /checkin/
+Disallow: /api/
+Disallow: /lovable/
+
+Sitemap: https://trackly.racing/sitemap.xml

@@ -5,9 +5,9 @@ import { loadVenueCards, VenueCardView, type VenueCard } from "@/components/Venu
 
 export const Route = createFileRoute("/_app/tracks")({
   head: () => ({ meta: [
-    { title: "Book a whole track — Trackly" },
+    { title: "Tracks | Trackly Racing" },
     { name: "description", content: "Rent a Baltic race track by the hour — book it whole or split the cost with other drivers." },
-    { property: "og:title", content: "Book a whole track — Trackly" },
+    { property: "og:title", content: "Tracks | Trackly Racing" },
     { property: "og:description", content: "Rent a Baltic race track by the hour — book it whole or split the cost with other drivers." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

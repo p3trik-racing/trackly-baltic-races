@@ -8,9 +8,9 @@ import { formatRoundDate } from "@/lib/format";
 
 export const Route = createFileRoute("/_app/competitions")({
   head: () => ({ meta: [
-    { title: "Compete — Trackly" },
+    { title: "Competitions | Trackly Racing" },
     { name: "description", content: "Racing series and championships you can enter across Latvia, Estonia and Lithuania." },
-    { property: "og:title", content: "Compete — Trackly" },
+    { property: "og:title", content: "Competitions | Trackly Racing" },
     { property: "og:description", content: "Racing series and championships you can enter across Latvia, Estonia and Lithuania." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },

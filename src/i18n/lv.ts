@@ -29,6 +29,8 @@ export const lv: Partial<Record<keyof typeof en, string>> = {
   "splash.terms": "Lietošanas noteikumiem",
   "splash.and": "un",
   "splash.privacy": "Privātuma politikai",
+  "splash.seoTitle": "Trases dienas, drifts un braukšana pa ledu Baltijā",
+  "splash.seoBody": "Trackly Racing ir lietotne, kurā atrast un rezervēt motorsporta pasākumus un trases laiku Latvijā, Lietuvā un Igaunijā. Rezervē visu trasi vai vienu laiku un sadali rēķinu ar draugiem.",
   "auth.login.title": "Prieks tevi redzēt",
   "auth.login.subtitle": "Ienāc, lai turpinātu",
   "auth.email": "E-pasts",

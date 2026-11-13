@@ -31,6 +31,8 @@ export const en = {
   "splash.terms": "Terms of Service",
   "splash.and": "and",
   "splash.privacy": "Privacy Policy",
+  "splash.seoTitle": "Track days, drift and ice driving in the Baltics",
+  "splash.seoBody": "Trackly Racing is an app to find and book motorsport events and track time in Latvia, Lithuania and Estonia. Book the whole track or a single slot and split the bill with friends.",
 
   // auth — login
   "auth.login.title": "Welcome back",
