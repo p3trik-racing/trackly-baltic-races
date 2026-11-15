@@ -164,7 +164,7 @@ export const en = {
   "book.depositNow": "Deposit now ({count} × €{price})",
   "book.balanceAtTrack": "Balance to pay at the track: €{amount}",
   "book.payDeposit": "Pay deposit €{total}",
-  "book.platformFee": "Trackly platform fee (5%)",
+  "book.platformFee": "Trackly booking fee (5%)",
   "book.total": "Total",
   "book.totalValue": "Total: €{total}",
   "book.waiverPrefix": "I am 18 or older and accept the",
@@ -415,7 +415,7 @@ export const en = {
   "eventTerms.s11.title": "11. Deposits, cancellations and no-shows",
   "eventTerms.s11.body": "Cancel 48 h or more before the start to get back what you paid online (minus the 5% booking fee); later cancellations and no-shows lose the deposit. If the organiser cancels, you get a full refund. Full rules: section 4 of the Terms of Service.",
   "eventTerms.s12.title": "12. Law",
-  "eventTerms.s12.body": "These terms are governed by the laws of the Republic of Latvia. Questions: hello@trackly.racing Trackly and SIA \"Trackly Studio\" are not affiliated with, endorsed by or responsible for Majorka, Majorka Riga, Majorka Racing, or any car community, club, meet or event run under those names. Those activities are organised by others, who are solely responsible for them.",
+  "eventTerms.s12.body": "These terms are governed by the laws of the Republic of Latvia. Questions: hello@trackly.racing. Trackly and SIA \"Trackly Studio\" are not affiliated with, endorsed by or responsible for Majorka, Majorka Riga, Majorka Racing, or any car community, club, meet or event run under those names. Those activities are organised by others, who are solely responsible for them.",
 
   // privacy
   "privacy.title": "Privacy Policy",
@@ -600,7 +600,7 @@ export const en = {
   "booking.balanceAtTrack": "Balance at the track: €{amount}",
   "booking.paid": "Paid: €{amount}",
   "booking.cancelFree": "Cancel your booking for {title}?",
-  "booking.cancelRefund": "You'll get your {kind} of €{amount} back within 5–10 business days (the 5% platform fee isn't refunded).",
+  "booking.cancelRefund": "You'll get your {kind} of €{amount} back within 5–10 business days (the 5% booking fee isn't refunded).",
   "booking.kindDeposit": "deposit",
   "booking.kindPayment": "payment",
   "booking.cancelNoRefund": "It's less than 48 h before the event, so your deposit isn't refunded.",
@@ -829,7 +829,7 @@ export const en = {
   "pay.entryFee": "Pay entry fee {total}",
   "pay.share": "Pay your share {total}",
   "pay.hostTotal": "Pay your total {total} (incl. empty spots)",
-  "pay.feeIncluded": "Includes the 5% Trackly platform fee. Cards, Apple Pay and Google Pay accepted.",
+  "pay.feeIncluded": "Includes the 5% Trackly booking fee. Cards, Apple Pay and Google Pay accepted.",
   "pay.within30": "Pay within 30 minutes to keep the slot — {time} left",
   "pay.expired": "Payment time expired",
   "pay.done": "Payment received",
@@ -892,6 +892,7 @@ export const en = {
   "privacy.cookies.title": "8. Cookies",
   "privacy.cookies.body": "We only use strictly necessary cookies and storage (login session, Stripe fraud prevention). We use no analytics or advertising cookies, so no cookie banner is shown.",
   "privacy.contact.title": "9. Contact",
+  "privacy.contact.body": "For privacy questions: hello@trackly.racing",
 } as const;
 
 export type TranslationKey = keyof typeof en;

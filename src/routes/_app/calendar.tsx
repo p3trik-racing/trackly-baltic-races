@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { fetchUpcomingEvents, type UpcomingEvent } from "@/lib/upcoming-events";
 import { ViewToggle } from "@/components/ViewToggle";
 import { EventCard } from "@/components/EventCard";
-import { CATEGORIES } from "@/lib/categories";
+import { CATEGORIES, SPECIAL, SHOW_MAJORKA_SPECIAL } from "@/lib/categories";
 
 export const Route = createFileRoute("/_app/calendar")({
   head: () => ({ meta: [
@@ -37,7 +37,7 @@ function CalendarPage() {
 
   useEffect(() => { fetchUpcomingEvents().then((d) => { setEvents(d); setLoaded(true); }); }, []);
 
-  const filtered = useMemo(() => events.filter((e) => category === "all" || e.category === category), [events, category]);
+  const filtered = useMemo(() => events.filter((e) => (SHOW_MAJORKA_SPECIAL || e.category !== SPECIAL) && (category === "all" || e.category === category)), [events, category]);
   const byDay = useMemo(() => {
     const m: Record<string, UpcomingEvent[]> = {};
     filtered.forEach((e) => { (m[e.date.slice(0, 10)] ??= []).push(e); });
@@ -74,7 +74,7 @@ function CalendarPage() {
 
       <div data-scroll-x className="-mx-5 px-5 overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: "none" }}>
         <div className="flex gap-2 w-max pr-5">
-          {[{ value: "all", label: t("common.all") }, ...CATEGORIES.map((c) => ({ value: c.value, label: catLabel(t, c.value) }))].map((c) => {
+          {[{ value: "all", label: t("common.all") }, ...CATEGORIES.filter((c) => SHOW_MAJORKA_SPECIAL || c.value !== SPECIAL).map((c) => ({ value: c.value, label: catLabel(t, c.value) }))].map((c) => {
             const active = category === c.value;
             return (
               <button key={c.value} onClick={() => setCategory(c.value)}

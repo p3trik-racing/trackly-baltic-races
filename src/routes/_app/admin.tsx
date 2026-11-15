@@ -33,7 +33,7 @@ function Payments() {
     const body = [head.join(","), ...d.rows.map((r: any) => head.map((h) => csvCell(r[h])).join(","))].join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([body], { type: "text/csv" }));
-    a.download = `majorka-payments-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `trackly-payments-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
   }
   if (err) return <p className="text-sm" style={{ color: "var(--accent)" }}>{err}</p>;
