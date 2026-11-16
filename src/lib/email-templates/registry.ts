@@ -23,7 +23,7 @@ import { template as eventCancelled } from './event-cancelled'
 import { template as eventReminder } from './event-reminder'
 import { template as newBooking } from './new-booking'
 import { approvedTemplate, rejectedTemplate } from './organiser-decision'
-import { applicationNewTemplate, competitionEntryAdminTemplate } from './admin-notices'
+import { applicationNewTemplate, competitionEntryAdminTemplate, disputeAdminTemplate } from './admin-notices'
 import { template as competitionEntry } from './competition-entry'
 import { grantedTemplate, revokedTemplate } from './organiser-role'
 import { template as eventPhotos } from './event-photos'
@@ -47,6 +47,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'organiser-application-new': applicationNewTemplate,
   'competition-entry': competitionEntry,
   'competition-entry-admin': competitionEntryAdminTemplate,
+  'stripe-dispute-admin': disputeAdminTemplate,
   'organiser-role-granted': grantedTemplate,
   'organiser-role-revoked': revokedTemplate,
 }

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import type { TemplateEntry } from './registry'
 import { A, Btn, Code, Layout, P, Qr, Row, mapsUrl, pickLang } from './_layout'
+import { PaymentDetails } from './payment-details'
 
 const C = {
   en: { subject: (t: string) => `You're booked: ${t}`, title: "You're booked!", hi: (n: string) => `Hi ${n},`, intro: 'Your spot is confirmed. Here are your details.', event: 'Event', when: 'Date & time', where: 'Location', maps: 'Open in Google Maps', spots: 'Spots', paid: 'Paid now', balance: 'Balance to pay at the track', req: 'Requirements', ref: 'Booking reference', code: 'Check-in code', btn: 'Open my check-in pass', shot: 'Show your pass at the track. Tip: take a screenshot in case there is no signal.', there: 'there' },
@@ -11,7 +12,7 @@ const C = {
 export interface BookingConfirmedProps {
   lang?: string; name?: string; eventTitle?: string; when?: string; location?: string; spots?: number
   paidNow?: string; balance?: string | null; requirements?: string[]; reference?: string; code?: string
-  passUrl?: string; qrUrl?: string
+  passUrl?: string; qrUrl?: string; seller?: string; fee?: string | null
 }
 
 const Email = (p: BookingConfirmedProps) => {
@@ -28,6 +29,7 @@ const Email = (p: BookingConfirmedProps) => {
       <Row label={c.balance} value={p.balance ?? undefined} />
       <Row label={c.req} value={p.requirements?.length ? p.requirements.join(' · ') : undefined} />
       <Row label={c.ref} value={p.reference} />
+      <PaymentDetails lang={l} seller={p.seller} fee={p.fee} />
       {p.code && (<><Row label={c.code} value=" " /><Code>{p.code}</Code></>)}
       {p.qrUrl && <Qr src={p.qrUrl} />}
       {p.passUrl && <Btn href={p.passUrl}>{c.btn}</Btn>}
@@ -40,5 +42,5 @@ export const template = {
   component: Email,
   subject: (d: Record<string, any>) => C[pickLang(d.lang)].subject(d.eventTitle ?? 'Trackly'),
   displayName: 'Booking confirmed',
-  previewData: { name: 'Jane', eventTitle: 'Biķernieki Track Day', when: '12 October 2026 · 09:00', location: 'Biķernieki, Riga', spots: 1, paidNow: '€52.50', balance: '€100.00', requirements: ['Helmet'], reference: 'AB12CD34', code: '3F9A2C7B', passUrl: 'https://trackly.racing/booking/x' },
+  previewData: { name: 'Jane', eventTitle: 'Biķernieki Track Day', when: '12 October 2026 · 09:00', location: 'Biķernieki, Riga', spots: 1, paidNow: '€52.50', balance: '€100.00', requirements: ['Helmet'], reference: 'AB12CD34', code: '3F9A2C7B', passUrl: 'https://trackly.racing/booking/x', seller: 'Track Co SIA', fee: '€2.50' },
 } satisfies TemplateEntry

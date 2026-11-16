@@ -28,3 +28,11 @@ export const competitionEntryAdminTemplate = {
   displayName: 'Competition entry (admin)',
   previewData: { heading: 'New competition entry', competition: 'Latvian Drift Series', fullName: 'Jane Doe', fields: [['Name', 'Jane Doe'], ['Car', 'BMW E36']] },
 } satisfies TemplateEntry
+
+export const disputeAdminTemplate = {
+  component: Fields,
+  to: ADMIN,
+  subject: (d: Record<string, any>) => `Stripe dispute opened — ${d.amount ?? ''} — ${d.item ?? ''}`,
+  displayName: 'Stripe dispute (admin)',
+  previewData: { heading: 'Stripe dispute opened', amount: '€52.50', item: 'Booking AB12CD34', fields: [['Dispute', 'dp_123'], ['Reason', 'fraudulent']] },
+} satisfies TemplateEntry

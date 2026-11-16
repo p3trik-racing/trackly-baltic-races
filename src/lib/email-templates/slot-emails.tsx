@@ -1,6 +1,7 @@
 import * as React from 'react'
 import type { TemplateEntry } from './registry'
 import { Btn, Code, Layout, P, Row, SITE, pickLang, type EmailLang } from './_layout'
+import { PaymentDetails } from './payment-details'
 
 type D = Record<string, any>
 
@@ -95,6 +96,7 @@ const OwnerNew = (d: D) => {
       <Row label={t.cars} value={d.spots} />
       <Row label={t.amount} value={money(d.amount)} />
       <Row label={t.payment} value={t.pending} />
+      <PaymentDetails lang={l} seller={d.seller} fee={d.fee} />
       {d.isSplit ? <Row label={t.split} value={t.splitLine(d)} /> : null}
       <Btn href={`${SITE}/organiser/tracks`}>{t.openTracks}</Btn>
     </Layout>

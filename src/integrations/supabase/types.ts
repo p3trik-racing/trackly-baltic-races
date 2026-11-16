@@ -23,6 +23,7 @@ export type Database = {
           checked_in_at: string | null
           checked_in_by: string | null
           created_at: string
+          disputed_at: string | null
           event_id: string
           id: string
           no_show: boolean
@@ -30,6 +31,7 @@ export type Database = {
           platform_fee: number
           reminder_sent_at: string | null
           status: Database["public"]["Enums"]["booking_status"]
+          stripe_dispute_id: string | null
           stripe_payment_intent_id: string | null
           stripe_refund_id: string | null
           stripe_transfer_id: string | null
@@ -48,6 +50,7 @@ export type Database = {
           checked_in_at?: string | null
           checked_in_by?: string | null
           created_at?: string
+          disputed_at?: string | null
           event_id: string
           id?: string
           no_show?: boolean
@@ -55,6 +58,7 @@ export type Database = {
           platform_fee: number
           reminder_sent_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_dispute_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
           stripe_transfer_id?: string | null
@@ -73,6 +77,7 @@ export type Database = {
           checked_in_at?: string | null
           checked_in_by?: string | null
           created_at?: string
+          disputed_at?: string | null
           event_id?: string
           id?: string
           no_show?: boolean
@@ -80,6 +85,7 @@ export type Database = {
           platform_fee?: number
           reminder_sent_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_dispute_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
           stripe_transfer_id?: string | null
@@ -642,6 +648,59 @@ export type Database = {
           },
         ]
       }
+      organiser_tax_details: {
+        Row: {
+          address_line: string
+          city: string
+          country: string
+          date_of_birth: string | null
+          iban: string
+          legal_name: string
+          postcode: string
+          seller_type: string
+          tax_id_or_reg_no: string
+          updated_at: string
+          user_id: string
+          vat_no: string | null
+        }
+        Insert: {
+          address_line: string
+          city: string
+          country?: string
+          date_of_birth?: string | null
+          iban: string
+          legal_name: string
+          postcode: string
+          seller_type: string
+          tax_id_or_reg_no: string
+          updated_at?: string
+          user_id: string
+          vat_no?: string | null
+        }
+        Update: {
+          address_line?: string
+          city?: string
+          country?: string
+          date_of_birth?: string | null
+          iban?: string
+          legal_name?: string
+          postcode?: string
+          seller_type?: string
+          tax_id_or_reg_no?: string
+          updated_at?: string
+          user_id?: string
+          vat_no?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organiser_tax_details_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -778,6 +837,7 @@ export type Database = {
           checked_in_at: string | null
           class: string | null
           created_at: string
+          disputed_at: string | null
           email: string
           holder_name: string
           id: string
@@ -788,6 +848,7 @@ export type Database = {
           platform_fee: number
           quantity: number
           status: string
+          stripe_dispute_id: string | null
           stripe_payment_intent_id: string | null
           stripe_refund_id: string | null
           ticket_type_id: string
@@ -800,6 +861,7 @@ export type Database = {
           checked_in_at?: string | null
           class?: string | null
           created_at?: string
+          disputed_at?: string | null
           email: string
           holder_name: string
           id?: string
@@ -810,6 +872,7 @@ export type Database = {
           platform_fee?: number
           quantity?: number
           status?: string
+          stripe_dispute_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
           ticket_type_id: string
@@ -822,6 +885,7 @@ export type Database = {
           checked_in_at?: string | null
           class?: string | null
           created_at?: string
+          disputed_at?: string | null
           email?: string
           holder_name?: string
           id?: string
@@ -832,6 +896,7 @@ export type Database = {
           platform_fee?: number
           quantity?: number
           status?: string
+          stripe_dispute_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
           ticket_type_id?: string
@@ -855,6 +920,7 @@ export type Database = {
           attendee_phone: string | null
           check_in_code: string
           created_at: string
+          disputed_at: string | null
           id: string
           is_gap: boolean
           is_host: boolean
@@ -866,6 +932,7 @@ export type Database = {
           slot_id: string
           spots: number
           status: string
+          stripe_dispute_id: string | null
           stripe_payment_intent_id: string | null
           stripe_refund_id: string | null
           stripe_transfer_id: string | null
@@ -879,6 +946,7 @@ export type Database = {
           attendee_phone?: string | null
           check_in_code?: string
           created_at?: string
+          disputed_at?: string | null
           id?: string
           is_gap?: boolean
           is_host?: boolean
@@ -890,6 +958,7 @@ export type Database = {
           slot_id: string
           spots?: number
           status?: string
+          stripe_dispute_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
           stripe_transfer_id?: string | null
@@ -903,6 +972,7 @@ export type Database = {
           attendee_phone?: string | null
           check_in_code?: string
           created_at?: string
+          disputed_at?: string | null
           id?: string
           is_gap?: boolean
           is_host?: boolean
@@ -914,6 +984,7 @@ export type Database = {
           slot_id?: string
           spots?: number
           status?: string
+          stripe_dispute_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_refund_id?: string | null
           stripe_transfer_id?: string | null
@@ -929,6 +1000,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      stripe_webhook_events: {
+        Row: {
+          account: string | null
+          id: string
+          livemode: boolean
+          received_at: string
+          type: string
+        }
+        Insert: {
+          account?: string | null
+          id: string
+          livemode: boolean
+          received_at?: string
+          type: string
+        }
+        Update: {
+          account?: string | null
+          id?: string
+          livemode?: boolean
+          received_at?: string
+          type?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
@@ -1179,6 +1274,16 @@ export type Database = {
           username: string
         }[]
       }
+      get_event_booked_counts: {
+        Args: { event_ids: string[] }
+        Returns: {
+          confirmed: number
+          event_id: string
+          held: number
+        }[]
+      }
+      get_event_seller_name: { Args: { _event_id: string }; Returns: string }
+      get_venue_seller_name: { Args: { _venue_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1227,6 +1332,7 @@ export type Database = {
           ratings: number
         }[]
       }
+      organiser_tax_complete: { Args: { _user_id: string }; Returns: boolean }
       process_split_deadlines: { Args: never; Returns: number }
       prompt_event_ratings: { Args: never; Returns: number }
       race_tickets_left: { Args: { _type_id: string }; Returns: number }
