@@ -98,6 +98,8 @@ export async function createSlotPayment(id: string, userId: string) {
 }
 
 export async function confirmSlotPayment(id: string, userId: string, piId: string) {
+  const { data: ex } = await supabaseAdmin.from("slot_bookings").select("user_id,payment_status,stripe_payment_intent_id").eq("id", id).maybeSingle();
+  if (ex && ex.user_id === userId && ex.payment_status === "paid" && ex.stripe_payment_intent_id === piId) return { ok: true };
   const { b, total } = await loadSlotBooking(id, userId);
   const pi = await stripe(`/payment_intents/${encodeURIComponent(piId)}`);
   if (pi.status !== "succeeded") throw new Error("Payment not completed");
@@ -137,6 +139,8 @@ export async function createTicketPayment(id: string, userId: string) {
 }
 
 export async function confirmTicketPayment(id: string, userId: string, piId: string) {
+  const { data: ex } = await supabaseAdmin.from("race_tickets").select("user_id,payment_status,stripe_payment_intent_id").eq("id", id).maybeSingle();
+  if (ex && ex.user_id === userId && ex.payment_status === "paid" && ex.stripe_payment_intent_id === piId) return { ok: true };
   const { tk, tt, total } = await loadTicket(id, userId);
   const pi = await stripe(`/payment_intents/${encodeURIComponent(piId)}`);
   if (pi.status !== "succeeded") throw new Error("Payment not completed");

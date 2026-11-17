@@ -147,6 +147,9 @@ function BookPage() {
         body: {
           event_id: event.id,
           ticket_count: tickets,
+          attendee_name: form.name,
+          attendee_email: form.email,
+          attendee_phone: form.phone,
         },
       });
       if (error) throw new Error(error.message);

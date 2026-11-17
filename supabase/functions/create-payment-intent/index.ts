@@ -84,6 +84,12 @@ Deno.serve(async (req) => {
     params.append("metadata[user_id]", userId);
     params.append("metadata[ticket_count]", String(tc));
     params.append("metadata[organiser_id]", String(event.organiser_id ?? ""));
+    // Attendee details so the Stripe webhook can create the booking if the client never confirms.
+    const str = (v: unknown, n: number) => (typeof v === "string" ? v.trim().slice(0, n) : "");
+    const an = str(body?.attendee_name, 100), ae = str(body?.attendee_email, 200), ap = str(body?.attendee_phone, 40);
+    if (an) params.append("metadata[attendee_name]", an);
+    if (ae) params.append("metadata[attendee_email]", ae);
+    if (ap) params.append("metadata[attendee_phone]", ap);
     params.append("transfer_group", `event_${event_id}`);
     params.append("automatic_payment_methods[enabled]", "true");
 

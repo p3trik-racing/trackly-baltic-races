@@ -117,9 +117,11 @@ Deno.serve(async (req) => {
       }
       const { data: used } = await admin
         .from("bookings")
-        .select("id")
+        .select("id,user_id,event_id")
         .eq("stripe_payment_intent_id", intent.id)
         .maybeSingle();
+      // Already created by the Stripe webhook — return it as success.
+      if (used && used.user_id === userId && used.event_id === event_id) return json({ id: used.id, ok: true });
       if (used) return json({ error: "Payment already used" }, 409);
       verifiedIntentId = intent.id;
     }
@@ -142,6 +144,10 @@ Deno.serve(async (req) => {
       })
       .select("id")
       .single();
+    if (bErr?.code === "23505" && verifiedIntentId) {
+      const { data: dup } = await admin.from("bookings").select("id,user_id,event_id").eq("stripe_payment_intent_id", verifiedIntentId).maybeSingle();
+      if (dup && dup.user_id === userId && dup.event_id === event_id) return json({ id: dup.id, ok: true });
+    }
     if (bErr?.code === "23505") return json({ error: "Payment already used" }, 409);
     if (bErr || !booking) return json({ error: "Could not create booking" }, 500);
 

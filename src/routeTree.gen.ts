@@ -44,6 +44,7 @@ import { Route as AppTracksSlugRouteImport } from './routes/_app/tracks_.$slug'
 import { Route as ApiPublicCronPayoutsRouteImport } from './routes/api/public/cron/payouts'
 import { Route as ApiPublicCronRemindersRouteImport } from './routes/api/public/cron/reminders'
 import { Route as ApiPublicQrBookingIdRouteImport } from './routes/api/public/qr.$bookingId'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -224,6 +225,11 @@ const ApiPublicQrBookingIdRoute = ApiPublicQrBookingIdRouteImport.update({
   path: '/api/public/qr/$bookingId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe/webhook',
+  path: '/api/public/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
@@ -288,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cron/payouts': typeof ApiPublicCronPayoutsRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -329,6 +336,7 @@ export interface FileRoutesByTo {
   '/api/public/cron/payouts': typeof ApiPublicCronPayoutsRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/api/public/cron/payouts': typeof ApiPublicCronPayoutsRoute
   '/api/public/cron/reminders': typeof ApiPublicCronRemindersRoute
   '/api/public/qr/$bookingId': typeof ApiPublicQrBookingIdRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -415,6 +424,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/payouts'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
+    | '/api/public/stripe/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/payouts'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
+    | '/api/public/stripe/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/payouts'
     | '/api/public/cron/reminders'
     | '/api/public/qr/$bookingId'
+    | '/api/public/stripe/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -518,6 +530,7 @@ export interface RootRouteChildren {
   ApiPublicCronPayoutsRoute: typeof ApiPublicCronPayoutsRoute
   ApiPublicCronRemindersRoute: typeof ApiPublicCronRemindersRoute
   ApiPublicQrBookingIdRoute: typeof ApiPublicQrBookingIdRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -770,6 +783,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicQrBookingIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/stripe/webhook': {
+      id: '/api/public/stripe/webhook'
+      path: '/api/public/stripe/webhook'
+      fullPath: '/api/public/stripe/webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
       path: '/lovable/email/auth/preview'
@@ -880,6 +900,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCronPayoutsRoute: ApiPublicCronPayoutsRoute,
   ApiPublicCronRemindersRoute: ApiPublicCronRemindersRoute,
   ApiPublicQrBookingIdRoute: ApiPublicQrBookingIdRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
