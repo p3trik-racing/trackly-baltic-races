@@ -80,7 +80,7 @@ export function SellerDetailsCard() {
       {field("vat_no", t("seller.vat"))}
       {field("iban", t("seller.iban"))}
       {isInd && field("date_of_birth", t("seller.dob"), "date")}
-      <button type="submit" className="btn-primary w-full" disabled={saving}>{t("seller.save")}</button>
+      <button type="submit" className="w-full rounded-xl bg-primary text-primary-foreground font-semibold py-3 disabled:opacity-60" disabled={saving}>{t("seller.save")}</button>
     </form>
   );
 }
