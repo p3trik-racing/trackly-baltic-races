@@ -228,7 +228,14 @@ function PostEventPage() {
       : await supabase.from("events").insert(payload).select("id").single();
 
     setSubmitting(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      if (error.message?.includes("SELLER_DETAILS_REQUIRED")) {
+        return toast.error(t("seller.required"), {
+          action: { label: t("seller.open"), onClick: () => { window.location.href = "/organiser#seller-details"; } },
+        });
+      }
+      return toast.error(error.message);
+    }
     const savedId = (saved as any)?.id ?? editId;
     if (status === "live" && savedId) {
       const { data: ann } = await supabase.rpc("announce_event", { _event_id: savedId });

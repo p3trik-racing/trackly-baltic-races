@@ -49,12 +49,10 @@ function ExplorePage() {
         setEvents(list);
         if (list.length) {
           const ids = list.map((e: any) => e.id);
-          const { data: bks } = await supabase
-            .from("bookings").select("event_id,ticket_count,status").in("event_id", ids);
+          const { data: bks } = await supabase.rpc("get_event_booked_counts", { event_ids: ids });
           const counts: Record<string, number> = {};
           (bks ?? []).forEach((b: any) => {
-            if (b.status === "cancelled") return;
-            counts[b.event_id] = (counts[b.event_id] ?? 0) + (b.ticket_count ?? 1);
+            counts[b.event_id] = Number(b.confirmed) + Number(b.held);
           });
           setBookingCounts(counts);
         }

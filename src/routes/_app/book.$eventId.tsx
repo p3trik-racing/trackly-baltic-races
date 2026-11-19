@@ -57,15 +57,10 @@ function BookPage() {
 
   useEffect(() => {
     supabase.from("events").select("*").eq("id", eventId).maybeSingle().then(({ data }) => setEvent(data));
-    supabase
-      .from("bookings")
-      .select("ticket_count,status")
-      .eq("event_id", eventId)
+    supabase.rpc("get_event_booked_counts", { event_ids: [eventId] })
       .then(({ data }) => {
-        const total = (data ?? [])
-          .filter((b: any) => b.status !== "cancelled")
-          .reduce((sum: number, b: any) => sum + (b.ticket_count ?? 1), 0);
-        setBookedCount(total);
+        const r: any = (data ?? [])[0];
+        setBookedCount(r ? Number(r.confirmed) + Number(r.held) : 0);
       });
   }, [eventId]);
 

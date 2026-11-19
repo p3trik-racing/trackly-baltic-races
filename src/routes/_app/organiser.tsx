@@ -11,6 +11,7 @@ import { cancelEventWithNotifications } from "@/lib/cancel-event.functions";
 import { useOrganiserGuard } from "@/lib/roles";
 import { SharePhotos } from "@/components/SharePhotos";
 import { RatingBadge } from "@/components/Ratings";
+import { SellerDetailsCard } from "@/components/SellerDetailsCard";
 import { PayoutsCard, useConnectStatus } from "@/components/PayoutsCard";
 
 export const Route = createFileRoute("/_app/organiser")({
@@ -158,6 +159,8 @@ function OrganiserDashboard() {
       </div>
 
       <PayoutsCard status={connect} />
+
+      <SellerDetailsCard />
 
       <div className="flex gap-2 bg-card p-1 rounded-xl border border-border">
         {(["active", "past"] as const).map((t) => (

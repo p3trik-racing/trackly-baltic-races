@@ -246,7 +246,7 @@ function genCode() {
   const arr = new Uint32Array(8);
   crypto.getRandomValues(arr);
   const s = Array.from(arr, (n) => chars[n % chars.length]).join("");
-  return `MR-${s.slice(0, 4)}-${s.slice(4)}`;
+  return `TR-${s.slice(0, 4)}-${s.slice(4)}`;
 }
 
 function Codes() {
